@@ -1,0 +1,49 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import PageIntro from '../components/PageIntro.astro';
+---
+
+<BaseLayout
+  title="Colophon"
+  description="A small, static website built with Astro, TypeScript, and MDX, designed for readability, accessibility, and simple maintenance."
+>
+  <PageIntro
+    label="Colophon"
+    title="A small site, built with care."
+    description="A few decisions behind the pages you’re reading."
+  />
+  <article class="prose colophon-prose">
+    <h2>Content first</h2>
+    <p>
+      This site is built with Astro and strict TypeScript. Work, research, and
+      lab entries live in schema-validated MDX collections, keeping the writing
+      separate from the layouts.
+    </p>
+    <h2>Only the interaction that helps</h2>
+    <p>
+      Most pages are static HTML. A small React component powers the
+      ranked-review demonstration in the lab; its explanatory content and
+      initial results remain readable without JavaScript.
+    </p>
+    <h2>Readable by design</h2>
+    <p>
+      The design uses system serif and sans-serif fonts, a quiet neutral
+      palette, and a green accent. There are no external font requests, stock
+      profile photographs, or decorative animations. Keyboard access, visible
+      focus, contrast, and smaller screens are part of the design.
+    </p>
+    <h2>A quiet corner of the web</h2>
+    <p>
+      There are no analytics, tracking scripts, advertising, accounts, or
+      third-party embeds. Contact links open email or an external professional
+      profile.
+    </p>
+    <h2>Attribution & responsibility</h2>
+    <p>
+      Professional descriptions draw on my public profile. Research
+      contributions link to their sources, and demonstrations are labeled as
+      synthetic. Writing, identity, and third-party material are not offered
+      under a blanket open-source license.
+    </p>
+  </article>
+</BaseLayout>

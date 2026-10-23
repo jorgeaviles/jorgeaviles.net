@@ -1,0 +1,58 @@
+---
+import { render } from 'astro:content';
+import BaseLayout from '../layouts/BaseLayout.astro';
+import PageIntro from '../components/PageIntro.astro';
+import RankedReview from '../components/RankedReview';
+import { getPublishedEntries } from '../lib/content';
+const entries = await Promise.all(
+  (await getPublishedEntries('lab')).map(async (entry) => ({
+    entry,
+    ...(await render(entry)),
+  })),
+);
+---
+
+<BaseLayout
+  title="Lab"
+  description="A small interactive demonstration of precision and recall, using deterministic synthetic data. No trained model or real records."
+>
+  <PageIntro
+    label="The lab"
+    title="A question you can interact with."
+    description="Small, explainable experiments at the intersection of analysis and engineering."
+  />
+  {entries.map(({ entry, Content }) => (
+    <section class="lab-entry">
+      <div class="lab-intro">
+        <span class="synthetic-label">
+          Synthetic data · Educational demonstration
+        </span>
+        <h2>{entry.data.title}</h2>
+        <div class="prose">
+          <Content />
+        </div>
+      </div>
+      <RankedReview client:visible />
+    </section>
+  ))}
+  <div class="lab-explanation">
+    <div>
+      <h3>Precision asks</h3>
+      <p>
+        Of the cases selected, how many are relevant? A smaller selection can be
+        more concentrated, but may leave useful cases behind.
+      </p>
+    </div>
+    <div>
+      <h3>Recall asks</h3>
+      <p>
+        Of all relevant cases, how many have been selected? A larger selection
+        finds more, but also brings in irrelevant cases.
+      </p>
+    </div>
+  </div>
+  <p class="section-footnote">
+    This is a deterministic engineering example. No model was trained, and these
+    figures describe no real-world model performance.
+  </p>
+</BaseLayout>

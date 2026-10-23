@@ -1,0 +1,21 @@
+---
+interface Props {
+  diagonal?: boolean;
+}
+const { diagonal = false } = Astro.props;
+---
+
+<svg
+  class="arrow"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="1.5"
+  aria-hidden="true"
+>
+  {diagonal ? (
+    <path d="M5 19 19 5M5 5h14v14" />
+  ) : (
+    <path d="M4 12h15m-6-6 6 6-6 6" />
+  )}
+</svg>

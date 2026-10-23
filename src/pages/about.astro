@@ -1,0 +1,110 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import PageIntro from '../components/PageIntro.astro';
+import Arrow from '../components/Arrow.astro';
+import { site } from '../config/site';
+---
+
+<BaseLayout
+  title="About"
+  description="My background connects business analysis, data platforms, applied research, and practical technology."
+>
+  <PageIntro
+    label="About"
+    title="The question comes first."
+    description="My work sits where business needs, analytical thinking, and practical technology meet."
+  />
+  <div class="editorial-grid">
+    <div class="prose">
+      <h2>A connecting thread</h2>
+      <p>
+        I’m Jorge Aviles. My experience spans legal services, banking, and
+        academia. Across those settings, I’ve been interested in the same
+        problem: how to turn complicated information into something people can
+        understand and use.
+      </p>
+      <p>
+        At the Committee for Public Counsel Services, that has meant moving from
+        Python and Jupyter analysis to data warehouse development with Azure
+        Synapse, and more recently building a Blazor application to make data
+        and operational workflows easier to access.
+      </p>
+      <p>
+        Earlier work at Santander brought together data quality, CRM and
+        marketing data, and business analysis for capital technology projects.
+        Research assistance at CENTRUM PUCP connected quantitative methods with
+        business questions.
+      </p>
+      <h2>How I work</h2>
+      <p>
+        I start with the people using the result and the decision or workflow it
+        needs to support. I examine data quality and assumptions, make
+        trade-offs explicit, and favor behavior that can be tested and
+        explained.
+      </p>
+      <p>
+        The right result might be an analysis, a better data pipeline, a report,
+        or an application. The form follows the need, and the work improves with
+        feedback.
+      </p>
+      <a class="text-link" href="/work/">
+        Explore selected work <Arrow />
+      </a>
+    </div>
+    <aside class="aside-note">
+      <p class="eyebrow">Education</p>
+      <h3>BA in Economics</h3>
+      <p>
+        Suffolk University
+        <br />
+        2011
+      </p>
+      <div class="aside-divider"></div>
+      <p class="eyebrow">Elsewhere</p>
+      <a href={site.github}>
+        GitHub <Arrow diagonal />
+      </a>
+      <a href={site.linkedin}>
+        LinkedIn <Arrow diagonal />
+      </a>
+    </aside>
+  </div>
+  <section class="section-space capabilities">
+    <div class="section-heading">
+      <div>
+        <p class="eyebrow">Capabilities</p>
+        <h2>Different tools. A shared purpose.</h2>
+      </div>
+    </div>
+    <div class="capability-grid">
+      <div>
+        <span class="work-number">01</span>
+        <h3>Business analysis</h3>
+        <p>
+          Stakeholder consultation, requirements, prioritization, and
+          translating operational needs into useful systems.
+        </p>
+      </div>
+      <div>
+        <span class="work-number">02</span>
+        <h3>Data & analytics</h3>
+        <p>
+          SQL, Python, R, Jupyter, data engineering, reporting, and statistical
+          and machine-learning methods.
+        </p>
+      </div>
+      <div>
+        <span class="work-number">03</span>
+        <h3>Applications & technology</h3>
+        <p>
+          C#, .NET, Blazor, Azure data services, and practical exploration of
+          AI-assisted information access.
+        </p>
+      </div>
+    </div>
+    <p class="section-footnote">
+      Background based on my{' '}
+      <a href={site.profileSource}>public professional profile</a>.
+    </p>
+  </section>
+</BaseLayout>

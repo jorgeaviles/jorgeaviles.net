@@ -1,0 +1,122 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import WorkList from '../components/WorkList.astro';
+import Arrow from '../components/Arrow.astro';
+import { site } from '../config/site';
+import { getPublishedEntries } from '../lib/content';
+const work = (await getPublishedEntries('work')).filter(
+  (entry) => entry.data.featured,
+);
+---
+
+<BaseLayout>
+  <section class="home-intro">
+    <div class="hero-main">
+      <p class="eyebrow">
+        <span class="small-rule" aria-hidden="true"></span>Business analysis ·
+        Data platforms · Applied research
+      </p>
+      <h1>
+        Turning complex information into <em>useful decisions</em> and systems.
+      </h1>
+      <p class="hero-description">
+        I’m Jorge Aviles. I connect business needs, data, and practical
+        technology to help people understand information and put it to work.
+      </p>
+      <div class="hero-links">
+        <a class="button" href="/work/">
+          Explore my work <Arrow />
+        </a>
+        <a class="text-link" href="/about/">
+          A little about me <Arrow />
+        </a>
+      </div>
+    </div>
+    <aside class="hero-note">
+      <span class="note-marker" aria-hidden="true">
+        ↳
+      </span>
+      <p>
+        From the question
+        <br />
+        to the analysis.
+        <br />
+        From the analysis
+        <br />
+        to something useful.
+      </p>
+      <span class="mono-label">A practical, curious approach</span>
+    </aside>
+  </section>
+  <div class="context-strip">
+    <p>
+      Experience across <strong>legal services, banking, and academia.</strong>
+    </p>
+    <a href="/about/">
+      The connecting thread <Arrow />
+    </a>
+  </div>
+  <section class="home-work section-space" aria-labelledby="selected-work">
+    <div class="section-heading">
+      <div>
+        <p class="eyebrow">Selected work</p>
+        <h2 id="selected-work">From questions to practice.</h2>
+      </div>
+      <a class="text-link" href="/work/">
+        View all work <Arrow />
+      </a>
+    </div>
+    <WorkList entries={work} />
+    <p class="section-footnote">
+      High-level perspectives on my work. Sensitive data and internal systems
+      stay private.
+    </p>
+  </section>
+  <section class="explore-section" aria-labelledby="explore-title">
+    <div class="explore-copy">
+      <p class="eyebrow">A closer look</p>
+      <h2 id="explore-title">
+        Room for inquiry.
+        <br />
+        Space to experiment.
+      </h2>
+      <p>
+        Research informs how I ask questions. Small experiments help me make the
+        answers tangible.
+      </p>
+    </div>
+    <div class="explore-links">
+      <a href="/research/">
+        <span class="work-category">Research & writing</span>
+        <h3>Following the evidence.</h3>
+        <p>
+          Research assistance, quantitative questions, and the care behind a
+          useful conclusion.
+        </p>
+        <Arrow />
+      </a>
+      <a href="/lab/">
+        <span class="work-category">The lab</span>
+        <h3>A small working example.</h3>
+        <p>
+          Explore the trade-off between precision and recall with a clearly
+          synthetic dataset.
+        </p>
+        <Arrow />
+      </a>
+    </div>
+  </section>
+  <section class="contact-band">
+    <div>
+      <p class="eyebrow">Let’s connect</p>
+      <h2>Have a question worth exploring?</h2>
+      <p>
+        I welcome conversations about analysis, research, and practical
+        technology.
+      </p>
+    </div>
+    <a class="text-link" href={`mailto:${site.email}`}>
+      Get in touch <Arrow diagonal />
+    </a>
+  </section>
+</BaseLayout>

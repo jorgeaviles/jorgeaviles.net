@@ -1,0 +1,42 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import PageIntro from '../components/PageIntro.astro';
+import Arrow from '../components/Arrow.astro';
+import { site } from '../config/site';
+---
+
+<BaseLayout
+  title="Contact"
+  description="Get in touch with Jorge Aviles about business analysis, data platforms, applied research, and practical technology."
+>
+  <PageIntro
+    label="Contact"
+    title="Good work starts with a conversation."
+    description="I welcome thoughtful conversations about analysis, research, and building useful things."
+  />
+  <div class="contact-options">
+    <a class="contact-primary" href={`mailto:${site.email}`}>
+      <span class="work-category">Email</span>
+      <span>{site.email}</span>
+      <Arrow diagonal />
+    </a>
+    <a href={site.github}>
+      <div>
+        <span class="work-category">Projects & professional profile</span>
+        <h2>GitHub</h2>
+      </div>
+      <Arrow diagonal />
+    </a>
+    <a href={site.linkedin}>
+      <div>
+        <span class="work-category">Professional connections</span>
+        <h2>LinkedIn</h2>
+      </div>
+      <Arrow diagonal />
+    </a>
+  </div>
+  <p class="section-footnote">
+    Email opens in your preferred mail application. This site has no contact
+    form or tracking scripts.
+  </p>
+</BaseLayout>

@@ -1,0 +1,22 @@
+---
+import type { CollectionEntry } from 'astro:content';
+import Arrow from './Arrow.astro';
+interface Props {
+  entries: CollectionEntry<'work'>[];
+}
+const { entries } = Astro.props;
+---
+
+<div class="work-list">
+  {entries.map((entry, index) => (
+    <a class="work-row" href={`/work/${entry.id}/`}>
+      <span class="work-number">{String(index + 1).padStart(2, '0')}</span>
+      <div>
+        <span class="work-category">{entry.data.category}</span>
+        <h3>{entry.data.title}</h3>
+        <p>{entry.data.description}</p>
+      </div>
+      <Arrow />
+    </a>
+  ))}
+</div>

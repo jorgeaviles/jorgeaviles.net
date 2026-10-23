@@ -1,0 +1,76 @@
+---
+import { render, type CollectionEntry } from 'astro:content';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import PageIntro from '../../components/PageIntro.astro';
+import Arrow from '../../components/Arrow.astro';
+import { getPublishedEntries } from '../../lib/content';
+export async function getStaticPaths() {
+  return (await getPublishedEntries('work')).map((entry) => ({
+    params: { slug: entry.id },
+    props: { entry },
+  }));
+}
+interface Props {
+  entry: CollectionEntry<'work'>;
+}
+const { entry } = Astro.props;
+const { Content } = await render(entry);
+const related = (await getPublishedEntries('work')).filter(
+  (item) => item.id !== entry.id,
+);
+---
+
+<BaseLayout title={entry.data.title} description={entry.data.description}>
+  <a class="back-link" href="/work/">
+    ← All selected work
+  </a>
+  <PageIntro
+    label={entry.data.category}
+    title={entry.data.title}
+    description={entry.data.description}
+  />
+  <div class="editorial-grid">
+    <article class="prose">
+      <Content />
+    </article>
+    <aside class="aside-note">
+      <p class="eyebrow">Perspective</p>
+      <p>A public, high-level account of my contribution.</p>
+      {entry.data.methods.length > 0 && (
+        <>
+          <div class="aside-divider"></div>
+          <p class="eyebrow">Areas of practice</p>
+          <ul>
+            {entry.data.methods.map((method) => (
+              <li>{method}</li>
+            ))}
+          </ul>
+        </>
+      )}
+      {entry.data.sources.length > 0 && (
+        <>
+          <div class="aside-divider"></div>
+          <p class="eyebrow">Sources</p>
+          {entry.data.sources.map((source) => (
+            <a href={source.url}>
+              {source.label} <Arrow diagonal />
+            </a>
+          ))}
+        </>
+      )}
+      {entry.data.href && (
+        <a href={entry.data.href}>
+          Explore the project <Arrow diagonal />
+        </a>
+      )}
+    </aside>
+  </div>
+  <section class="related-work">
+    <p class="eyebrow">Continue exploring</p>
+    {related.map((item) => (
+      <a href={`/work/${item.id}/`}>
+        {item.data.title} <Arrow />
+      </a>
+    ))}
+  </section>
+</BaseLayout>

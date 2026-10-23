@@ -1,0 +1,23 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import PageIntro from '../../components/PageIntro.astro';
+import WorkList from '../../components/WorkList.astro';
+import { getPublishedEntries } from '../../lib/content';
+const entries = await getPublishedEntries('work');
+---
+
+<BaseLayout
+  title="Selected work"
+  description="Selected perspectives on analytical data platforms, applied research, and making information useful through applications."
+>
+  <PageIntro
+    label="Selected work"
+    title="Making information useful."
+    description="A few perspectives on the work connecting analysis, research, and the systems people use."
+  />
+  <WorkList entries={entries} />
+  <p class="work-disclosure">
+    These are high-level accounts based on my public professional profile.
+    Internal data, code, and operational details are not published here.
+  </p>
+</BaseLayout>

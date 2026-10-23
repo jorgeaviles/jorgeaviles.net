@@ -1,0 +1,60 @@
+---
+import { render } from 'astro:content';
+import BaseLayout from '../layouts/BaseLayout.astro';
+import PageIntro from '../components/PageIntro.astro';
+import Arrow from '../components/Arrow.astro';
+import { getPublishedEntries } from '../lib/content';
+const entries = await Promise.all(
+  (await getPublishedEntries('research')).map(async (entry) => ({
+    entry,
+    ...(await render(entry)),
+  })),
+);
+---
+
+<BaseLayout
+  title="Research"
+  description="Verified research assistance and quantitative interests, including an acknowledged contribution to a 2014 cattle-ranch profitability study."
+>
+  <PageIntro
+    label="Research & writing"
+    title="Following the evidence."
+    description="An interest in quantitative questions, careful interpretation, and the work behind a useful conclusion."
+  />
+  <div class="research-context">
+    <p>
+      At CENTRUM PUCP, I supported faculty research on profitability
+      forecasting, consumer spending, choice-based conjoint analysis, and
+      pricing. The contribution below is documented in the published research.
+    </p>
+  </div>
+  {entries.map(({ entry, Content }) => (
+    <article class="research-entry">
+      <div class="research-meta">
+        <p class="eyebrow">{entry.data.category}</p>
+        <span class="mono-label">Acknowledged research assistance</span>
+      </div>
+      <div>
+        <h2>{entry.data.title}</h2>
+        <div class="prose">
+          <Content />
+        </div>
+        <div class="source-links">
+          {entry.data.sources.map((source) => (
+            <a class="text-link" href={source.url}>
+              {source.label} <Arrow diagonal />
+            </a>
+          ))}
+        </div>
+      </div>
+    </article>
+  ))}
+  <aside class="research-note">
+    <p class="eyebrow">On attribution</p>
+    <p>
+      Research assistance is described separately from authorship. The lab on
+      this site uses invented data and does not reproduce the findings of this
+      study.
+    </p>
+  </aside>
+</BaseLayout>
