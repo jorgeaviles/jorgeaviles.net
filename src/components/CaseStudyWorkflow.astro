@@ -9,11 +9,12 @@
         Narrow the view to the item that needs attention.
       </p>
       <div class="fictional-example">
-        <span>Fictional example</span>
-        <p>Work in view</p>
+        <span>Fictional record · first view</span>
         <p>
           <strong>Harbor review</strong>
         </p>
+        <p class="record-state">Needs context</p>
+        <p>Next step: gather supporting material</p>
       </div>
     </li>
     <li>
@@ -25,9 +26,12 @@
         Read the context before deciding what happens next.
       </p>
       <div class="fictional-example">
-        <span>Same fictional item</span>
-        <p>Purpose: review a sample process</p>
-        <p>Next step: gather context</p>
+        <span>Same fictional record · context added</span>
+        <p>
+          <strong>Harbor review</strong>
+        </p>
+        <p class="record-state">Ready for review</p>
+        <p>Fictional briefing linked for review</p>
       </div>
     </li>
     <li>
@@ -39,9 +43,12 @@
         Make a deliberate change within the permitted workflow.
       </p>
       <div class="fictional-example">
-        <span>Concept only</span>
-        <p>Proposed next step: review the summary</p>
-        <p>Changes are intentional</p>
+        <span>Same fictional record · progress updated</span>
+        <p>
+          <strong>Harbor review</strong>
+        </p>
+        <p class="record-state">Briefing reviewed</p>
+        <p>Next step: prepare a summary</p>
       </div>
     </li>
   </ol>
@@ -109,6 +116,10 @@
   }
   .case-study-workflow .fictional-example p + p {
     margin-top: 8px;
+  }
+  .case-study-workflow .record-state {
+    color: var(--green);
+    font-weight: 500;
   }
   .case-study-workflow figcaption {
     font-size: 13px;

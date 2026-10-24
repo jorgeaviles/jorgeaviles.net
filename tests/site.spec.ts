@@ -593,6 +593,29 @@ test('approved case study stays consistent across listings and renders a static 
     'Understand',
     'Update',
   ]);
+  await expect(figure.getByText('Harbor review', { exact: true })).toHaveCount(
+    3,
+  );
+  await expect(figure.locator('.record-state')).toHaveText([
+    'Needs context',
+    'Ready for review',
+    'Briefing reviewed',
+  ]);
+  await expect(
+    page.getByRole('link', {
+      name: 'FY2027 agency appropriations',
+      exact: true,
+    }),
+  ).toHaveAttribute(
+    'href',
+    'https://malegislature.gov/Budget/FY2027/FinalBudget',
+  );
+  await expect(page.locator('article.prose')).toContainText(
+    'approximately 10 staff users',
+  );
+  await expect(page.locator('article.prose')).toContainText(
+    'not a count of portal users or a verified current active-panel count',
+  );
   await expect(figure.locator('figcaption')).toHaveText(
     'Conceptual workflow illustrated with fictional information. Not a screenshot of the internal application.',
   );
