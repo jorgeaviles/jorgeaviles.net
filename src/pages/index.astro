@@ -2,7 +2,6 @@
 import BaseLayout from '../layouts/BaseLayout.astro';
 import WorkList from '../components/WorkList.astro';
 import Arrow from '../components/Arrow.astro';
-import { site } from '../config/site';
 import { getPublishedEntries } from '../lib/content';
 const work = (await getPublishedEntries('work')).filter(
   (entry) => entry.data.featured,
@@ -115,8 +114,8 @@ const work = (await getPublishedEntries('work')).filter(
         technology.
       </p>
     </div>
-    <a class="text-link" href={`mailto:${site.email}`}>
-      Get in touch <Arrow diagonal />
+    <a class="text-link" href="/contact/">
+      Get in touch <Arrow />
     </a>
   </section>
 </BaseLayout>
