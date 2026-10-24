@@ -1,26 +1,58 @@
 ---
-title: Analytical applications
-description: Bringing data access and operational workflows into a shared interface.
+title: Designing an audit-tracking workspace
+description: Connecting analytical exploration, supporting documents, and operational oversight in an audit-tracking workspace.
 category: Applications
 order: 3
 featured: true
 methods:
-  - Requirements analysis
-  - Blazor and .NET
   - Workflow design
+  - Data integration
+  - Application engineering
 sources:
-  - label: Public professional profile
+  - label: Professional background
     url: https://github.com/jorgeaviles/jorgeaviles
 ---
 
-## Context
+import CaseStudyWorkflow from '../../components/CaseStudyWorkflow.astro';
 
-My work at CPCS also includes building a Blazor application for data access and operational workflows.
+## The challenge
 
-## Approach
+The project began with a gap between established reporting and the kinds of analytical investigation we wanted to pursue. Legacy databases and web-based reporting applications provided an existing information environment; the goal was to explore more advanced analysis and machine-learning methods alongside it. The work began with consultation with Suffolk University about proposed models in Jupyter notebooks. Those notebooks opened up analytical questions beyond the reporting already available, while further exploration led to the development of an analytical warehouse.
 
-Application development sits alongside analysis: understanding requirements, coordinating priorities, and incorporating feedback into usable tools.
+The Audit Portal became a front end for connecting that analytical work with information access and operational oversight. This case study focuses on its Audit Tracker: a workspace for finding a record, understanding its context, reviewing related material, and making a permitted update. It describes the connection between those tasks rather than attempting to catalogue every application module.
 
-## Scope
+## My role
 
-This overview describes the direction of the work. It contains no private code, screenshots, records, or claims of measured outcomes.
+I am the sole hands-on developer across the analytical notebooks, warehouse, and Audit Portal. The work is informed by consultation with colleagues in Audit & Oversight, whose firsthand experience of attorney billing and casework adds context that is not apparent from database records alone. I use that input to revisit analytical assumptions, iterate on models, design reports, and refine the audit interface in response to feedback. Model tuning is part of the process; this account does not claim a measured improvement in predictive performance.
+
+The project began with university consultation on proposed machine-learning models. IT colleagues contributed the data and access arrangements: an applications-team database analyst worked with me on scheduled master-data extracts, and the infrastructure team assisted with role-based access and application-identity permissions. Those contributions are credited separately from the coding and development work.
+
+## From requirements to design
+
+Departmental feedback helps connect the analytical questions with the information people need to interpret a record and decide what to examine next. That is an iterative relationship between practical experience, analysis, and interface design.
+
+The tracker connects record discovery with a more detailed workspace. Search and filters help narrow the list, while the detail view separates stable context, subsequent progress, and recorded changes. Editing is deliberate: permitted users can change information, save their work, and encounter explicit handling for unsaved or conflicting changes. Historical compatibility also matters; validation accommodates specified gaps in older records rather than inventing information to make them appear complete.
+
+Users also work with document attachments, folder synchronization, and AI assistance informed by related documents. Users can ask questions that connect an audit's progress and supporting material with analytical information and policy guidance. The design objective is to make those sources useful within the context of the work, while preserving distinctions between recorded information, retrieved passages, and an AI-generated interpretation.
+
+For example, an investigation question might ask what the available material establishes, which policy is relevant, and what information is still needed. Such a question is not evidence that every document has been read exhaustively or that a generated answer is correct. Retrieval and evidence-coverage limits are part of the engineering responsibility, especially when a question spans several documents and data sources.
+
+<CaseStudyWorkflow />
+
+## Technical decisions
+
+One decision embodied in the application is server-side interactivity with .NET and Blazor. Interactive pages use application services to validate requests and coordinate persistence, while connection handling and application state remain engineering responsibilities.
+
+A second decision separates workflow information from analytical access and separates interface behavior from business rules and storage. That introduces boundaries to maintain, but allows selected rules and failure conditions to be tested independently of a full screen. It also keeps the tracker from becoming a copy of the analytical warehouse.
+
+A third decision places authorization and version-aware updates beyond the visible controls. Permissions are checked at service boundaries, and persistence can reject changes based on an outdated record. The corresponding interface must help the user understand what has been saved and what needs attention.
+
+## What the work delivered
+
+The implementation includes searchable record views, creation and editing, lifecycle information, progress and change-history views, and workbook exports. The portal is used for document attachments, folder synchronization, document-informed AI questions, and visual oversight of audit progress. The broader questions users bring to the portal can combine warehouse information, policy material, audit progress, and related documents.
+
+I have observed users updating tracker details without needing instruction. That is a qualitative observation, not a formal usability study or a measured reduction in time, cost, or errors. These observations do not establish adoption levels or the accuracy of AI-generated answers.
+
+## What I learned
+
+This work has reinforced the importance of learning how a process operates beyond its database representation. Colleagues' practical experience helps me question assumptions, interpret patterns, and refine what an analysis or interface should make visible. Developing the technical components myself does not remove the need for that domain expertise. Connecting analytical capability with operational work requires both technical judgment and a willingness to revise the design as that understanding develops.
