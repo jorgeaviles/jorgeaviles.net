@@ -10,7 +10,7 @@ const routes = [
   { path: '/work/', heading: 'Making information useful.' },
   {
     path: '/work/analytical-data-platforms/',
-    heading: 'Analytical data platforms',
+    heading: 'Building an analytical data platform',
   },
   {
     path: '/work/applied-predictive-research/',
@@ -343,6 +343,14 @@ test.describe('without JavaScript', () => {
       );
       await expect(page.getByRole('main')).toBeVisible();
       await expectNoHorizontalOverflow(page);
+      if (route.path === '/work/analytical-data-platforms/') {
+        await expect(
+          page.getByRole('figure', { name: 'Conceptual analytical data flow' }),
+        ).toBeVisible();
+        await expect(page.locator('.analytical-flow figcaption')).toContainText(
+          'Not a diagram of the internal production environment.',
+        );
+      }
       if (route.path === '/work/analytical-applications/') {
         await expect(
           page.getByRole('figure', { name: 'Conceptual record workflow' }),
@@ -625,6 +633,57 @@ test('approved case study stays consistent across listings and renders a static 
   const screenshot = testInfo.outputPath('audit-tracker-case-study.png');
   await page.screenshot({ path: screenshot, fullPage: true });
   await testInfo.attach('Approved case study', {
+    path: screenshot,
+    contentType: 'image/png',
+  });
+});
+
+test('data platform case study shares metadata and explains a static fictional data flow', async ({
+  page,
+}, testInfo) => {
+  const title = 'Building an analytical data platform';
+  for (const route of ['/', '/work/']) {
+    await page.goto(route);
+    const link = page.getByRole('link', { name: new RegExp(title) });
+    await expect(link).toHaveAttribute(
+      'href',
+      '/work/analytical-data-platforms/',
+    );
+    await link.click();
+    await expect(page.getByRole('heading', { level: 1 })).toHaveText(title);
+  }
+  const figure = page.getByRole('figure', {
+    name: 'Conceptual analytical data flow',
+  });
+  await expect(figure.getByRole('heading', { level: 3 })).toHaveText([
+    'Source',
+    'Prepare',
+    'Serve',
+    'Apply',
+  ]);
+  await expect(figure.locator('figcaption')).toHaveText(
+    'Conceptual analytical workflow using fictional data. Not a diagram of the internal production environment.',
+  );
+  await expect(figure.getByRole('table')).toHaveCount(2);
+  await expect(figure.getByRole('table').nth(1).locator('tbody tr')).toHaveText(
+    ['Sketch25'],
+  );
+  await expect(figure).toContainText('it is not treated as zero');
+  await expect(page.locator('article.prose')).toContainText(
+    'It is not a dedicated provisioned SQL warehouse',
+  );
+  await expect(
+    page.getByRole('link', { name: 'Synapse serverless SQL', exact: true }),
+  ).toHaveAttribute(
+    'href',
+    'https://learn.microsoft.com/en-us/azure/synapse-analytics/sql/on-demand-workspace-overview',
+  );
+  await expect(page.locator('astro-island')).toHaveCount(0);
+  await expectNoHorizontalOverflow(page);
+  await expectAccessible(page);
+  const screenshot = testInfo.outputPath('data-platform-case-study.png');
+  await page.screenshot({ path: screenshot, fullPage: true });
+  await testInfo.attach('Data platform case study', {
     path: screenshot,
     contentType: 'image/png',
   });
