@@ -21,7 +21,7 @@ const routes = [
     heading: 'Analytical applications',
   },
   { path: '/research/', heading: 'Following the evidence.' },
-  { path: '/lab/', heading: 'A question you can interact with.' },
+  { path: '/lab/', heading: 'Learn how models learn' },
   { path: '/contact/', heading: 'Good work starts with a conversation.' },
   { path: '/colophon/', heading: 'A small site, built with care.' },
 ] as const;
@@ -236,11 +236,13 @@ test('learning journeys train models and evaluate model-generated rankings', asy
   const workspace = page.getByRole('region', {
     name: 'Machine learning workspace',
   });
-  const before = await workspace.locator('dd').first().innerText();
+  const before = (await workspace
+    .locator('.training-feedback')
+    .textContent())!.replace(/\s+/g, ' ');
   await page
     .getByRole('button', { name: 'Train one step', exact: true })
     .press('Enter');
-  await expect(workspace.locator('dd').first()).not.toHaveText(before);
+  await expect(workspace.locator('.training-feedback')).not.toHaveText(before);
   await page.getByRole('button', { name: 'Train', exact: true }).click();
   await expect(
     page.getByRole('button', { name: 'Pause', exact: true }),
@@ -248,15 +250,17 @@ test('learning journeys train models and evaluate model-generated rankings', asy
   await expect
     .poll(async () =>
       Number(
-        (await page.getByText(/\d+ gradient updates/).innerText()).match(
-          /(\d+) gradient updates/,
+        (await page.locator('.training-feedback').textContent())!.match(
+          /Step (\d+)/,
         )?.[1],
       ),
     )
     .toBeGreaterThan(1);
   await page.getByRole('button', { name: 'Pause', exact: true }).click();
-  await page.getByRole('button', { name: 'Reset', exact: true }).click();
-  await expect(workspace.locator('dd').first()).toHaveText(before);
+  await page
+    .getByRole('button', { name: 'Reset this model', exact: true })
+    .click();
+  await expect(workspace.locator('.training-feedback')).toHaveText(before);
   await page.getByText('Explore parameters manually', { exact: true }).click();
   await page
     .getByRole('spinbutton', { name: 'Weight 1', exact: true })
@@ -264,20 +268,23 @@ test('learning journeys train models and evaluate model-generated rankings', asy
   await expect(
     page.getByRole('spinbutton', { name: 'Weight 1', exact: true }),
   ).toHaveValue('0.3');
-  await page.getByRole('button', { name: 'Reset', exact: true }).click();
   await page
-    .getByRole('button', { name: '2 · Logistic regression', exact: true })
+    .getByRole('button', { name: 'Reset this model', exact: true })
+    .click();
+  await page
+    .getByRole('link', { name: '2 Logistic regression', exact: true })
     .click();
   await page
     .getByRole('button', { name: 'Train one step', exact: true })
     .click();
-  await page.getByLabel('Inspect example').selectOption('SYN-60');
+  await page.getByLabel('Show', { exact: true }).selectOption('validation');
+  await page
+    .getByRole('combobox', { name: 'Inspect example', exact: true })
+    .selectOption('SYN-60');
   await page.getByText('Inspect the mathematics', { exact: true }).click();
   await expect(page.getByText(/Actual class:/)).toBeVisible();
   await expectAccessible(page);
-  await page
-    .getByRole('button', { name: '3 · Evaluation', exact: true })
-    .click();
+  await page.getByRole('link', { name: '3 Evaluation', exact: true }).click();
   const slider = page.getByRole('slider', {
     name: 'Review budget',
     exact: true,
@@ -343,4 +350,155 @@ test.describe('without JavaScript', () => {
       }
     });
   }
+});
+
+test('guidance, independent histories and population inspection remain coherent', async ({
+  page,
+}, testInfo) => {
+  const errors = observeApplicationErrors(page);
+  await page.goto('/lab/');
+  await page
+    .getByRole('button', { name: 'Train one step', exact: true })
+    .scrollIntoViewIfNeeded();
+  await page.waitForFunction(
+    () => !document.querySelector('astro-island')?.hasAttribute('ssr'),
+  );
+  const hint = page.getByRole('note', { name: 'Lesson guidance' });
+  await expect(hint).toBeVisible();
+  await expect(
+    page.getByText('Initial prediction: 0 minutes', { exact: true }),
+  ).toBeVisible();
+  await page.screenshot({
+    path: testInfo.outputPath('lab-linear-initial.png'),
+    fullPage: true,
+  });
+  await page
+    .getByRole('button', { name: 'Train one step', exact: true })
+    .press('Enter');
+  await expect(hint).toBeHidden();
+  await expect(page.locator('.training-feedback')).toContainText(
+    'Error decreased',
+  );
+  const linearFeedback = (await page
+    .locator('.training-feedback')
+    .textContent())!.replace(/\s+/g, ' ');
+  const trace = await page
+    .getByRole('img', { name: /Loss history:/ })
+    .getAttribute('aria-label');
+  await page
+    .getByRole('combobox', { name: 'Inspect example', exact: true })
+    .selectOption('TASK-8');
+  await page
+    .getByRole('link', { name: '2 Logistic regression', exact: true })
+    .click();
+  await expect(hint).toBeVisible();
+  await expect(page.getByText(/No unique 50% boundary:/)).toBeVisible();
+  await expect(page.locator('.model-figure figcaption')).toContainText(
+    '54 training examples',
+  );
+  await page.getByRole('button', { name: 'Train', exact: true }).click();
+  await expect(hint).toBeHidden();
+  await expect(page.locator('.training-feedback')).not.toContainText('Step 0');
+  await page.getByRole('button', { name: 'Pause', exact: true }).click();
+  await expect(page.getByTestId('decision-boundary')).toBeVisible();
+  await page.getByText('Inspect the mathematics', { exact: true }).click();
+  const weights = await page.getByText(/z = w · x/).innerText();
+  await page.getByLabel('Show', { exact: true }).selectOption('validation');
+  await expect(page.locator('.model-figure figcaption')).toContainText(
+    '18 validation examples',
+  );
+  await expect(page.getByText(/z = w · x/)).toContainText(
+    weights.split('The weighted score')[0],
+  );
+  await page
+    .getByRole('combobox', { name: 'Inspect example', exact: true })
+    .selectOption('SYN-60');
+  await page.screenshot({
+    path: testInfo.outputPath('lab-classifier-trained.png'),
+    fullPage: true,
+  });
+  await page
+    .getByRole('link', { name: '1 Linear regression', exact: true })
+    .click();
+  await expect(page.locator('.training-feedback')).toHaveText(linearFeedback);
+  await expect(
+    page.getByRole('img', { name: /Loss history:/ }),
+  ).toHaveAttribute('aria-label', trace!);
+  await expect(
+    page.getByRole('combobox', { name: 'Inspect example', exact: true }),
+  ).toHaveValue('TASK-8');
+  await expect(hint).toBeHidden();
+  await page.getByRole('button', { name: 'Help', exact: true }).press('Enter');
+  await expect(hint).toBeVisible();
+  await page.getByRole('button', { name: 'Help', exact: true }).press('Enter');
+  await expect(hint).toBeHidden();
+  await page.screenshot({
+    path: testInfo.outputPath('lab-linear-trained.png'),
+    fullPage: true,
+  });
+  await page.getByRole('link', { name: '3 Evaluation', exact: true }).click();
+  await expect(
+    page.getByRole('combobox', { name: 'Inspect example', exact: true }),
+  ).toHaveValue('SYN-60');
+  await expect(hint).toBeVisible();
+  const slider = page.getByRole('slider', {
+    name: 'Review budget',
+    exact: true,
+  });
+  await slider.fill('10');
+  await expect(hint).toBeHidden();
+  await expect(page.locator('.ranked-strip .chosen')).toHaveCount(10);
+  await expect(page.locator('.ranked-strip [aria-pressed=true]')).toHaveCount(
+    1,
+  );
+  const metrics = await page.locator('.essential-metrics').boundingBox(),
+    control = await slider.boundingBox(),
+    strip = await page.locator('.ranked-strip').boundingBox();
+  expect(metrics!.y - control!.y).toBeLessThan(110);
+  expect(strip!.y - (metrics!.y + metrics!.height)).toBeLessThan(40);
+  await expectNoHorizontalOverflow(page);
+  await expectAccessible(page);
+  expect(errors).toEqual([]);
+  await page.screenshot({
+    path: testInfo.outputPath('lab-evaluation.png'),
+    fullPage: true,
+  });
+  await page
+    .getByRole('link', { name: '2 Logistic regression', exact: true })
+    .click();
+  await expect(hint).toBeHidden();
+  await expect(
+    page.getByRole('combobox', { name: 'Inspect example', exact: true }),
+  ).toHaveValue('SYN-60');
+  await page.getByText('Inspect the mathematics', { exact: true }).click();
+  await expect(page.getByText(/z = w · x/)).toContainText(
+    weights.split('The weighted score')[0],
+  );
+});
+
+test('lesson deep links explain an untrained ranking and off-window boundary', async ({
+  page,
+}) => {
+  await page.goto('/lab/#evaluation');
+  await page
+    .getByRole('navigation', { name: 'Lab lessons' })
+    .scrollIntoViewIfNeeded();
+  await expect(
+    page.getByText(/Untrained model: every score is 50%/),
+  ).toBeVisible();
+  await page
+    .getByRole('link', { name: 'Train the classifier', exact: true })
+    .click();
+  await expect(page).toHaveURL(/#logistic-regression$/);
+  await page.getByText('Explore parameters manually', { exact: true }).click();
+  await page
+    .getByRole('spinbutton', { name: 'Weight 1', exact: true })
+    .fill('1');
+  await page.getByRole('spinbutton', { name: 'Bias', exact: true }).fill('100');
+  await expect(
+    page.getByText(/valid 50% boundary does not cross/),
+  ).toBeVisible();
+  await expect(page.getByTestId('decision-boundary')).toHaveCount(0);
+  await page.getByRole('link', { name: '3 Evaluation', exact: true }).click();
+  await expect(page.getByText(/Manual parameters: these scores/)).toBeVisible();
 });

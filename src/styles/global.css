@@ -1077,120 +1077,296 @@ strong {
 }
 
 .learning-lab {
-  margin-block: 2rem 4rem;
+  margin-block: 1.2rem 4rem;
 }
-.lesson-nav,
-.ml-actions {
-  display: flex;
-  gap: 0.6rem;
-  flex-wrap: wrap;
-  margin-block: 1rem;
+.lesson-nav {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 0.35rem;
+  margin-bottom: 1.5rem;
+}
+.lesson-nav a {
+  padding: 0.7rem;
+  border: 1px solid var(--line);
+  text-decoration: none;
+  font-size: 0.9rem;
+  text-align: center;
+  border-radius: 3px;
+}
+.lesson-nav [aria-current] {
+  background: var(--green);
+  color: white;
 }
 .learning-lab button,
 .learning-lab select,
 .learning-lab input[type='number'] {
   border: 1px solid var(--muted);
-  padding: 0.5rem 0.7rem;
+  padding: 0.55rem 0.65rem;
+  min-height: 44px;
   background: var(--paper);
   color: var(--ink);
   border-radius: 3px;
+  font: inherit;
 }
-.lesson-nav [aria-current],
-.learning-lab button[aria-pressed='true'] {
-  background: var(--green);
-  color: white;
+.learning-lab button {
+  cursor: pointer;
 }
 .learning-lab button:disabled {
   opacity: 0.5;
+  cursor: default;
+}
+.learning-lab h2 {
+  margin-bottom: 0.4rem;
+}
+.lesson-description {
+  margin-top: 0;
 }
 .ml-workspace {
   display: grid;
-  grid-template-columns: minmax(0, 2fr) minmax(240px, 1fr);
-  gap: 2rem;
-  margin-top: 1.5rem;
+  grid-template-columns: minmax(0, 2fr) minmax(250px, 1fr);
+  gap: 1.5rem;
   align-items: start;
+  margin-block: 1rem;
 }
 .ml-primary,
 .ml-controls {
   min-width: 0;
 }
-.model-chart {
-  width: 100%;
-  max-height: 440px;
-  overflow: hidden;
-  background: var(--light-green);
-}
-.model-chart text {
-  font: 12px var(--font-sans);
-  fill: var(--ink);
-}
 .ml-controls {
-  padding: 1.2rem;
   background: var(--light-green);
+  padding: 1rem;
 }
-.ml-controls label {
+.learning-lab label {
   display: block;
-  margin-block: 0.7rem;
 }
-.ml-controls select {
+.learning-lab select,
+.learning-lab input[type='number'] {
   max-width: 100%;
   display: block;
+  margin-block: 0.35rem 0.7rem;
+  width: 100%;
 }
-.ml-controls dd {
+.ml-actions {
+  display: flex;
+  gap: 0.4rem;
+  flex-wrap: wrap;
+  margin-block: 0.65rem;
+}
+.ml-actions button:first-child {
+  background: var(--green);
+  color: white;
+}
+.lab-guidance-row {
+  display: flex;
+  align-items: start;
+  gap: 0.6rem;
+}
+.lab-guidance {
+  font-size: 0.85rem;
+  line-height: 1.5;
+  border-left: 2px solid var(--green);
+  padding: 0.3rem 0.65rem;
+  flex: 1;
+}
+.lab-guidance[hidden] {
+  display: none;
+}
+.learning-lab .lab-help {
+  font-size: 0.8rem;
+  padding: 0.35rem;
+  min-width: 44px;
+  margin-left: auto;
+}
+.training-feedback {
+  padding: 0.55rem 0.7rem;
+  border-left: 3px solid var(--green);
+  background: var(--light-green);
+  margin: 0.7rem 0;
   font-variant-numeric: tabular-nums;
-  font-size: 1.2rem;
-  color: var(--green);
-  margin: 0 0 0.6rem;
+}
+.training-feedback strong,
+.training-feedback span {
+  display: block;
+  font-size: 0.88rem;
+}
+.learning-lab .population-control {
+  display: flex;
+  align-items: center;
+  gap: 0.7rem;
+  font-size: 0.85rem;
+}
+.population-control select {
+  width: auto;
+  margin: 0;
+}
+.model-figure,
+.loss-history {
+  margin: 1rem 0;
+}
+.model-figure figcaption,
+.loss-history figcaption {
+  font-size: 0.85rem;
+  font-weight: 600;
+  margin-bottom: 0.5rem;
+}
+.ml-plot {
+  width: 100%;
+  max-height: 440px;
+  background: var(--light-green);
+  overflow: hidden;
+}
+.ml-plot text {
+  font: 14px var(--font-sans);
+  fill: var(--ink);
+}
+.ml-plot .zero-prediction-label {
+  font-weight: 600;
+}
+.plot-point {
+  cursor: pointer;
+}
+.plot-key,
+.boundary-state,
+.inspector-note,
+.observed-value,
+.ranking-note {
+  font-size: 0.85rem;
+  line-height: 1.55;
+  margin: 0.6rem 0;
+}
+.boundary-state {
+  border-left: 2px solid var(--green);
+  padding-left: 0.6rem;
+}
+.loss-history svg {
+  width: 100%;
+  max-height: 165px;
+}
+.loss-history text {
+  font: 11px var(--font-sans);
+  fill: var(--ink);
+}
+.loss-history p,
+.loss-history small {
+  display: block;
+  font-size: 0.8rem;
+  margin: 0.4rem 0;
+}
+.calculation-flow {
+  list-style: none;
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 0.4rem;
+  padding: 0;
+  margin: 0.7rem 0;
+}
+.calculation-flow li {
+  border-top: 1px solid var(--line);
+  padding-top: 0.4rem;
+  overflow-wrap: anywhere;
+  font-size: 0.85rem;
+}
+.calculation-flow span,
+.calculation-flow strong {
+  display: block;
+}
+.calculation-flow span {
+  font-size: 0.75rem;
 }
 .learning-lab details {
   border-top: 1px solid var(--line);
-  padding-block: 1rem;
+  padding-block: 0.85rem;
 }
 .learning-lab summary {
   cursor: pointer;
   font-weight: 600;
 }
 .learning-lab details p {
-  margin-block: 0.6rem;
-}
-.ml-primary p,
-.ml-controls p {
   font-size: 0.85rem;
-  margin-block: 0.8rem;
+  margin-block: 0.7rem;
 }
 .learning-lab fieldset {
-  padding: 1rem;
   border: 1px solid var(--line);
+  padding: 0.65rem 0.8rem;
+  margin: 0;
 }
 .learning-lab fieldset label {
-  display: block;
+  font-size: 0.9rem;
+  margin-block: 0.35rem;
+}
+.learning-lab input[type='radio'] {
+  accent-color: var(--green);
+  width: 18px;
+  height: 18px;
+  vertical-align: middle;
 }
 .learning-lab input[type='range'] {
   width: 100%;
   accent-color: var(--green);
+  min-height: 32px;
+  display: block;
+}
+.policy-slider output {
+  float: right;
+  font-variant-numeric: tabular-nums;
+}
+.essential-metrics {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 0.35rem;
+  margin: 0.65rem 0;
+  padding: 0.6rem 0;
+  border-bottom: 1px solid var(--line);
+}
+.essential-metrics dt {
+  min-height: 2.6em;
+  font-size: 0.75rem;
+}
+.essential-metrics dd {
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: var(--green);
+  margin: 0.15rem 0 0;
 }
 .ranked-strip {
   display: grid;
   grid-template-columns: repeat(6, minmax(0, 1fr));
-  gap: 0.4rem;
-  margin-top: 1rem;
+  gap: 0.35rem;
+  margin-top: 0.8rem;
 }
-.ranked-strip button {
+.learning-lab .ranked-strip button {
   display: flex;
   flex-direction: column;
   align-items: center;
   font-size: 0.8rem;
-  padding: 0.3rem;
+  padding: 0.3rem 0.1rem;
+  line-height: 1.4;
 }
 .ranked-strip .chosen {
   background: var(--light-green);
   border: 2px solid var(--green);
 }
 .ranked-strip strong {
-  font-size: 1.3rem;
+  font-size: 1.2rem;
+  color: var(--green);
 }
-.ranked-strip button[aria-pressed='true'] strong {
-  color: white;
+.ranked-strip small {
+  font-size: 0.75rem;
+}
+.ranked-strip button[aria-pressed='true'] {
+  outline: 2px solid var(--green);
+  outline-offset: 2px;
+}
+.confusion-metrics {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+}
+.confusion-metrics dt {
+  font-size: 0.8rem;
+}
+.confusion-metrics dd {
+  margin: 0;
 }
 .ml-table {
   overflow: auto;
@@ -1199,46 +1375,93 @@ strong {
   width: 100%;
   text-align: left;
   border-collapse: collapse;
+  white-space: nowrap;
 }
 .ml-table td,
 .ml-table th {
   padding: 0.5rem;
   border-bottom: 1px solid var(--line);
 }
+.lab-page-intro {
+  padding-block: 2rem 1rem;
+}
+.lab-page-intro h1 {
+  font-size: clamp(2rem, 5vw, 3.4rem);
+  margin: 0.4rem 0 0.6rem;
+}
+.lab-page-intro p {
+  max-width: 60ch;
+  margin-block: 0.4rem;
+}
 @media (max-width: 800px) {
   .ml-workspace {
     grid-template-columns: 1fr;
     gap: 1rem;
   }
-  .model-chart {
-    max-height: 330px;
+  .ml-plot {
+    max-height: 390px;
   }
-  .ml-controls {
-    padding: 1rem;
+}
+@media (max-width: 480px) {
+  .lab-page-intro {
+    padding-block: 1.2rem 0.5rem;
+  }
+  .lab-page-intro h1 {
+    font-size: 2rem;
+    line-height: 1.12;
+  }
+  .lab-page-intro p {
+    font-size: 0.9rem;
+  }
+  .learning-lab {
+    margin-top: 0.5rem;
+  }
+  .lesson-nav {
+    margin-bottom: 1rem;
+    gap: 0.25rem;
+  }
+  .lesson-nav a {
+    font-size: 0.85rem;
+    padding: 0.55rem 0.2rem;
+    line-height: 1.25;
+  }
+  .lesson-nav span {
+    display: inline;
+  }
+  .learning-lab h2 {
+    font-size: 1.5rem;
+  }
+  .lesson-description {
+    font-size: 0.9rem;
+  }
+  .ml-workspace {
+    margin-top: 0.7rem;
+  }
+  .ml-actions button {
+    font-size: 0.85rem;
+    padding: 0.5rem;
   }
   .ranked-strip {
-    grid-template-columns: repeat(6, minmax(0, 1fr));
-    gap: 0.2rem;
+    gap: 0.3rem;
   }
-  .ranked-strip button {
-    font-size: 0.65rem;
-    padding: 0.25rem;
+  .learning-lab .ranked-strip button {
+    font-size: 0.75rem;
   }
-  .lesson-nav button {
-    flex: 1;
-    font-size: 0.85rem;
+  .essential-metrics dt {
+    font-size: 0.72rem;
+  }
+  .essential-metrics dd {
+    font-size: 1rem;
   }
 }
 
-.ranked-strip button[aria-pressed='true'] {
-  background: var(--paper);
-  color: var(--ink);
-  outline: 3px solid var(--green);
-  outline-offset: 2px;
+.lab-guidance-content {
+  flex: 1;
+  min-width: 0;
 }
-.ranked-strip button.chosen[aria-pressed='true'] {
-  background: var(--light-green);
+.lab-guidance-row:has(.lab-guidance[hidden]) {
+  align-items: center;
 }
-.ranked-strip button[aria-pressed='true'] strong {
-  color: var(--green);
+.lab-guidance-row:has(.lab-guidance[hidden]) .ml-actions {
+  margin: 0;
 }

@@ -1,6 +1,5 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
-import PageIntro from '../components/PageIntro.astro';
 import LearningLab from '../components/LearningLab';
 import { getPublishedEntries } from '../lib/content';
 const entries = await getPublishedEntries('lab');
@@ -10,11 +9,14 @@ const entries = await getPublishedEntries('lab');
   title="Lab"
   description="Train small linear and logistic regression models locally, then explore validation decisions using synthetic data."
 >
-  <PageIntro
-    label="The lab"
-    title="A question you can interact with."
-    description="Small, explainable experiments at the intersection of analysis and engineering."
-  />
+  <header class="lab-page-intro">
+    <p class="eyebrow">The lab</p>
+    <h1>Learn how models learn</h1>
+    <p>
+      Train a line, build a classifier, and explore decisions with synthetic
+      data.
+    </p>
+  </header>
   {entries.length > 0 && <LearningLab client:visible />}
   <noscript>
     <p>
