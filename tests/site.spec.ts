@@ -69,7 +69,7 @@ for (const route of routes) {
     ).toBeVisible();
     if (route.path === '/lab/') {
       await page
-        .getByRole('slider', { name: 'Records to review' })
+        .getByRole('navigation', { name: 'Lab lessons' })
         .scrollIntoViewIfNeeded();
       await page.waitForFunction(() =>
         Array.from(document.querySelectorAll('astro-island')).every(
@@ -220,52 +220,108 @@ test('keyboard users can see focus and skip directly to the main content', async
   await expect(page).toHaveURL(/#main$/);
 });
 
-test('ranked-review controls update the visible results at both boundaries', async ({
+test('learning journeys train models and evaluate model-generated rankings', async ({
   page,
-}) => {
+}, testInfo) => {
   const errors = observeApplicationErrors(page);
   await page.goto('/lab/');
-  const number = page.getByRole('spinbutton', {
-    name: 'Selection size',
-    exact: true,
-  });
-  const range = page.getByRole('slider', {
-    name: 'Records to review',
-    exact: true,
-  });
-  await number.scrollIntoViewIfNeeded();
+  await page
+    .getByRole('button', { name: 'Train one step', exact: true })
+    .scrollIntoViewIfNeeded();
   await page.waitForFunction(() =>
     Array.from(document.querySelectorAll('astro-island')).every(
-      (island) => !island.hasAttribute('ssr'),
+      (i) => !i.hasAttribute('ssr'),
     ),
   );
-  const metrics = page.locator('.lab-metrics');
-  const precision = metrics
-    .locator('.lab-metric')
-    .filter({ hasText: 'Precision' });
-  const recall = metrics.locator('.lab-metric').filter({ hasText: 'Recall' });
-  const selectedRows = page
-    .getByRole('table')
-    .locator('tbody tr[data-selected="true"]');
-  await expect(number).toHaveValue('4');
-  await expect(range).toHaveValue('4');
-  await expect(precision.locator('strong')).toHaveText('75%');
-  await expect(recall.locator('strong')).toHaveText('50%');
-  await expect(selectedRows).toHaveCount(4);
+  const workspace = page.getByRole('region', {
+    name: 'Machine learning workspace',
+  });
+  const before = await workspace.locator('dd').first().innerText();
+  await page
+    .getByRole('button', { name: 'Train one step', exact: true })
+    .press('Enter');
+  await expect(workspace.locator('dd').first()).not.toHaveText(before);
+  await page.getByRole('button', { name: 'Train', exact: true }).click();
+  await expect(
+    page.getByRole('button', { name: 'Pause', exact: true }),
+  ).toBeVisible();
+  await expect
+    .poll(async () =>
+      Number(
+        (await page.getByText(/\d+ gradient updates/).innerText()).match(
+          /(\d+) gradient updates/,
+        )?.[1],
+      ),
+    )
+    .toBeGreaterThan(1);
+  await page.getByRole('button', { name: 'Pause', exact: true }).click();
+  await page.getByRole('button', { name: 'Reset', exact: true }).click();
+  await expect(workspace.locator('dd').first()).toHaveText(before);
+  await page.getByText('Explore parameters manually', { exact: true }).click();
+  await page
+    .getByRole('spinbutton', { name: 'Weight 1', exact: true })
+    .fill('0.3');
+  await expect(
+    page.getByRole('spinbutton', { name: 'Weight 1', exact: true }),
+  ).toHaveValue('0.3');
+  await page.getByRole('button', { name: 'Reset', exact: true }).click();
+  await page
+    .getByRole('button', { name: '2 · Logistic regression', exact: true })
+    .click();
+  await page
+    .getByRole('button', { name: 'Train one step', exact: true })
+    .click();
+  await page.getByLabel('Inspect example').selectOption('SYN-60');
+  await page.getByText('Inspect the mathematics', { exact: true }).click();
+  await expect(page.getByText(/Actual class:/)).toBeVisible();
+  await expectAccessible(page);
+  await page
+    .getByRole('button', { name: '3 · Evaluation', exact: true })
+    .click();
+  const slider = page.getByRole('slider', {
+    name: 'Review budget',
+    exact: true,
+  });
+  await slider.fill('0');
+  await expect(page.getByText('Undefined', { exact: true })).toBeVisible();
+  await slider.press('End');
+  await expect(page.locator('.ranked-strip .chosen')).toHaveCount(18);
+  await slider.fill('6');
+  await expect(page.locator('.ranked-strip .chosen')).toHaveCount(6);
+  await page.getByLabel('Probability threshold', { exact: true }).check();
+  await page.getByRole('slider', { name: 'Probability cutoff' }).fill('1');
+  await expect(page.locator('.ranked-strip .chosen')).toHaveCount(0);
+  await page.getByText('Inspect records', { exact: true }).click();
+  await expect(page.getByRole('table').locator('tbody tr')).toHaveCount(18);
+  const recordRegion = page.getByRole('region', {
+    name: 'Validation records, scroll horizontally',
+  });
+  if (await recordRegion.evaluate((e) => e.scrollWidth > e.clientWidth)) {
+    await recordRegion.focus();
+    await recordRegion.press('ArrowRight');
+    await expect
+      .poll(() => recordRegion.evaluate((e) => e.scrollLeft))
+      .toBeGreaterThan(0);
+  }
 
-  await number.fill('0');
-  await expect(range).toHaveValue('0');
-  await expect(precision.locator('strong')).toHaveText('0%');
-  await expect(recall.locator('strong')).toHaveText('0%');
-  await expect(selectedRows).toHaveCount(0);
-
-  await range.press('End');
-  await expect(number).toHaveValue('12');
-  await expect(precision.locator('strong')).toHaveText('50%');
-  await expect(recall.locator('strong')).toHaveText('100%');
-  await expect(selectedRows).toHaveCount(12);
-  await expect(page.getByRole('table').getByRole('row')).toHaveCount(13);
+  await page.getByText('Final test assessment', { exact: true }).click();
+  await page
+    .getByRole('button', { name: 'Lock experiment and evaluate test' })
+    .click();
+  await expect(
+    page.getByRole('slider', { name: 'Probability cutoff' }),
+  ).toBeDisabled();
+  await page.getByRole('button', { name: 'Reset experiment' }).click();
+  await expect(
+    page.getByRole('slider', { name: 'Review budget' }),
+  ).toBeEnabled();
+  await expectNoHorizontalOverflow(page);
+  await expectAccessible(page);
   expect(errors).toEqual([]);
+  await page.screenshot({
+    path: testInfo.outputPath('learning-lab.png'),
+    fullPage: true,
+  });
 });
 
 test.describe('without JavaScript', () => {
@@ -281,8 +337,6 @@ test.describe('without JavaScript', () => {
       await expect(page.getByRole('main')).toBeVisible();
       await expectNoHorizontalOverflow(page);
       if (route.path === '/lab/') {
-        await expect(page.getByRole('table')).toBeVisible();
-        await expect(page.getByRole('table').getByRole('row')).toHaveCount(13);
         const fallback = page.locator('noscript p');
         await expect(fallback).toContainText('JavaScript is disabled.');
         await expect(fallback).toBeVisible();

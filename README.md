@@ -21,7 +21,7 @@ The site runs at `http://localhost:4321`. On systems using nvm, run `nvm install
 | `npm run lint`             | ESLint                                                          |
 | `npm run format:check`     | Prettier validation                                             |
 | `npm run format`           | Apply consistent formatting                                     |
-| `npm test`                 | Pure lab calculation tests                                      |
+| `npm test`                 | Pure model and evaluation tests                                 |
 | `npm run test:publication` | Build disposable draft fixtures and verify their exclusion      |
 | `npm run assets:social`    | Regenerate the social PNG from the original SVG artwork         |
 | `npm run build`            | Static production output and first-party link/privacy checks    |
@@ -35,7 +35,7 @@ The site runs at `http://localhost:4321`. On systems using nvm, run `nvm install
 - Shared name, contact details, and metadata: `src/config/site.ts`.
 - Work, research, and lab prose: `src/content/<collection>/*.mdx`.
 - Main page layouts: `src/pages/`, `src/layouts/`, and `src/styles/global.css`.
-- Synthetic fixtures and tested calculations: `src/lib/ranked-review.ts`.
+- Synthetic fixtures and tested calculations: `src/lib/ml/models.ts`.
 
 Content entries require a title, description, category, and numeric order. Optional fields include `featured`, `draft`, `methods`, `sources` (label and URL), and `href`. Work filenames become `/work/<filename>/`. Sources and optional links render only when provided. `getPublishedEntries()` excludes drafts from all public routes, lists, related content, and the sitemap. Draft files are still public source when committed; never use drafts for sensitive information.
 

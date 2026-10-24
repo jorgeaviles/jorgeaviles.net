@@ -1,5 +1,7 @@
 # Verification
 
+This document records the original deployed reference release. The feature-branch machine-learning lab replaces its fixed ranking; current implementation and validation are documented in [learning-lab.md](learning-lab.md). That feature is pending review and has not been deployed.
+
 Local verification was performed on 2026-10-23 on macOS arm64 with an Apple M3 Pro and 18 GB memory. Hosted GitHub Actions and live Cloudflare checks are recorded separately below. WebKit checks do not establish installed Safari behavior; automated accessibility scans and Lighthouse runs do not establish full WCAG conformance or field performance.
 
 ## Delivery state

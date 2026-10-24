@@ -1,58 +1,29 @@
 ---
-import { render } from 'astro:content';
 import BaseLayout from '../layouts/BaseLayout.astro';
 import PageIntro from '../components/PageIntro.astro';
-import RankedReview from '../components/RankedReview';
+import LearningLab from '../components/LearningLab';
 import { getPublishedEntries } from '../lib/content';
-const entries = await Promise.all(
-  (await getPublishedEntries('lab')).map(async (entry) => ({
-    entry,
-    ...(await render(entry)),
-  })),
-);
+const entries = await getPublishedEntries('lab');
 ---
 
 <BaseLayout
   title="Lab"
-  description="A small interactive demonstration of precision and recall, using deterministic synthetic data. No trained model or real records."
+  description="Train small linear and logistic regression models locally, then explore validation decisions using synthetic data."
 >
   <PageIntro
     label="The lab"
     title="A question you can interact with."
     description="Small, explainable experiments at the intersection of analysis and engineering."
   />
-  {entries.map(({ entry, Content }) => (
-    <section class="lab-entry">
-      <div class="lab-intro">
-        <span class="synthetic-label">
-          Synthetic data · Educational demonstration
-        </span>
-        <h2>{entry.data.title}</h2>
-        <div class="prose">
-          <Content />
-        </div>
-      </div>
-      <RankedReview client:visible />
-    </section>
-  ))}
-  <div class="lab-explanation">
-    <div>
-      <h3>Precision asks</h3>
-      <p>
-        Of the cases selected, how many are relevant? A smaller selection can be
-        more concentrated, but may leave useful cases behind.
-      </p>
-    </div>
-    <div>
-      <h3>Recall asks</h3>
-      <p>
-        Of all relevant cases, how many have been selected? A larger selection
-        finds more, but also brings in irrelevant cases.
-      </p>
-    </div>
-  </div>
-  <p class="section-footnote">
-    This is a deterministic engineering example. No model was trained, and these
-    figures describe no real-world model performance.
-  </p>
+  {entries.length > 0 && <LearningLab client:visible />}
+  <noscript>
+    <p>
+      JavaScript is disabled. Linear regression fits a line by reducing mean
+      squared error. Logistic regression transforms a weighted feature score
+      with sigmoid and learns using log loss. Evaluation compares
+      model-generated predictions with labels on held-out records. Enable
+      JavaScript to train these synthetic models locally; no real records or
+      operational performance are represented.
+    </p>
+  </noscript>
 </BaseLayout>
