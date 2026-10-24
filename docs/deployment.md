@@ -2,21 +2,21 @@
 
 ## Current state
 
-As of 2026-10-23, the owner has directly authorized publication and free-tier Cloudflare setup. The public repository has been created; initial push, hosted checks, and provider setup are in progress. Cloudflare account ownership, Worker, domains, production release, and live DNS comparison are not yet verified. Local preview and a Wrangler dry run do not establish a live deployment. See [verification.md](verification.md) for current evidence.
+The public source is [jorgeaviles/jorgeaviles.net](https://github.com/jorgeaviles/jorgeaviles.net). The owner directly authorized publication and free-tier Cloudflare setup. Hosted Quality checks and the initial Workers Static Assets release have passed. Current release, domain, credential-cleanup, and DNS-comparison evidence is recorded in [verification.md](verification.md).
 
-| Setting                        | Intended value                                               | Status                                                 |
-| ------------------------------ | ------------------------------------------------------------ | ------------------------------------------------------ |
-| GitHub repository              | `jorgeaviles/jorgeaviles.net`                                | Created; initial push pending                          |
-| Canonical site                 | `https://jorgeaviles.net`                                    | Live website configuration unverified                  |
-| Worker                         | `jorge-aviles-site`                                          | Configuration present; remote existence unverified     |
-| Assets                         | `./dist`, static only, real 404 page                         | Configured locally                                     |
-| workers.dev                    | Enabled for initial smoke test                               | Assigned URL unverified                                |
-| Version preview URLs           | Disabled                                                     | Configured locally                                     |
-| Production gate                | Repository variable `ENABLE_PRODUCTION_DEPLOY` equals `true` | Keep unset until setup is authorized and complete      |
-| Custom domain and www redirect | Not bound in this configuration                              | Pending                                                |
-| Email DNS                      | No changes performed                                         | Preservation comparison pending any future domain work |
+| Setting                | Configured value                                                                                                                                                      |
+| ---------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Canonical site         | `https://jorgeaviles.net`                                                                                                                                             |
+| Dedicated Worker       | `jorge-aviles-site`; static assets from `./dist`, real 404 page                                                                                                       |
+| Verification host      | `https://jorge-aviles-site.sax-hefts-5e.workers.dev`; serves host-specific `X-Robots-Tag: noindex`                                                                    |
+| Version preview URLs   | Disabled                                                                                                                                                              |
+| Deployment gate        | Repository variable `ENABLE_PRODUCTION_DEPLOY=true`                                                                                                                   |
+| Production environment | Custom deployment-branch policy allows only `main`; no second approver required                                                                                       |
+| Main protection        | Pull requests and successful `Quality` from GitHub Actions; up-to-date branch, administrators included, conversation resolution required, no force pushes or deletion |
+| Deployment credential  | Account-owned token with Individual Workers Editor scoped only to `jorge-aviles-site`; no DNS or email permissions                                                    |
+| Domain configuration   | Dashboard-managed apex Worker Custom Domain; website-only canonical redirect; HTTPS and redirect behavior live-verified; see verification                             |
 
-The attachment supplies the project brief, and the owner subsequently authorized publication and Cloudflare setup directly. No credentials belong in chat, committed files, build output, or public logs.
+Test jobs have read-only repository permissions. Workflow token defaults are read-only, with pull-request approval disabled. No Workers Builds, Cloudflare Pages, or GitHub Pages deployment is configured. Static assets use the free service; no paid plan or metered extras were activated for this project. Credentials belong only in provider controls, never in chat, source, build output, or public logs.
 
 ## One deployment authority
 
@@ -28,15 +28,13 @@ The production concurrency group allows one deployment at a time and does not ca
 
 The workflow invokes `npx --no-install wrangler deploy`, using the checked-in configuration and the verified asset directory. `npm run deploy` invokes `gh workflow run site.yml --repo jorgeaviles/jorgeaviles.net --ref main`, which requires a securely authenticated GitHub CLI and the published workflow. It requests fresh quality checks for the current remote main commit and never uploads or deploys local files. The command reports dispatch failure through its exit status; successful dispatch starts an asynchronous Actions run, so inspect that run for the final result. A dispatch can run checks while production remains gated off. Do not also connect Cloudflare Workers Builds, GitHub Pages, or Cloudflare Pages to deploy this site.
 
-## Production setup still required
+## Credentials and release controls
 
-After direct authorization, inspect existing resources before creating anything. Confirm the GitHub owner and the Cloudflare account that owns `jorgeaviles.net`; continue an existing dedicated repository/Worker instead of duplicating it. Use the free plan and do not enable paid or metered extras.
+The GitHub `production` environment holds `CLOUDFLARE_API_TOKEN` and `CLOUDFLARE_ACCOUNT_ID`. The ongoing token uses Cloudflare's resource-specific Individual Workers Editor role for this Worker only. Do not replace it with an account-wide administrator token or grant DNS editing to CI. A temporary seven-day bootstrap administrator token was used for initial provisioning. The site-only token successfully deployed the corrected release, then the bootstrap token was revoked and its API verification returned HTTP 401. Both local credential files were removed. The ongoing token has no expiration; to rotate it, create a replacement with the same single-Worker role, replace the environment secret securely, verify a gated deployment, and revoke the old token. Do not put values in source files or logs.
 
-In GitHub, establish a `production` environment restricted to `main` and enter `CLOUDFLARE_API_TOKEN` and `CLOUDFLARE_ACCOUNT_ID` as environment secrets. Keep the Cloudflare token limited to the correct account and the Workers permissions required for asset deployment. Cloudflare may scope some deployment permissions at account level rather than to one Worker; review the provider's actual available scopes. Ongoing CI deployment should not receive DNS editing permission. Keep any one-time zone/domain setup token separate and narrowly scoped. Store secret values through provider controls without printing them.
+The environment allows only `main`, and repository protection requires a pull request plus the actual `Quality` check from the GitHub Actions app. Zero required approvals permits solo maintenance without disabling the pull-request/check requirements. Repository-local commit metadata uses GitHub's noreply address; global git identity is unchanged. The owner also explicitly authorized enabling GitHub's email-privacy setting for future web commits.
 
-Once the workflow has run successfully, protect `main`: require pull requests and the actual `Quality` check, block force pushes and deletion, and avoid requiring a second approver in a solo-owned project. Verify the account supports and enforces the selected rules. Branch protection is not established by merely committing this file.
-
-Set `ENABLE_PRODUCTION_DEPLOY=true` only when the environment, secrets, permissions, and publication review are complete. A reviewed main change then triggers deployment; `npm run deploy` can request a fresh gated run for the existing remote main commit. Initial deployment must be smoke-tested at its assigned workers.dev URL before any custom-domain change.
+A reviewed merge to `main` triggers Quality followed by Production. `npm run deploy` requests the same gated process for the existing remote main commit. To pause future releases, set `ENABLE_PRODUCTION_DEPLOY=false`; an already active deployment may finish. Keep the gate enabled for normal operation and inspect the final Actions result rather than treating dispatch success as deployment success.
 
 ## Domain setup and email preservation
 
@@ -44,15 +42,19 @@ Before domain work, confirm `.private/` is ignored with `git check-ignore .priva
 
 Preserve the exact values, TTLs, priorities, and proxy settings of existing iCloud MX records, apple-domain verification TXT, SPF TXT (`v=spf1 include:icloud.com ~all`), `sig1._domainkey` DKIM CNAME, and DMARC TXT (`v=DMARC1; p=none`). Do not alter nameservers, DNSSEC, iCloud settings, or enable Cloudflare Email Routing/Sending.
 
-After the workers.dev smoke test, inspect website hostnames and use a [Worker Custom Domain](https://developers.cloudflare.com/workers/configuration/routing/custom-domains/) for `jorgeaviles.net`. Add that binding to `wrangler.jsonc` through review when compatible with the final token permissions; otherwise document the deliberate dashboard-managed binding and verify subsequent deploys preserve it. This version intentionally contains no domain routes.
+The apex uses Cloudflare's [Worker Custom Domain](https://developers.cloudflare.com/workers/configuration/routing/custom-domains/) mechanism. Its binding is deliberately dashboard-managed. `wrangler.jsonc` omits domain routes so the site-only deployment token does not need DNS access; do not add an empty routes array or enable another deployment integration. Verify that a subsequent pipeline deployment preserves the binding.
 
-Configure a Cloudflare redirect matching only `www.jorgeaviles.net`, with a permanent redirect to `https://jorgeaviles.net` preserving path and query. Review the existing records and rules before selecting the narrow implementation; none is established here. Check HTTPS, a nested path, a query string, assets, canonical metadata, `deployment.json`, and a nonexistent path with real HTTP requests after setup. Compare the protected email records with the private snapshot afterward. That comparison is not a fresh email delivery test, and this task does not send email.
+The canonical redirect is restricted to `www.jorgeaviles.net` and HTTP requests for the apex. Its dynamic destination is `concat("https://jorgeaviles.net", http.request.uri.path)`, status 301, with query-string preservation enabled. The match expression is `(http.host eq "www.jorgeaviles.net") or (http.request.full_uri wildcard "http://jorgeaviles.net/*")`. A proxied `www` A record uses the documentation-only address `192.0.2.1` to reach the edge redirect; it is not an origin server. These settings were applied through the provider UI and verified with live requests. Do not change unrelated rules or hostnames.
+
+The assigned workers.dev release passed live smoke checks before the apex was connected. Production checks verified HTTPS, nested paths and query preservation, seven assets and their MIME/cache headers, canonical metadata, `/deployment.json`, and a genuine HTTP 404. All six protected email records matched the ignored private baseline exactly after domain setup. This is not a fresh email delivery test; no email was sent and no iCloud setting was changed.
+
+Cloudflare automatically injected its free-plan RUM beacon after the apex was proxied. The active Configuration Rule `Professional website: no browser telemetry` sets only Disable RUM, matching `(http.host eq "jorgeaviles.net") or (http.host eq "www.jorgeaviles.net")`. It prevents analytics injection for these website hosts without changing security settings or unrelated hostnames. Keep this dashboard-managed rule with the domain and redirect settings; CI has no zone-edit permission.
 
 ## Rollback and release evidence
 
 Prefer reverting the faulty change through a pull request. Merge the revert to `main`; the resulting new commit runs the full Quality job and deploys through the same gate. `npm run deploy` always dispatches the current remote main commit. Do not re-run an older SHA or use a local Wrangler deployment to bypass the pipeline. If a release must be paused, disable the repository deployment variable while preparing the reviewed fix; an already active deployment may finish.
 
-For each live release, record its Actions run, commit, Cloudflare version ID from the deploy output, assigned URL, HTTP smoke checks, and any domain/email-DNS comparison in `docs/verification.md`. `/deployment.json` identifies the deployed commit. No live release evidence exists until these checks are actually performed.
+For each live release, record its Actions run, commit, Cloudflare version ID from the deploy output, assigned URL, HTTP smoke checks, and any domain/email-DNS comparison in `docs/verification.md`. `/deployment.json` identifies the deployed commit. Record only executed checks. `/deployment.json` remains authoritative for the current release after this document's reference release changes.
 
 ## Action pins and references
 

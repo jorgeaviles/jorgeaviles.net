@@ -43,9 +43,9 @@ Content entries require a title, description, category, and numeric order. Optio
 
 Astro generates HTML; React hydrates only the lab island when visible. MDX content has a Zod schema. Tailwind uses its supported Vite plugin. System fonts and a small original monogram keep assets light. There are no databases, accounts, telemetry, or server-side forms.
 
-Cloudflare Workers Static Assets serves `dist/` with a real 404 page, without SSR or a Worker handler. GitHub Actions is the single production deployment authority: Quality must pass for the exact commit before Production can use its verified build artifact. Production is disabled until the repository gate, environment secrets, account ownership, and publication authorization are established.
+Cloudflare Workers Static Assets serves `dist/` with a real 404 page, without SSR or a Worker handler. GitHub Actions is the single production deployment authority: Quality must pass for the exact commit before Production can use its verified build artifact. Changes to protected `main` go through pull requests. `npm run deploy` requests a fresh gated release of remote `main`; it does not deploy local files.
 
-See [architecture](docs/architecture.md), [deployment](docs/deployment.md), [verification](docs/verification.md), and the [content backlog](docs/content-backlog.md). Local preview does not establish live Cloudflare or custom-domain behavior. Email DNS and unrelated infrastructure are outside local implementation.
+See [architecture](docs/architecture.md), [deployment](docs/deployment.md), [verification](docs/verification.md), and the [content backlog](docs/content-backlog.md). Verification records distinguish local checks, hosted CI, Worker releases, and custom-domain behavior. Domain changes must preserve existing email DNS; a DNS comparison does not establish email delivery.
 
 ## Attribution and licensing
 
