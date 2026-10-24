@@ -653,6 +653,10 @@ strong {
   user-select: text;
   cursor: text;
 }
+.contact-primary .text-link {
+  min-height: 44px;
+  font-size: 14px;
+}
 .contact-profile h2 {
   font-size: 27px;
   margin-top: 6px;
