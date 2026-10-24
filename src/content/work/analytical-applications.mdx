@@ -11,48 +11,54 @@ methods:
 sources:
   - label: Professional background
     url: https://github.com/jorgeaviles/jorgeaviles
+  - label: FY2027 CPCS appropriations
+    url: https://malegislature.gov/Budget/FY2027/FinalBudget
 ---
 
 import CaseStudyWorkflow from '../../components/CaseStudyWorkflow.astro';
 
 ## The challenge
 
-The project began with a gap between established reporting and the kinds of analytical investigation we wanted to pursue. Legacy databases and web-based reporting applications provided an existing information environment; the goal was to explore more advanced analysis and machine-learning methods alongside it. The work began with consultation with Suffolk University about proposed models in Jupyter notebooks. Those notebooks opened up analytical questions beyond the reporting already available, while further exploration led to the development of an analytical warehouse.
+The project began with a gap between established reporting and the analytical investigation we wanted to pursue. Legacy databases and web-based reporting provided an existing information environment; consultation with Suffolk University on proposed machine-learning models in Jupyter notebooks opened up further questions. That exploration led to an analytical warehouse and the Audit Portal: a front end connecting analytical access with operational oversight.
 
-The Audit Portal became a front end for connecting that analytical work with information access and operational oversight. This case study focuses on its Audit Tracker: a workspace for finding a record, understanding its context, reviewing related material, and making a permitted update. It describes the connection between those tasks rather than attempting to catalogue every application module.
+The portal supports an Audit & Oversight department of approximately 10 staff users. I estimate that the department's broader work involves more than 5,000 attorneys. That is an estimate of oversight scope, not a count of portal users or a verified current active-panel count. The challenge is to make complex information useful to a small, specialized team whose work supports investigation and management decision-making.
+
+The department operates within the Committee for Public Counsel Services (CPCS). Its [FY2027 agency appropriations](https://malegislature.gov/Budget/FY2027/FinalBudget) total approximately $380 million across agency operations, private counsel compensation, and court costs. This is agency-wide financial context, not spending controlled by the portal or a financial outcome of the project.
 
 ## My role
 
-I am the sole hands-on developer across the analytical notebooks, warehouse, and Audit Portal. The work is informed by consultation with colleagues in Audit & Oversight, whose firsthand experience of attorney billing and casework adds context that is not apparent from database records alone. I use that input to revisit analytical assumptions, iterate on models, design reports, and refine the audit interface in response to feedback. Model tuning is part of the process; this account does not claim a measured improvement in predictive performance.
+I am the sole hands-on developer across the analytical notebooks, warehouse, and Audit Portal. I consult with Audit & Oversight colleagues whose firsthand experience of attorney billing and casework adds context that is not apparent from database records alone. Their feedback informs analytical assumptions, model iteration, reports, and the audit interface. Model tuning is part of the process; this account makes no claim of a measured improvement in predictive performance.
 
-The project began with university consultation on proposed machine-learning models. IT colleagues contributed the data and access arrangements: an applications-team database analyst worked with me on scheduled master-data extracts, and the infrastructure team assisted with role-based access and application-identity permissions. Those contributions are credited separately from the coding and development work.
+University consultation informed the initial model proposals. IT colleagues contributed the data and access arrangements: an applications-team database analyst worked with me on scheduled master-data extracts, while infrastructure colleagues assisted with role-based access and application-identity permissions. These contributions are credited separately from the coding and development work.
 
 ## From requirements to design
 
-Departmental feedback helps connect the analytical questions with the information people need to interpret a record and decide what to examine next. That is an iterative relationship between practical experience, analysis, and interface design.
+Departmental feedback connects analytical questions with the information people need to interpret a record and decide what to examine next. The tracker links record discovery with a detailed workspace: search and filters narrow the list, while the detail view distinguishes stable context, subsequent progress, and recorded changes.
 
-The tracker connects record discovery with a more detailed workspace. Search and filters help narrow the list, while the detail view separates stable context, subsequent progress, and recorded changes. Editing is deliberate: permitted users can change information, save their work, and encounter explicit handling for unsaved or conflicting changes. Historical compatibility also matters; validation accommodates specified gaps in older records rather than inventing information to make them appear complete.
+Updates are deliberate. Permitted users can edit and save information, with explicit handling for unsaved work and conflicting changes. Historical compatibility matters too: validation accommodates specified gaps in earlier records rather than inventing information to make them appear complete.
 
-Users also work with document attachments, folder synchronization, and AI assistance informed by related documents. Users can ask questions that connect an audit's progress and supporting material with analytical information and policy guidance. The design objective is to make those sources useful within the context of the work, while preserving distinctions between recorded information, retrieved passages, and an AI-generated interpretation.
-
-For example, an investigation question might ask what the available material establishes, which policy is relevant, and what information is still needed. Such a question is not evidence that every document has been read exhaustively or that a generated answer is correct. Retrieval and evidence-coverage limits are part of the engineering responsibility, especially when a question spans several documents and data sources.
+Document attachments and functioning SharePoint folder synchronization connect supporting material to individual audits. Document-informed AI assistance lets users ask questions involving audit progress, analytical information, and policy guidance. The design must distinguish recorded facts, retrieved passages, and generated interpretations. A question spanning several documents is not evidence that every document has been read exhaustively or that the answer is correct; users retain responsibility for reviewing it.
 
 <CaseStudyWorkflow />
 
-## Technical decisions
+## Why Blazor Interactive Server
 
-One decision embodied in the application is server-side interactivity with .NET and Blazor. Interactive pages use application services to validate requests and coordinate persistence, while connection handling and application state remain engineering responsibilities.
+I developed the portal with ASP.NET Core and Blazor Interactive Server, hosted on Azure App Service. This keeps application logic and data access on the server while providing a component-based interface. In departmental use, I have found the interface responsive for the team's workflows; this is an observation, not a performance benchmark.
 
-A second decision separates workflow information from analytical access and separates interface behavior from business rules and storage. That introduces boundaries to maintain, but allows selected rules and failure conditions to be tested independently of a full screen. It also keeps the tracker from becoming a copy of the analytical warehouse.
+Working primarily in C# with reusable Razor components supports iterative refinement without maintaining a separate JavaScript application. Interface components, feature services, business rules, and persistence have distinct responsibilities. That introduces boundaries to maintain, but allows selected rules and failure conditions to be tested independently of a full screen. Departmental feedback can inform changes to shared patterns as well as individual views.
 
-A third decision places authorization and version-aware updates beyond the visible controls. Permissions are checked at service boundaries, and persistence can reject changes based on an outdated record. The corresponding interface must help the user understand what has been saved and what needs attention.
+Microsoft Entra ID provides authentication. Application roles and server-side service checks restrict permitted actions beyond the visible controls. Managed identities support appropriately scoped access to approved backend Azure services, including analytical and workflow storage; this does not give portal users unrestricted Azure access or put database credentials in their browsers. Version-aware writes can reject updates based on outdated records.
 
-## What the work delivered
+The server-side approach also requires interactive connections, server resources, reconnect handling, and application-state management. Those responsibilities are part of the architecture and its trade-offs.
 
-The implementation includes searchable record views, creation and editing, lifecycle information, progress and change-history views, and workbook exports. The portal is used for document attachments, folder synchronization, document-informed AI questions, and visual oversight of audit progress. The broader questions users bring to the portal can combine warehouse information, policy material, audit progress, and related documents.
+## What the work enables
 
-I have observed users updating tracker details without needing instruction. That is a qualitative observation, not a formal usability study or a measured reduction in time, cost, or errors. These observations do not establish adoption levels or the accuracy of AI-generated answers.
+The implementation connects record creation and editing, searchable views, lifecycle information, progress and change-history views, document management, and workbook exports. Users work with synchronized supporting folders and document-informed questions in a common, permission-controlled workspace.
+
+The practical value is helping a specialized team work with related analytical and operational information. Its significance is not a large login count: the workflow supports oversight questions involving records, documents, policy, and the data foundation behind them.
+
+I have observed users updating tracker details without instruction. That is a qualitative observation, not a formal usability study or a measured reduction in time, cost, or errors. The integration enables review and investigation; it does not establish adoption levels, financial returns, or the accuracy of AI-generated answers.
 
 ## What I learned
 
-This work has reinforced the importance of learning how a process operates beyond its database representation. Colleagues' practical experience helps me question assumptions, interpret patterns, and refine what an analysis or interface should make visible. Developing the technical components myself does not remove the need for that domain expertise. Connecting analytical capability with operational work requires both technical judgment and a willingness to revise the design as that understanding develops.
+Software complexity is not determined solely by the number of users. A small team can work with information that has substantial financial and organizational significance. Building for that environment requires attention to authorization, data integrity, historical context, maintainability, and the practical judgment of the people using it. Colleagues' experience continues to help me question assumptions and refine what an analysis or interface should make visible.
