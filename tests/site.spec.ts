@@ -18,7 +18,7 @@ const routes = [
   },
   {
     path: '/work/analytical-applications/',
-    heading: 'Analytical applications',
+    heading: 'Designing an audit-tracking workspace',
   },
   { path: '/research/', heading: 'Following the evidence.' },
   { path: '/lab/', heading: 'Learn how models learn' },
@@ -343,6 +343,14 @@ test.describe('without JavaScript', () => {
       );
       await expect(page.getByRole('main')).toBeVisible();
       await expectNoHorizontalOverflow(page);
+      if (route.path === '/work/analytical-applications/') {
+        await expect(
+          page.getByRole('figure', { name: 'Conceptual record workflow' }),
+        ).toBeVisible();
+        await expect(
+          page.locator('.case-study-workflow figcaption'),
+        ).toContainText('Not a screenshot of the internal application.');
+      }
       if (route.path === '/lab/') {
         const fallback = page.locator('noscript p');
         await expect(fallback).toContainText('JavaScript is disabled.');
@@ -555,4 +563,46 @@ test('home contact invitation leads to contact choices', async ({ page }) => {
   await page.getByRole('link', { name: 'Get in touch' }).click();
   await expect(page).toHaveURL(/\/contact\/$/);
   await expect(page.locator('.contact-address')).toBeVisible();
+});
+
+test('approved case study stays consistent across listings and renders a static fictional workflow', async ({
+  page,
+}, testInfo) => {
+  const title = 'Designing an audit-tracking workspace';
+  for (const route of ['/', '/work/']) {
+    await page.goto(route);
+    const link = page.getByRole('link', { name: new RegExp(title) });
+    await expect(link).toHaveAttribute(
+      'href',
+      '/work/analytical-applications/',
+    );
+    await link.click();
+    await expect(page.getByRole('heading', { level: 1 })).toHaveText(title);
+  }
+  await expect(
+    page.getByText(
+      'I am the sole hands-on developer across the analytical notebooks, warehouse, and Audit Portal.',
+      { exact: false },
+    ),
+  ).toBeVisible();
+  const figure = page.getByRole('figure', {
+    name: 'Conceptual record workflow',
+  });
+  await expect(figure.getByRole('heading', { level: 3 })).toHaveText([
+    'Find',
+    'Understand',
+    'Update',
+  ]);
+  await expect(figure.locator('figcaption')).toHaveText(
+    'Conceptual workflow illustrated with fictional information. Not a screenshot of the internal application.',
+  );
+  await expect(page.locator('astro-island')).toHaveCount(0);
+  await expectNoHorizontalOverflow(page);
+  await expectAccessible(page);
+  const screenshot = testInfo.outputPath('audit-tracker-case-study.png');
+  await page.screenshot({ path: screenshot, fullPage: true });
+  await testInfo.attach('Approved case study', {
+    path: screenshot,
+    contentType: 'image/png',
+  });
 });

@@ -1,0 +1,134 @@
+<figure class="case-study-workflow" aria-label="Conceptual record workflow">
+  <ol>
+    <li>
+      <span class="step-number" aria-hidden="true">
+        01
+      </span>
+      <h3>Find</h3>
+      <p class="step-purpose">
+        Narrow the view to the item that needs attention.
+      </p>
+      <div class="fictional-example">
+        <span>Fictional example</span>
+        <p>Work in view</p>
+        <p>
+          <strong>Harbor review</strong>
+        </p>
+      </div>
+    </li>
+    <li>
+      <span class="step-number" aria-hidden="true">
+        02
+      </span>
+      <h3>Understand</h3>
+      <p class="step-purpose">
+        Read the context before deciding what happens next.
+      </p>
+      <div class="fictional-example">
+        <span>Same fictional item</span>
+        <p>Purpose: review a sample process</p>
+        <p>Next step: gather context</p>
+      </div>
+    </li>
+    <li>
+      <span class="step-number" aria-hidden="true">
+        03
+      </span>
+      <h3>Update</h3>
+      <p class="step-purpose">
+        Make a deliberate change within the permitted workflow.
+      </p>
+      <div class="fictional-example">
+        <span>Concept only</span>
+        <p>Proposed next step: review the summary</p>
+        <p>Changes are intentional</p>
+      </div>
+    </li>
+  </ol>
+  <figcaption>
+    Conceptual workflow illustrated with fictional information. Not a screenshot
+    of the internal application.
+  </figcaption>
+</figure>
+
+<style>
+  .case-study-workflow {
+    margin: 2rem 0;
+    container-type: inline-size;
+  }
+  .case-study-workflow ol {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    background: var(--light-green);
+    border-block: 1px solid var(--line);
+  }
+  .case-study-workflow li {
+    padding: 20px;
+    margin: 0;
+    min-width: 0;
+  }
+  .case-study-workflow li + li {
+    border-left: 1px solid var(--line);
+  }
+  .case-study-workflow .step-number {
+    display: block;
+    color: var(--green);
+    font-size: 12px;
+    font-weight: 600;
+    margin-bottom: 10px;
+  }
+  .case-study-workflow h3 {
+    font-size: 25px;
+    margin: 0 0 10px;
+  }
+  .case-study-workflow p {
+    font-size: 14px;
+    line-height: 1.65;
+    margin: 0;
+  }
+  .case-study-workflow .step-purpose {
+    min-height: 70px;
+    color: var(--muted);
+    margin-bottom: 20px;
+  }
+  .case-study-workflow .fictional-example {
+    border-top: 2px solid var(--green);
+    padding-top: 12px;
+    margin-top: 0;
+  }
+  .case-study-workflow .fictional-example > span {
+    display: block;
+    font-size: 11px;
+    color: var(--green);
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    margin-bottom: 8px;
+  }
+  .case-study-workflow .fictional-example p + p {
+    margin-top: 8px;
+  }
+  .case-study-workflow figcaption {
+    font-size: 13px;
+    line-height: 1.65;
+    color: var(--muted);
+    margin-top: 12px;
+  }
+  @container (max-width:620px) {
+    .case-study-workflow .step-purpose {
+      min-height: 0;
+    }
+    .case-study-workflow ol {
+      grid-template-columns: 1fr;
+    }
+    .case-study-workflow li + li {
+      border-left: 0;
+      border-top: 1px solid var(--line);
+    }
+    .case-study-workflow .fictional-example {
+      margin-top: 0;
+    }
+  }
+</style>
