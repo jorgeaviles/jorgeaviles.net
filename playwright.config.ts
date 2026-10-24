@@ -16,6 +16,18 @@ export default defineConfig({
   },
   projects: [
     {
+      name: 'chromium-laptop',
+      use: {
+        browserName: 'chromium',
+        viewport: { width: 1024, height: 768 },
+        reducedMotion: 'reduce',
+      },
+    },
+    {
+      name: 'webkit-tablet',
+      use: { browserName: 'webkit', viewport: { width: 768, height: 1024 } },
+    },
+    {
       name: 'chromium-desktop',
       use: { browserName: 'chromium', viewport: { width: 1440, height: 1000 } },
     },

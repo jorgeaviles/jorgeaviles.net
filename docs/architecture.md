@@ -9,7 +9,7 @@ This is a static professional website. Astro renders ordinary pages and MDX cont
 - Shared Astro layouts provide metadata, navigation, readable typography, and accessible page structure.
 - Tailwind uses its Vite integration. System fonts and local assets avoid external font and image dependencies.
 - React hydrates only the lab demonstration on visibility. The rest of the site and the initial lab explanation/table remain useful without JavaScript.
-- The lab uses deterministic synthetic data and a pure TypeScript calculation module. It presents an educational example rather than measured model performance.
+- The lab uses deterministic synthetic data and pure TypeScript numerical modules. It presents an educational example with actual browser-local training rather than measured operational performance.
 
 The public-source boundary applies to every committed file, including unpublished drafts and documentation. Public professional descriptions must remain modest and source-backed. Research assistance must not be presented as authorship. Licensing of writing, identity, and source code remains undecided; no blanket license is asserted.
 
