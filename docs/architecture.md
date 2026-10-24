@@ -8,7 +8,7 @@ This is a static professional website. Astro renders ordinary pages and MDX cont
 - Schema-validated content collections keep work, research, and lab prose separate from layouts. Public listings and generated routes exclude drafts.
 - Shared Astro layouts provide metadata, navigation, readable typography, and accessible page structure.
 - Tailwind uses its Vite integration. System fonts and local assets avoid external font and image dependencies.
-- React hydrates only the lab demonstration on visibility. The rest of the site and the initial lab explanation/table remain useful without JavaScript.
+- React hydrates only the lab demonstration on visibility. The rest of the site and the initial lab explanation and regression plot remain useful without JavaScript.
 - The lab uses deterministic synthetic data and pure TypeScript numerical modules. It presents an educational example with actual browser-local training rather than measured operational performance.
 
 The public-source boundary applies to every committed file, including unpublished drafts and documentation. Public professional descriptions must remain modest and source-backed. Research assistance must not be presented as authorship. Licensing of writing, identity, and source code remains undecided; no blanket license is asserted.
@@ -21,7 +21,7 @@ Domain setup is separate from code delivery: the apex Worker Custom Domain is da
 
 GitHub Actions is the sole production deployment authority. Its Quality job runs type/content checks, lint, formatting, unit tests, a production build, and browser/accessibility tests. Chromium and WebKit cover desktop and narrow mobile viewports. This does not establish installed Safari coverage or full WCAG conformance.
 
-The successful job uploads its verified `dist/` as an immutable artifact. A separate dependent Production job restores that artifact instead of rebuilding. A commit marker in `deployment.json`, the Actions run, and Wrangler's deployment message identify the source commit. Production concurrency and a fresh main-branch check prevent stale queued runs from replacing a later release. The production gate is enabled, and its GitHub environment is restricted to `main`. Branch protection requires a pull request and the successful Quality check. `npm run deploy` requests this workflow for remote `main` through GitHub CLI; it never deploys local files. Rollbacks follow the same checks through a revert pull request; see [deployment.md](deployment.md).
+The successful job uploads its verified `dist/` as an immutable artifact. A separate dependent Production job restores that artifact instead of rebuilding. A commit marker in `deployment.json`, the Actions run, and Wrangler's deployment message identify the source commit. After an upload, a read-only smoke check verifies commit provenance, Lab HTML/assets and the custom HTTP 404. Browser reports and representative screenshots are saved separately for review. Production concurrency and a fresh main-branch check prevent stale queued runs from replacing a later release. The production gate is enabled, and its GitHub environment is restricted to `main`. Branch protection requires a pull request and the successful Quality check. `npm run deploy` requests this workflow for remote `main` through GitHub CLI; it never deploys local files. Rollbacks follow the same checks through a revert pull request; see [deployment.md](deployment.md).
 
 ## Deliberate limits
 
