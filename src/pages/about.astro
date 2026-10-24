@@ -2,6 +2,7 @@
 import BaseLayout from '../layouts/BaseLayout.astro';
 import PageIntro from '../components/PageIntro.astro';
 import Arrow from '../components/Arrow.astro';
+import BrandIcon from '../components/BrandIcon.astro';
 import { site } from '../config/site';
 ---
 
@@ -62,10 +63,10 @@ import { site } from '../config/site';
       <div class="aside-divider"></div>
       <p class="eyebrow">Elsewhere</p>
       <a href={site.github}>
-        GitHub <Arrow diagonal />
+        <BrandIcon brand="github" /> GitHub <Arrow diagonal />
       </a>
       <a href={site.linkedin}>
-        LinkedIn <Arrow diagonal />
+        <BrandIcon brand="linkedin" /> LinkedIn <Arrow diagonal />
       </a>
     </aside>
   </div>

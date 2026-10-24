@@ -428,7 +428,7 @@ strong {
   color: var(--green);
 }
 .site-footer > div > p {
-  font-size: 10px;
+  font-size: 12px;
   color: var(--muted);
   margin-top: 4px;
 }
@@ -436,9 +436,10 @@ strong {
   display: flex;
   align-items: center;
   gap: 23px;
-  font-size: 10px;
+  font-size: 13px;
 }
 .footer-links a {
+  min-height: 44px;
   display: inline-flex;
   align-items: center;
   gap: 4px;
@@ -448,7 +449,7 @@ strong {
   height: 12px;
 }
 .copyright {
-  font-size: 9px;
+  font-size: 11px;
   color: var(--muted);
   grid-column: 1 / -1;
 }
@@ -529,10 +530,11 @@ strong {
 .aside-note a {
   display: flex;
   align-items: center;
-  justify-content: space-between;
   gap: 12px;
-  font-size: 11px;
-  margin-block: 12px;
+  font-size: 13px;
+  min-height: 44px;
+  justify-content: flex-start;
+  margin-block: 6px;
 }
 .aside-note .arrow {
   width: 15px;
@@ -634,40 +636,47 @@ strong {
 }
 .contact-options {
   max-width: 850px;
-  margin-bottom: 25px;
+  margin-bottom: 20px;
   border-top: 1px solid var(--line);
 }
-.contact-options > a {
-  display: flex;
-  align-items: center;
-  gap: 20px;
-  justify-content: space-between;
-  padding-block: 26px;
+.contact-options > section {
+  padding-block: 24px;
   border-bottom: 1px solid var(--line);
 }
-.contact-options > a:hover {
-  background: var(--light-green);
-}
-.contact-options h2 {
-  font-size: 27px;
-  margin-top: 8px;
-}
-.contact-options .contact-primary {
-  display: grid;
-  grid-template-columns: 1fr auto;
-}
-.contact-primary .work-category {
-  grid-column: 1 / -1;
-}
-.contact-primary > span:nth-child(2) {
+.contact-primary .contact-address {
   font-family: var(--font-serif);
-  color: var(--green);
-  font-size: clamp(1.4rem, 3.1vw, 2.8rem);
+  font-size: clamp(1.4rem, 3.1vw, 2.4rem);
   letter-spacing: -0.04em;
+  color: var(--green);
   overflow-wrap: anywhere;
+  margin-block: 0.4rem 0.7rem;
+  user-select: text;
+  cursor: text;
+}
+.contact-profile h2 {
+  font-size: 27px;
+  margin-top: 6px;
+}
+.contact-profile h2 a {
+  display: inline-flex;
+  align-items: center;
+  gap: 12px;
+  min-height: 44px;
+}
+.contact-profile a:hover {
+  text-decoration: underline;
+}
+.contact-profile .brand-icon {
+  width: 23px;
+  height: 23px;
+}
+.brand-icon {
+  width: 18px;
+  height: 18px;
+  flex-shrink: 0;
 }
 .contact-options + .section-footnote {
-  margin-bottom: 75px;
+  margin-bottom: 55px;
 }
 .colophon-prose {
   max-width: 720px;

@@ -140,7 +140,7 @@ test('contact links identify the approved destinations', async ({ page }) => {
   await page.goto('/contact/');
   const main = page.getByRole('main');
   await expect(
-    main.getByRole('link', { name: /jorge@jorgeaviles\.net/ }),
+    main.getByRole('link', { name: 'Write an email' }),
   ).toHaveAttribute('href', 'mailto:jorge@jorgeaviles.net');
   await expect(main.getByRole('link', { name: /GitHub/ })).toHaveAttribute(
     'href',
@@ -501,4 +501,58 @@ test('lesson deep links explain an untrained ranking and off-window boundary', a
   await expect(page.getByTestId('decision-boundary')).toHaveCount(0);
   await page.getByRole('link', { name: '3 Evaluation', exact: true }).click();
   await expect(page.getByText(/Manual parameters: these scores/)).toBeVisible();
+});
+
+test('email text can be selected without launching a mail application', async ({
+  page,
+  isMobile,
+}) => {
+  await page.goto('/contact/');
+  const email = page.locator('.contact-address');
+  await expect(email).toHaveText('jorge@jorgeaviles.net');
+  expect(await email.evaluate((el) => !!el.closest('a,button'))).toBe(false);
+  const mailRequests: string[] = [];
+  page.on('request', (r) => {
+    if (r.url().startsWith('mailto:')) mailRequests.push(r.url());
+  });
+  await email.click();
+  await expect(page).toHaveURL(/\/contact\/$/);
+  if (!isMobile) {
+    const box = await email.evaluate((el) => {
+      const range = document.createRange();
+      range.selectNodeContents(el);
+      const rect = range.getBoundingClientRect();
+      return { x: rect.x, y: rect.y, width: rect.width, height: rect.height };
+    });
+    await page.mouse.move(box.x, box.y + box.height / 2);
+    await page.mouse.down();
+    await page.mouse.move(box.x + box.width, box.y + box.height / 2, {
+      steps: 20,
+    });
+    await page.mouse.up();
+    expect(await page.evaluate(() => window.getSelection()?.toString())).toBe(
+      'jorge@jorgeaviles.net',
+    );
+  }
+  await email.evaluate((el) => {
+    const range = document.createRange();
+    range.selectNodeContents(el);
+    const selection = window.getSelection();
+    selection?.removeAllRanges();
+    selection?.addRange(range);
+  });
+  expect(await page.evaluate(() => window.getSelection()?.toString())).toBe(
+    'jorge@jorgeaviles.net',
+  );
+  expect(mailRequests).toEqual([]);
+  await expect(
+    page.getByRole('link', { name: 'Write an email' }),
+  ).toHaveAttribute('href', 'mailto:jorge@jorgeaviles.net');
+});
+
+test('home contact invitation leads to contact choices', async ({ page }) => {
+  await page.goto('/');
+  await page.getByRole('link', { name: 'Get in touch' }).click();
+  await expect(page).toHaveURL(/\/contact\/$/);
+  await expect(page.locator('.contact-address')).toBeVisible();
 });

@@ -2,6 +2,7 @@
 import '../styles/global.css';
 import { site, navigation } from '../config/site';
 import Arrow from '../components/Arrow.astro';
+import BrandIcon from '../components/BrandIcon.astro';
 interface Props {
   title?: string;
   description?: string;
@@ -100,10 +101,10 @@ const structuredData = {
         </div>
         <div class="footer-links">
           <a href={site.github}>
-            GitHub <Arrow diagonal />
+            <BrandIcon brand="github" /> GitHub <Arrow diagonal />
           </a>
           <a href={site.linkedin}>
-            LinkedIn <Arrow diagonal />
+            <BrandIcon brand="linkedin" /> LinkedIn <Arrow diagonal />
           </a>
           <a href="/colophon/">Colophon</a>
         </div>

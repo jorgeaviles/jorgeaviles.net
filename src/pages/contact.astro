@@ -2,6 +2,7 @@
 import BaseLayout from '../layouts/BaseLayout.astro';
 import PageIntro from '../components/PageIntro.astro';
 import Arrow from '../components/Arrow.astro';
+import BrandIcon from '../components/BrandIcon.astro';
 import { site } from '../config/site';
 ---
 
@@ -15,28 +16,32 @@ import { site } from '../config/site';
     description="I welcome thoughtful conversations about analysis, research, and building useful things."
   />
   <div class="contact-options">
-    <a class="contact-primary" href={`mailto:${site.email}`}>
-      <span class="work-category">Email</span>
-      <span>{site.email}</span>
-      <Arrow diagonal />
-    </a>
-    <a href={site.github}>
-      <div>
-        <span class="work-category">Projects & professional profile</span>
-        <h2>GitHub</h2>
-      </div>
-      <Arrow diagonal />
-    </a>
-    <a href={site.linkedin}>
-      <div>
-        <span class="work-category">Professional connections</span>
-        <h2>LinkedIn</h2>
-      </div>
-      <Arrow diagonal />
-    </a>
+    <section class="contact-primary" aria-label="Email">
+      <p class="work-category">Email</p>
+      <p class="contact-address">{site.email}</p>
+      <a class="text-link" href={`mailto:${site.email}`}>
+        Write an email <Arrow diagonal />
+      </a>
+    </section>
+    <section class="contact-profile" aria-label="GitHub profile">
+      <p class="work-category">Projects & professional profile</p>
+      <h2>
+        <a href={site.github}>
+          <BrandIcon brand="github" /> GitHub <Arrow diagonal />
+        </a>
+      </h2>
+    </section>
+    <section class="contact-profile" aria-label="LinkedIn profile">
+      <p class="work-category">Professional connections</p>
+      <h2>
+        <a href={site.linkedin}>
+          <BrandIcon brand="linkedin" /> LinkedIn <Arrow diagonal />
+        </a>
+      </h2>
+    </section>
   </div>
   <p class="section-footnote">
-    Email opens in your preferred mail application. This site has no contact
-    form or tracking scripts.
+    Select the address to copy it, or choose “Write an email” to open your mail
+    application.
   </p>
 </BaseLayout>
