@@ -1,22 +1,39 @@
 # Verification
 
-Verified locally on 2026-10-23, on macOS arm64 with an Apple M3 Pro and 18 GB memory. These results describe static production output served by Astro preview. They do not establish a public deployment, installed Safari behavior, full WCAG conformance, or field performance.
+Local verification was performed on 2026-10-23 on macOS arm64 with an Apple M3 Pro and 18 GB memory. Hosted GitHub Actions and live Cloudflare checks are recorded separately below. WebKit checks do not establish installed Safari behavior; automated accessibility scans and Lighthouse runs do not establish full WCAG conformance or field performance.
 
 ## Delivery state
 
-| Stage                                  | Actual status                                                                |
-| -------------------------------------- | ---------------------------------------------------------------------------- |
-| Local implementation                   | Complete; publication authorized, initial push pending                       |
-| Proposed public repository             | Public repository created; initial push pending                              |
-| CI/CD source                           | Implemented and actionlint-validated; no hosted run yet                      |
-| Cloudflare CLI authentication          | No authenticated session                                                     |
-| Cloudflare account / domain ownership  | Unverified                                                                   |
-| workers.dev preview                    | Not deployed                                                                 |
-| Production `https://jorgeaviles.net`   | Not deployed or live-verified by this task                                   |
-| www redirect / HTTPS / deployed commit | Pending live setup                                                           |
-| DNS / email                            | No changes made; no before/after comparison or email-delivery test performed |
+| Stage                          | Actual status                                                                                                  |
+| ------------------------------ | -------------------------------------------------------------------------------------------------------------- |
+| Local implementation           | Complete; static multipage site with an isolated interactive lab                                               |
+| Public source                  | [jorgeaviles/jorgeaviles.net](https://github.com/jorgeaviles/jorgeaviles.net)                                  |
+| Hosted CI/CD                   | Quality and initial production pipeline passed; protected main and main-only production environment verified   |
+| Cloudflare                     | Existing account/domain ownership verified; dedicated assets-only Worker created on the free service           |
+| Verification host              | [Workers deployment](https://jorge-aviles-site.sax-hefts-5e.workers.dev); initial HTTP/browser smoke completed |
+| Canonical domain, cleanup, DNS | HTTPS, canonical redirects, token cleanup, and exact six-record email-DNS comparison passed                    |
 
-The owner directly authorized public publication and free-tier Cloudflare setup on 2026-10-23. No unrelated profiles, repositories, infrastructure, or iCloud settings were modified. Repository-local commit metadata uses the GitHub-provided noreply address to avoid disclosing a personal or professional email; global git identity is unchanged. Initial hosted checks and live deployment evidence will be recorded as setup progresses.
+The owner directly authorized publication and free-tier setup on 2026-10-23. Repository-local commit metadata uses GitHub's noreply address; global git identity is unchanged. The owner separately authorized enabling GitHub's email-privacy setting, and the provider confirmed it is enabled. No private email is used in this repository's commits.
+
+The initial release was commit `f5403446bc48db4279ed9996d0b74517b32457ed`, deployed by [Actions run 40034313792](https://github.com/jorgeaviles/jorgeaviles.net/actions/runs/40034313792), Cloudflare version `f520db5c-f2b3-41c2-98bc-c0a232a36b1b`. Ten content routes, seven assets, release provenance, security headers, and genuine custom 404 passed initial HTTP checks. Focused live Chromium/WebKit checks passed all eight desktop/mobile and JavaScript/no-JavaScript combinations, including lab calculations, no application errors, no overflow, and zero axe violations on the scanned home/lab pages.
+
+That HTTP check found overlapping cache directives on hashed assets. [Pull request #2](https://github.com/jorgeaviles/jorgeaviles.net/pull/2) removes the redundant global cache header and adds host-specific workers.dev `noindex`, relying on Cloudflare's default mutable-file revalidation. Its hosted Quality check passed after a fresh-runner retry of a stalled Ubuntu browser-dependency download; no application change was made to address that infrastructure stall. The merge used noreply metadata and left branch protections enforced.
+
+## Live production reference release
+
+The corrected release is commit `6184125e90b1d9f3280b42d658d228545271d069`, [Actions run 40058165984](https://github.com/jorgeaviles/jorgeaviles.net/actions/runs/40058165984), Cloudflare version `d9e4b78b-abf4-4b5d-aeb5-4ee746222ba4`. Hosted Quality passed 104 browser checks in 55.7 seconds; Production succeeded with the Individual Workers Editor token scoped only to `jorge-aviles-site`. The earlier manual run for the superseded main commit exited without deploying, exercising the stale-release guard. The current deployed SHA is always available at [/deployment.json](https://jorgeaviles.net/deployment.json); later documentation-only releases may advance it beyond this reference.
+
+The corrected workers.dev smoke passed before the apex was connected. Production HTTP checks then passed all ten public content routes, seven assets including the lab's JavaScript dependencies, correct HTML/SVG/PNG/CSS/JavaScript MIME types, default mutable-file revalidation, unambiguous immutable caching on hashed assets, security headers, canonical metadata, and the exact release commit. An unknown path returned the custom page with HTTP 404. The verification host serves `X-Robots-Tag: noindex`; production does not.
+
+Four real redirect requests passed with status 301: HTTPS `www` root, HTTPS `www` nested work path with multiple query parameters, HTTP `www` lab, and HTTP apex research. Each reached `https://jorgeaviles.net` with the original path and query intact. HTTPS requests used normal certificate verification.
+
+Cloudflare's free-plan automatic RUM injection caused the first production browser check to request a third-party beacon. No analytics code was added to the source. A Configuration Rule now sets only Disable RUM for the apex and `www`. After that change, all eight live browser combinations passed: Chromium and WebKit, desktop and mobile, JavaScript enabled and disabled. Home/lab scans found zero axe violations, controls returned the expected default/zero/all metrics, no horizontal overflow or application errors occurred, and the tested pages made no third-party requests. Unknown URLs still returned HTTP 404. This is separate from ordinary provider-side request accounting.
+
+The protected email-DNS comparison passed for all six original records, including exact content, TTL, proxy setting, and MX priority. The only DNS additions were the managed apex Worker record and proxied `www` A record used for redirects. No nameservers, DNSSEC, iCloud configuration, Email Routing/Sending, or unrelated infrastructure were changed. This comparison does not establish fresh email delivery; no messages were sent.
+
+The temporary bootstrap token was revoked after the site-only token successfully deployed. Its verification endpoint returned HTTP 401; the ongoing token remained active and could read this Worker's settings, which showed zero bindings. Both local credential files were removed. GitHub holds the ongoing credential only in the `production` environment. The final provider token list showed one active Individual Workers Editor token for this website; no account-wide administrator credential remains from this setup.
+
+Live evidence remains ignored and local: `.local/workers-dev-corrected-smoke.json`, `.local/production-http-smoke.json`, `.local/production-redirect-smoke.json`, `.local/production-browser-smoke.json`, `.local/cache-fix-deploy.log`, `.local/github-final-controls.json`, and `.local/credential-cleanup.json`. Private DNS and provider-setting snapshots are under `.private/`; they must never be published.
 
 ## Installed stack
 
@@ -56,7 +73,7 @@ The final complete run used the pinned Node runtime and `ASTRO_TELEMETRY_DISABLE
 | `npm test`                  | Passed; 20 tests                                                                                                                            |
 | `npm run test:publication`  | Passed; three temporary draft fixtures excluded from all 13 HTML/XML outputs; real pages and sitemap retained                               |
 | `npm run build`             | Passed; 11 generated pages including `404.html`, 157 first-party link/asset references checked                                              |
-| `npm run test:browser`      | Passed; 104 tests in 33.4 seconds; no retries needed                                                                                        |
+| `npm run test:browser`      | Passed; 104 tests in 32.0 seconds; no retries needed                                                                                        |
 | Actionlint 1.7.12           | Passed for the workflow; downloaded official binary verified with its published SHA256                                                      |
 | `wrangler deploy --dry-run` | Passed; assets-only configuration, no bindings; no upload or deployment                                                                     |
 | Source/build privacy review | No matched credential/private-key/local-path patterns or observed private content; ignored setup files excluded from publication candidates |
@@ -65,7 +82,7 @@ The browser matrix covers Chromium 156.0.8078.4 (Playwright revision 1248) and W
 
 Fixed during verification: numbered-label contrast, the decorative monogram’s accessible-name interaction, generated test-report exclusions from source checking, and explicit no-JavaScript fallback assertions. WebKit on macOS uses Option-Tab to include links according to its platform keyboard preference; Linux CI uses Tab. Automated scans supplement visual and keyboard review and do not establish complete accessibility conformance.
 
-The actual static Cloudflare routing, headers, cache behavior, custom domains, TLS, redirect preservation, and deployment provenance still need live requests after publication. Local Astro preview and Wrangler dry-run results are not substitutes for those checks.
+Local Astro preview and Wrangler dry-run results remain distinct from hosted Quality and the live edge checks above. Each live release must verify edge routing, headers, cache behavior, TLS, redirects, and deployment provenance through actual requests.
 
 ## Screenshots and reports
 
@@ -76,8 +93,9 @@ Local verification artifacts are ignored and are not included in the public repo
 - `.local/screenshots/lab-desktop.png`, `lab-mobile.png`, and `lab-nojs.png`.
 - `playwright-report/index.html` and browser-test attachments under `test-results/`.
 - `.local/final-verify.log` and `.local/lighthouse/summary.json`.
+- `.local/screenshots/production-{chromium,webkit}-{home,lab}-{desktop,mobile}.png` from the live canonical domain.
 
-Desktop/mobile home, about, research, and lab images were inspected. Home screenshots were refreshed after the accessible monogram correction; secondary screenshots reflect the same layout before that correction. No substantive clipping or page overflow was observed. The mobile lab table is readable but tall because descriptions wrap; compacting it is an optional refinement.
+Live production desktop/mobile home and lab screenshots were inspected. Local desktop/mobile home, about, research, and lab images were also inspected. Home screenshots were refreshed after the accessible monogram correction; secondary screenshots reflect the same layout before that correction. No substantive clipping or page overflow was observed. The mobile lab table is readable but tall because descriptions wrap; compacting it is an optional refinement.
 
 ## Lighthouse measurements
 
