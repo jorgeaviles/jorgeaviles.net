@@ -3,6 +3,7 @@ import BaseLayout from '../layouts/BaseLayout.astro';
 import PageIntro from '../components/PageIntro.astro';
 import Arrow from '../components/Arrow.astro';
 import BrandIcon from '../components/BrandIcon.astro';
+import Background from '../content/background.mdx';
 import { site } from '../config/site';
 ---
 
@@ -12,50 +13,17 @@ import { site } from '../config/site';
 >
   <PageIntro
     label="About"
-    title="The question comes first."
-    description="My work sits where business needs, analytical thinking, and practical technology meet."
+    title="Experience, education & approach."
+    description="From banking and university research to developing analytical data infrastructure and applications in legal services."
   />
   <div class="editorial-grid">
     <div class="prose">
-      <h2>A connecting thread</h2>
-      <p>
-        I’m Jorge Aviles. My experience spans legal services, banking, and
-        academia. Across those settings, I’ve been interested in the same
-        problem: how to turn complicated information into something people can
-        understand and use.
-      </p>
-      <p>
-        At the Committee for Public Counsel Services, I am the sole hands-on
-        developer of analytical notebooks, an Azure Synapse analytical data
-        platform, and the Blazor-based Audit Portal. Together, they connect
-        analytical investigation with reusable data and operational workflows.
-        The work incorporates consultation with Suffolk University, practical
-        feedback from Audit &amp; Oversight colleagues, and IT support for data
-        access and infrastructure.
-      </p>
-      <p>
-        Earlier work at Santander brought together data quality, CRM and
-        marketing data, and business analysis for capital technology projects.
-        Research assistance at CENTRUM PUCP connected quantitative methods with
-        business questions.
-      </p>
-      <h2>How I work</h2>
-      <p>
-        I start with the people using the result and the decision or workflow it
-        needs to support. I examine data quality and assumptions, make
-        trade-offs explicit, and favor behavior that can be tested and
-        explained.
-      </p>
-      <p>
-        The right result might be an analysis, a better data pipeline, a report,
-        or an application. The form follows the need, and the work improves with
-        feedback.
-      </p>
+      <Background />
       <a class="text-link" href="/work/">
         Explore selected work <Arrow />
       </a>
     </div>
-    <aside class="aside-note">
+    <aside class="aside-note" id="education">
       <p class="eyebrow">Education</p>
       <h3>BA in Economics</h3>
       <p>

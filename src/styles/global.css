@@ -129,7 +129,7 @@ strong {
   display: flex;
   gap: 31px;
   align-items: center;
-  font-size: 13px;
+  font-size: 14px;
 }
 .site-header nav a {
   position: relative;
@@ -173,7 +173,7 @@ strong {
 .eyebrow,
 .work-category {
   color: var(--green);
-  font-size: 10px;
+  font-size: 12px;
   line-height: 1.8;
   font-weight: 600;
   text-transform: uppercase;
@@ -192,10 +192,10 @@ strong {
 }
 .home-intro {
   display: grid;
-  grid-template-columns: minmax(0, 780px) 1fr;
+  grid-template-columns: minmax(0, 2.6fr) minmax(200px, 1fr);
   align-items: center;
-  gap: 65px;
-  padding-block: 76px 67px;
+  gap: 48px;
+  padding-block: 52px 48px;
 }
 .hero-main h1 {
   max-width: 780px;
@@ -221,7 +221,7 @@ strong {
   gap: 28px;
   background: var(--green);
   color: white;
-  font-size: 12px;
+  font-size: 14px;
   padding: 13px 20px;
   border: 1px solid var(--green);
   border-radius: 2px;
@@ -235,7 +235,7 @@ strong {
   display: inline-flex;
   align-items: center;
   gap: 14px;
-  font-size: 12px;
+  font-size: 14px;
   font-weight: 500;
   line-height: 1.8;
 }
@@ -244,12 +244,12 @@ strong {
 }
 .hero-note {
   color: var(--muted);
-  font-family: var(--font-serif);
-  font-size: 18px;
-  line-height: 1.55;
+  font-family: var(--font-sans);
+  font-size: 14px;
+  line-height: 1.7;
   border-left: 1px solid var(--line);
   padding-left: 27px;
-  margin-top: 45px;
+  margin-top: 0;
 }
 .note-marker {
   color: var(--green);
@@ -275,13 +275,13 @@ strong {
   padding-block: 18px;
   border-block: 1px solid var(--line);
   color: var(--muted);
-  font-size: 11px;
+  font-size: 14px;
 }
 .context-strip a {
   display: inline-flex;
   align-items: center;
   gap: 14px;
-  font-size: 11px;
+  font-size: 14px;
   white-space: nowrap;
 }
 .context-strip .arrow {
@@ -331,7 +331,7 @@ strong {
 }
 .work-row p {
   color: var(--muted);
-  font-size: 13px;
+  font-size: 15px;
   line-height: 1.8;
   max-width: 750px;
 }
@@ -340,7 +340,7 @@ strong {
   width: 21px;
 }
 .section-footnote {
-  font-size: 10px;
+  font-size: 12px;
   color: var(--muted);
   margin-top: 17px;
   line-height: 1.8;
@@ -454,7 +454,7 @@ strong {
   grid-column: 1 / -1;
 }
 .page-intro {
-  padding-block: 66px 48px;
+  padding-block: 48px 36px;
   max-width: 850px;
 }
 .page-intro h1 {
@@ -574,7 +574,7 @@ strong {
 .back-link {
   display: inline-block;
   margin-top: 35px;
-  font-size: 11px;
+  font-size: 14px;
   color: var(--green);
 }
 .back-link + .page-intro {
@@ -845,7 +845,8 @@ strong {
     max-width: 750px;
   }
   .hero-note {
-    display: none;
+    display: block;
+    margin-top: 24px;
   }
   .editorial-grid {
     gap: 50px;
@@ -876,7 +877,7 @@ strong {
     width: 100%;
     justify-content: space-between;
     gap: 10px;
-    font-size: 12px;
+    font-size: 14px;
     padding-top: 8px;
   }
   .site-header nav a {
@@ -886,7 +887,7 @@ strong {
     padding-block: 44px 35px;
   }
   .home-intro .eyebrow {
-    font-size: 8px;
+    font-size: 11px;
     letter-spacing: 0.09em;
   }
   .small-rule {
@@ -907,10 +908,10 @@ strong {
   .button {
     padding: 12px 14px;
     gap: 18px;
-    font-size: 11px;
+    font-size: 14px;
   }
   .text-link {
-    font-size: 11px;
+    font-size: 14px;
     gap: 8px;
   }
   .hero-links > .text-link .arrow {
@@ -945,14 +946,14 @@ strong {
     padding-block: 23px;
   }
   .work-category {
-    font-size: 9px;
+    font-size: 11px;
   }
   .work-row h3 {
     font-size: 24px;
     margin-bottom: 10px;
   }
   .work-row p {
-    font-size: 12px;
+    font-size: 14px;
   }
   .work-row > .arrow {
     width: 17px;
@@ -1503,5 +1504,120 @@ strong {
   }
   .essential-metrics dd {
     font-size: 1rem;
+  }
+}
+
+/* Professional facts and evidence remain readable before the longer narrative. */
+.project-overview {
+  border-block: 1px solid var(--line);
+  padding-block: 24px;
+  margin-bottom: 36px;
+}
+.project-overview h2 {
+  font-size: 27px;
+  margin-bottom: 20px;
+}
+.project-overview dl {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 22px 44px;
+}
+.project-overview dt {
+  color: var(--green);
+  font-size: 14px;
+  font-weight: 600;
+  margin-bottom: 5px;
+}
+.project-overview dd {
+  color: var(--muted);
+  font-size: 15px;
+  line-height: 1.65;
+}
+.work-row .work-technologies {
+  color: var(--green);
+  font-size: 13px;
+  margin-top: 9px;
+}
+.hero-note .eyebrow {
+  color: var(--green);
+}
+.hero-note p + p {
+  margin-top: 12px;
+}
+.hero-note .hero-note-context {
+  border-top: 1px solid var(--line);
+  padding-top: 16px;
+}
+.study-contact {
+  border-top: 1px solid var(--line);
+  padding-top: 24px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px 28px;
+  align-items: center;
+  font-size: 15px;
+}
+.architecture-flow {
+  margin-block: 30px;
+  border: 1px solid var(--line);
+  padding: 22px;
+  background: var(--light-green);
+}
+.prose .architecture-flow ol {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+.architecture-flow li {
+  display: grid;
+  grid-template-columns: 30px minmax(0, 1fr);
+  gap: 14px;
+}
+.prose .architecture-flow li + li {
+  border-top: 1px solid var(--line);
+  padding-top: 18px;
+  margin-top: 18px;
+}
+.architecture-flow .flow-number {
+  font-size: 12px;
+  font-family: ui-monospace, monospace;
+  color: var(--green);
+  padding-top: 5px;
+}
+.prose .architecture-flow h3 {
+  font-size: 23px;
+  margin: 0 0 6px;
+}
+.prose .architecture-flow p {
+  font-size: 14px;
+  line-height: 1.7;
+  margin: 0;
+}
+.prose .architecture-flow .flow-technology {
+  color: var(--green);
+  font-weight: 600;
+  margin-bottom: 5px;
+}
+.prose .architecture-flow .flow-foundation {
+  border-top: 1px solid var(--line);
+  margin-top: 20px;
+  padding-top: 16px;
+}
+.architecture-flow figcaption {
+  font-size: 12px;
+  line-height: 1.7;
+  color: var(--muted);
+  margin-top: 20px;
+}
+@media (max-width: 620px) {
+  .project-overview dl {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 18px;
+  }
+  .architecture-flow {
+    padding: 16px;
+  }
+  .hero-links {
+    flex-wrap: wrap;
   }
 }

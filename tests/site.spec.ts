@@ -10,10 +10,10 @@ import { expect, test, type Page } from '@playwright/test';
 const routes = [
   {
     path: '/',
-    heading: 'Turning complex information into useful decisions and systems.',
+    heading: 'Building data platforms and applications for analytical work.',
   },
-  { path: '/about/', heading: 'The question comes first.' },
-  { path: '/work/', heading: 'Making information useful.' },
+  { path: '/about/', heading: 'Experience, education & approach.' },
+  { path: '/work/', heading: 'Data platforms & applications.' },
   {
     path: '/work/analytical-data-platforms/',
     heading: 'Building an analytical data platform',
@@ -26,7 +26,10 @@ const routes = [
     path: '/work/analytical-applications/',
     heading: 'Designing an audit-tracking workspace',
   },
-  { path: '/research/', heading: 'Following the evidence.' },
+  {
+    path: '/research/',
+    heading: 'Research assistance & quantitative inquiry.',
+  },
   { path: '/lab/', heading: 'Learn how models learn' },
   { path: '/contact/', heading: 'Good work starts with a conversation.' },
   { path: '/colophon/', heading: 'A small site, built with care.' },
@@ -121,10 +124,13 @@ test('navigation and case-study links reach their intended pages', async ({
     .click();
   await expect(page).toHaveURL(/\/$/);
   await page
-    .getByRole('link', { name: 'Explore my work', exact: true })
+    .getByRole('link', { name: 'View technical case studies', exact: true })
     .click();
   for (const route of routes.filter(
-    (item) => item.path.startsWith('/work/') && item.path !== '/work/',
+    (item) =>
+      item.path.startsWith('/work/') &&
+      item.path !== '/work/' &&
+      item.path !== '/work/applied-predictive-research/',
   )) {
     await page
       .getByRole('link', { name: new RegExp(route.heading) })
@@ -563,12 +569,12 @@ test('email text can be selected without launching a mail application', async ({
 
 test('home contact invitation leads to contact choices', async ({ page }) => {
   await page.goto('/');
-  await page.getByRole('link', { name: 'Get in touch' }).click();
+  await page.getByRole('link', { name: 'Contact me' }).click();
   await expect(page).toHaveURL(/\/contact\/$/);
   await expect(page.locator('.contact-address')).toBeVisible();
 });
 
-test('approved case study stays consistent across listings and renders a static fictional workflow', async ({
+test('approved case study stays consistent across listings and renders a static capability workflow', async ({
   page,
 }, testInfo) => {
   const title = 'Designing an audit-tracking workspace';
@@ -592,18 +598,15 @@ test('approved case study stays consistent across listings and renders a static 
     name: 'Conceptual record workflow',
   });
   await expect(figure.getByRole('heading', { level: 3 })).toHaveText([
-    'Find',
-    'Understand',
-    'Update',
+    'Find records',
+    'Review context',
+    'Connect documents & analysis',
+    'Save & trace changes',
   ]);
-  await expect(figure.getByText('Harbor review', { exact: true })).toHaveCount(
-    3,
-  );
-  await expect(figure.locator('.record-state')).toHaveText([
-    'Needs context',
-    'Ready for review',
-    'Briefing reviewed',
-  ]);
+  await expect(figure).toContainText('server-side authorization');
+  await expect(
+    page.getByRole('region', { name: 'Project at a glance' }),
+  ).toContainText('Blazor Interactive Server');
   await expect(
     page.getByRole('link', {
       name: 'FY2027 agency appropriations',
@@ -620,7 +623,7 @@ test('approved case study stays consistent across listings and renders a static 
     'not a count of portal users or a verified current active-panel count',
   );
   await expect(figure.locator('figcaption')).toHaveText(
-    'Conceptual workflow illustrated with fictional information. Not a screenshot of the internal application.',
+    'Conceptual application workflow showing implemented capabilities. Not a screenshot of the internal application.',
   );
   await expect(page.locator('astro-island')).toHaveCount(0);
   await expectNoHorizontalOverflow(page);
@@ -633,7 +636,7 @@ test('approved case study stays consistent across listings and renders a static 
   });
 });
 
-test('data platform case study shares metadata and explains a static fictional data flow', async ({
+test('data platform case study shares metadata and explains a static technology architecture', async ({
   page,
 }, testInfo) => {
   const title = 'Building an analytical data platform';
@@ -657,13 +660,15 @@ test('data platform case study shares metadata and explains a static fictional d
     'Apply',
   ]);
   await expect(figure.locator('figcaption')).toHaveText(
-    'Conceptual analytical workflow using fictional data. Not a diagram of the internal production environment.',
+    'Conceptual architecture using technology categories and responsibilities. Not a diagram of the internal production environment.',
   );
-  await expect(figure.getByRole('table')).toHaveCount(2);
-  await expect(figure.getByRole('table').nth(1).locator('tbody tr')).toHaveText(
-    ['Sketch25'],
+  await expect(figure).toContainText('Python / PySpark → Parquet');
+  await expect(figure).toContainText(
+    'Validated files → Synapse serverless SQL',
   );
-  await expect(figure).toContainText('it is not treated as zero');
+  await expect(
+    page.getByRole('region', { name: 'Project at a glance' }),
+  ).toContainText('Sole hands-on developer');
   await expect(page.locator('article.prose')).toContainText(
     'It is not a dedicated provisioned SQL warehouse',
   );
@@ -688,9 +693,8 @@ test('recent technical work leads both listings and related navigation', async (
   page,
 }) => {
   const ordered = [
-    '/work/analytical-data-platforms/',
     '/work/analytical-applications/',
-    '/work/applied-predictive-research/',
+    '/work/analytical-data-platforms/',
   ];
   for (const route of ['/', '/work/']) {
     await page.goto(route);
@@ -928,4 +932,51 @@ test('logistic landscape, parameters, loss and inspected task share actual train
     ).size,
   ).toBeGreaterThan(1);
   await expectNoHorizontalOverflow(page);
+});
+
+test('recruiter, engineering, and admissions paths expose evidence without ambiguous links', async ({
+  page,
+}) => {
+  await page.goto('/');
+  await expect(page.locator('.hero-description')).toContainText(
+    'Senior Auditor Data Analyst',
+  );
+  await page
+    .getByRole('link', { name: 'Experience & education', exact: true })
+    .click();
+  await expect(page.locator('main')).toContainText('June 2020–present');
+  await expect(page.locator('main')).toContainText(
+    'Change Management Business Analyst',
+  );
+  await expect(page.locator('#education')).toContainText('2011');
+  await page
+    .getByRole('navigation', { name: 'Main navigation' })
+    .getByRole('link', { name: 'Contact', exact: true })
+    .click();
+  await expect(page.locator('.contact-address')).toHaveText(
+    'jorge@jorgeaviles.net',
+  );
+  await page.goto('/');
+  await page.locator('.work-row').first().click();
+  await expect(
+    page.getByRole('region', { name: 'Project at a glance' }),
+  ).toContainText('Server-side authorization');
+  await expect(page.locator('article')).toContainText('Version-aware writes');
+  await page.locator('.related-work a').click();
+  await expect(page.locator('article')).toContainText('Engineering decisions');
+  await page
+    .getByRole('navigation', { name: 'Main navigation' })
+    .getByRole('link', { name: 'Research', exact: true })
+    .click();
+  await expect(page.locator('main')).toContainText('Asthana');
+  await expect(page.locator('.research-note')).toContainText(
+    'separately from authorship',
+  );
+  await page
+    .locator('.research-context')
+    .getByRole('link', { name: 'machine-learning lab', exact: true })
+    .click();
+  await expect(page.locator('.lab-page-intro')).toContainText(
+    'separate from my professional case studies',
+  );
 });

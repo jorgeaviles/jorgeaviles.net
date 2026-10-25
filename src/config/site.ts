@@ -4,7 +4,7 @@ export const site = {
   email: 'jorge@jorgeaviles.net',
   description:
     'Business analysis, data engineering, applied research, and application development. Connecting complex information with practical decisions and useful systems.',
-  headline: 'Turning complex information into useful decisions and systems.',
+  headline: 'Building data platforms and applications for analytical work.',
   github: 'https://github.com/jorgeaviles',
   linkedin: 'https://www.linkedin.com/in/jraviles/',
   profileSource:
@@ -12,8 +12,8 @@ export const site = {
 } as const;
 
 export const navigation = [
-  { label: 'About', href: '/about/' },
   { label: 'Work', href: '/work/' },
+  { label: 'About', href: '/about/' },
   { label: 'Research', href: '/research/' },
   { label: 'Lab', href: '/lab/' },
   { label: 'Contact', href: '/contact/' },

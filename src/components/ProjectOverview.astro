@@ -1,0 +1,27 @@
+---
+import type { CollectionEntry } from 'astro:content';
+interface Props {
+  overview: NonNullable<CollectionEntry<'work'>['data']['overview']>;
+}
+const { overview } = Astro.props;
+const fields = [
+  ['Purpose', overview.purpose],
+  ['My role', overview.role],
+  ['Technology', overview.technologies.join(' · ')],
+  ['Implemented capabilities', overview.capabilities],
+  ['Engineering focus', overview.engineering],
+  ['Context', overview.context],
+];
+---
+
+<section class="project-overview" aria-labelledby="project-overview-title">
+  <h2 id="project-overview-title">Project at a glance</h2>
+  <dl>
+    {fields.map(([label, value]) => (
+      <div>
+        <dt>{label}</dt>
+        <dd>{value}</dd>
+      </div>
+    ))}
+  </dl>
+</section>
