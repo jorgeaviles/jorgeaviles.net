@@ -1179,7 +1179,14 @@ test('About distinguishes academic education from compact technical coursework a
     name: 'Selected Technical Coursework',
     exact: true,
   });
-  await expect(coursework.locator('time')).toHaveText(['2015', '2024']);
+  await expect(coursework.locator('time')).toHaveText([
+    '2015',
+    '2024',
+    '2024',
+    '2024',
+    '2024',
+    '2020',
+  ]);
   for (const title of [
     'Introduction to R Programming (DAT204x)',
     'Intermediate Python',
@@ -1201,24 +1208,89 @@ test('About distinguishes academic education from compact technical coursework a
     'href',
     'https://verify.edx.org/cert/687402c185b84079a0fd00be4cd1a40a',
   );
-  await expect(coursework.getByRole('link')).toHaveCount(1);
-  await expect(education).not.toContainText('Professional Certifications');
-  // Reach the link through sequential keyboard navigation, including the page's existing links.
-  for (let i = 0; i < 30; i++) {
-    await page.keyboard.press(
-      browserName === 'webkit' && process.platform === 'darwin'
-        ? 'Alt+Tab'
-        : 'Tab',
+  const accomplishments = [
+    ['Developing Python Packages', 'fd798f0e03cdecc2e81e24371c2beb9e5bda853c'],
+    ['Joining Data with pandas', '13aadd1963844af79b33a370d820be64dc4c094f'],
+    [
+      'Data Manipulation with pandas',
+      '49278034a38c29b47828bad234e00500d571ddd0',
+    ],
+    ['Intermediate Python', 'c073b50b12424055585ca2e578d0930040f8f746'],
+  ];
+  await expect(coursework).toContainText('Statements of Accomplishment');
+  await expect(coursework.getByRole('link')).toHaveCount(6);
+  await expect(coursework.locator('.additional-courses h4')).toHaveText(
+    accomplishments.map(([title]) => title),
+  );
+  const completionDates: Record<string, string> = {
+    'Developing Python Packages': '2024-06-18',
+    'Joining Data with pandas': '2024-07-15',
+    'Data Manipulation with pandas': '2024-06-17',
+    'Intermediate Python': '2024-05-31',
+  };
+  for (const [title, id] of accomplishments) {
+    const entry = coursework.locator('.additional-courses > li').filter({
+      has: page.getByRole('heading', { name: title, exact: true }),
+    });
+    const link = entry.getByRole('link', {
+      name: `View accomplishment for ${title}`,
+      exact: true,
+    });
+    await expect(link).toHaveAttribute(
+      'href',
+      `https://www.datacamp.com/completed/statement-of-accomplishment/course/${id}`,
     );
-    if (await credential.evaluate((link) => document.activeElement === link))
-      break;
+    await expect(entry.getByRole('link')).toHaveCount(1);
+    await expect(entry.locator('time')).toHaveAttribute(
+      'datetime',
+      completionDates[title],
+    );
+    await expect(entry.locator('time')).toHaveText('2024');
   }
-  await expect(credential).toBeFocused();
-  const outline = await credential.evaluate((link) => {
-    const style = getComputedStyle(link);
-    return { style: style.outlineStyle, width: style.outlineWidth };
+  const introduction = coursework
+    .locator('.additional-courses > li')
+    .filter({ hasText: 'Introduction to Python' });
+  const introductoryCredential = introduction.getByRole('link', {
+    name: 'View accomplishment for Introduction to Python',
+    exact: true,
   });
-  expect(outline).toEqual({ style: 'solid', width: '2px' });
+  await expect(introductoryCredential).toHaveAttribute(
+    'href',
+    'https://www.datacamp.com/completed/statement-of-accomplishment/course/80c41f1670973091fd734aef396c78c6a848472f',
+  );
+  await expect(introduction.getByRole('link')).toHaveCount(1);
+  await expect(introduction.locator('time')).toHaveAttribute(
+    'datetime',
+    '2020-06-28',
+  );
+  await expect(education).not.toContainText('Professional Certifications');
+  // Reach every credential through sequential keyboard navigation.
+  for (const link of [
+    credential,
+    ...accomplishments.map(([title]) =>
+      coursework.getByRole('link', {
+        name: `View accomplishment for ${title}`,
+        exact: true,
+      }),
+    ),
+    introductoryCredential,
+  ]) {
+    for (let i = 0; i < 30; i++) {
+      await page.keyboard.press(
+        browserName === 'webkit' && process.platform === 'darwin'
+          ? 'Alt+Tab'
+          : 'Tab',
+      );
+      if (await link.evaluate((element) => document.activeElement === element))
+        break;
+    }
+    await expect(link).toBeFocused();
+    const outline = await link.evaluate((element) => {
+      const style = getComputedStyle(element);
+      return { style: style.outlineStyle, width: style.outlineWidth };
+    });
+    expect(outline).toEqual({ style: 'solid', width: '2px' });
+  }
   await expectNoHorizontalOverflow(page);
   const placement = await page.evaluate(() => {
     const experience = document.querySelector('.editorial-grid')!;
