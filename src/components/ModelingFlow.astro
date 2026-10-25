@@ -1,0 +1,53 @@
+---
+const stages = [
+  [
+    'Define the target',
+    'Historical random-audit outcomes',
+    'Interpret recorded reduction information and validate outcome-to-bill matching.',
+  ],
+  [
+    'Prepare features',
+    'Python / PySpark',
+    'Billing, service timing, submission lag, case context, and prior billing history.',
+  ],
+  [
+    'Fit candidates',
+    'Logistic regression · Random Forest · boosted trees · LightGBM',
+    'Use shared evaluation paths with model-appropriate preprocessing.',
+  ],
+  [
+    'Validate & calibrate',
+    'Grouped folds → chronological windows',
+    'Compare ranking and probability quality; calibrate separately and backtest over time.',
+  ],
+  [
+    'Score & investigate',
+    'Research outputs for human review',
+    'Produce scores and candidate rankings; examine drift before considering operational integration.',
+  ],
+];
+---
+
+<figure
+  class="modeling-flow architecture-flow"
+  aria-label="Conceptual modeling process"
+>
+  <ol>
+    {stages.map(([title, method, description], index) => (
+      <li>
+        <span class="flow-number" aria-hidden="true">
+          {String(index + 1).padStart(2, '0')}
+        </span>
+        <div>
+          <h3>{title}</h3>
+          <p class="flow-technology">{method}</p>
+          <p>{description}</p>
+        </div>
+      </li>
+    ))}
+  </ol>
+  <figcaption>
+    Conceptual research workflow. No agency records, model results, or internal
+    deployment details are shown.
+  </figcaption>
+</figure>

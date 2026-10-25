@@ -1,0 +1,67 @@
+---
+title: Developing machine-learning models for audit prioritization
+description: I implemented supervised-learning pipelines to investigate whether historical audit outcomes could help prioritize bills for human review.
+category: Applied machine learning
+order: 3
+featured: true
+overview:
+  purpose: Investigate whether predictive scores could help prioritize bills for human review.
+  role: Sole hands-on developer of feature preparation, model pipelines, evaluation, and scoring workflows.
+  technologies:
+    - Python / PySpark
+    - Azure Synapse
+    - Spark ML / Random Forest
+  capabilities: Feature engineering, candidate-model comparisons, grouped validation, calibration, backtests, scoring outputs, and drift diagnostics.
+  engineering: Label meaning, temporal leakage, related records, probability quality, and limited review capacity.
+  context: Experimental modeling work; not a production-approved or deployed decision model.
+methods:
+  - Supervised learning and feature engineering
+  - Grouped and time-based evaluation
+  - Probability calibration and ranking
+---
+
+import ModelingFlow from '../../components/ModelingFlow.astro';
+
+## What I developed
+
+I implemented a supervised-learning program in Python and PySpark to investigate audit prioritization. The work connects bill-level features with candidate models, repeatable evaluation, probability calibration, and scoring outputs. It extends beyond exploratory analysis into an implemented training and evaluation pipeline, while remaining experimental.
+
+I am the sole hands-on developer of these notebooks and pipelines. Suffolk University consultation informed the early modeling proposals. Audit & Oversight colleagues contribute practical knowledge of billing and casework; their feedback helps me question features, interpret labels, and refine what an investigation needs to explain.
+
+## Define the question before the model
+
+The training data draws on historically randomly audited bills and recorded reduction information. The target represents a historical reduction outcome under the source's recording conventions. It is not a label for fraud, proof of improper billing, or a direct instruction to initiate a full audit.
+
+Label construction required attention to missing information, source recording rules, and matching outcomes to the correct bill. A model learns this defined target, including the limitations of its historical coverage and review practices. A useful ranking therefore needs a narrower interpretation than “which bills are wrong?”
+
+<ModelingFlow />
+
+## Engineer features with historical context
+
+I developed features covering billed amounts and hours, service timing, submission lag, case context, and attorney billing history. Rolling historical measurements describe prior activity, while case-level cumulative features distinguish earlier work from the current bill.
+
+The preparation separates outcome labels from model inputs and excludes the current bill from selected historical windows. Missing grouping information needs deliberate handling so unrelated records do not acquire a shared history. These measures address leakage risks; they do not by themselves prove that every source value was available at the time a reviewer would have made a decision.
+
+## Compare candidates on a common evaluation path
+
+The comparison pipelines support logistic regression, Random Forest, gradient-boosted trees, and LightGBM. Model-specific preprocessing handles numerical and categorical inputs, with learned preprocessing fitted within training folds. LightGBM depends on the corresponding SynapseML runtime being available.
+
+Random Forest became a candidate for continued experimentation. The pipeline supports selecting which candidates run and recording their evaluation metrics. I do not present a verified winning model or comparative performance figures here: those require reviewed evaluation records, rather than inferring results from a model name or notebook configuration.
+
+## Evaluate ranking, probabilities, and time
+
+**Grouped cross-validation.** Grouping related records by attorney or case tests a different generalization question from splitting individual rows. It helps examine whether apparent performance depends on related records appearing on both sides of a split. Grouped validation does not replace a chronological test.
+
+**Several measures, different questions.** ROC AUC examines discrimination across thresholds. Brier score and log loss assess probability quality. Precision at a fixed review capacity asks how many historically positive outcomes appear among the highest-ranked candidates. That capacity-aware measure connects evaluation to a constrained human workflow; it is not a measure of recovered funds.
+
+**Calibration and backtesting.** I implemented Platt calibration on a separate calibration window, evaluation on a later test window, a buffer for delayed labels, and rolling time-based backtests. These distinguish fitting a model from checking whether its scores remain useful on later data. Calibration can change probability interpretation without necessarily improving ranking.
+
+**Drift diagnostics.** Prediction summaries and feature-distribution comparisons help investigate changes over time. Distribution drift is a signal to examine, not proof that performance has deteriorated or that a model should automatically retrain.
+
+## Outputs and operational boundary
+
+The workflows produce evaluation records, calibration parameters, scoring outputs, and ranked candidate views. These support research into bill-level prioritization and possible case-level review context. No numerical performance, savings, or operational impact is claimed in this public account.
+
+The [analytical data platform](/work/analytical-data-platforms/) provides the preparation foundation. Connecting predictive scores to reviewer workflows in the [Audit Portal](/work/analytical-applications/) is proposed integration, not an implemented decision feature. Scores would need review, validation, and approval before operational use, with human judgment retained.
+
+This professional modeling work is separate from the site's [educational ML Lab](/lab/), which uses independently fabricated data to explain learning and evaluation.

@@ -13,7 +13,7 @@ const routes = [
     heading: 'Building data platforms and applications for analytical work.',
   },
   { path: '/about/', heading: 'Experience, education & approach.' },
-  { path: '/work/', heading: 'Data platforms & applications.' },
+  { path: '/work/', heading: 'Data, applications & machine learning.' },
   {
     path: '/work/analytical-data-platforms/',
     heading: 'Building an analytical data platform',
@@ -29,6 +29,10 @@ const routes = [
   {
     path: '/research/',
     heading: 'Research assistance & quantitative inquiry.',
+  },
+  {
+    path: '/work/machine-learning-audit-prioritization/',
+    heading: 'Developing machine-learning models for audit prioritization',
   },
   { path: '/lab/', heading: 'Learn how models learn' },
   { path: '/contact/', heading: 'Good work starts with a conversation.' },
@@ -367,6 +371,14 @@ test.describe('without JavaScript', () => {
           page.locator('.case-study-workflow figcaption'),
         ).toContainText('Not a screenshot of the internal application.');
       }
+      if (route.path === '/work/machine-learning-audit-prioritization/') {
+        await expect(
+          page.getByRole('figure', { name: 'Conceptual modeling process' }),
+        ).toBeVisible();
+        await expect(page.locator('article')).toContainText(
+          'not a label for fraud',
+        );
+      }
       if (route.path === '/lab/') {
         const fallback = page.locator('noscript p');
         await expect(fallback).toContainText('JavaScript is disabled.');
@@ -695,6 +707,7 @@ test('recent technical work leads both listings and related navigation', async (
   const ordered = [
     '/work/analytical-applications/',
     '/work/analytical-data-platforms/',
+    '/work/machine-learning-audit-prioritization/',
   ];
   for (const route of ['/', '/work/']) {
     await page.goto(route);
@@ -709,7 +722,7 @@ test('recent technical work leads both listings and related navigation', async (
     await page
       .locator('.related-work a')
       .evaluateAll((links) => links.map((link) => link.getAttribute('href'))),
-  ).toEqual(ordered.slice(0, 2));
+  ).toEqual(ordered);
   await expect(page.locator('article')).toContainText(
     'Asthana is the paper’s author.',
   );
@@ -962,7 +975,9 @@ test('recruiter, engineering, and admissions paths expose evidence without ambig
     page.getByRole('region', { name: 'Project at a glance' }),
   ).toContainText('Server-side authorization');
   await expect(page.locator('article')).toContainText('Version-aware writes');
-  await page.locator('.related-work a').click();
+  await page
+    .locator('.related-work a[href="/work/analytical-data-platforms/"]')
+    .click();
   await expect(page.locator('article')).toContainText('Engineering decisions');
   await page
     .getByRole('navigation', { name: 'Main navigation' })
@@ -978,5 +993,70 @@ test('recruiter, engineering, and admissions paths expose evidence without ambig
     .click();
   await expect(page.locator('.lab-page-intro')).toContainText(
     'separate from my professional case studies',
+  );
+});
+
+test('professional modeling explains the target, evaluation, and proposed integration without production claims', async ({
+  page,
+}) => {
+  await page.goto('/research/');
+  await page
+    .getByRole('link', {
+      name: 'audit-prioritization modeling case study',
+      exact: true,
+    })
+    .click();
+  await expect(page).toHaveURL(
+    /\/work\/machine-learning-audit-prioritization\/$/,
+  );
+  const article = page.locator('article.prose');
+  await expect(
+    page.getByRole('region', { name: 'Project at a glance' }),
+  ).toContainText('not a production-approved or deployed decision model');
+  await expect(article).toContainText('not a label for fraud');
+  await expect(article).toContainText('not present a verified winning model');
+  for (const method of [
+    'logistic regression',
+    'Random Forest',
+    'gradient-boosted trees',
+    'LightGBM',
+    'ROC AUC',
+    'Brier score',
+    'Platt calibration',
+    'Precision at a fixed review capacity',
+    'Drift diagnostics',
+  ]) {
+    await expect(article).toContainText(method);
+  }
+  await expect(
+    page
+      .getByRole('figure', { name: 'Conceptual modeling process' })
+      .getByRole('heading', { level: 3 }),
+  ).toHaveText([
+    'Define the target',
+    'Prepare features',
+    'Fit candidates',
+    'Validate & calibrate',
+    'Score & investigate',
+  ]);
+  await expect(article).toContainText(
+    'proposed integration, not an implemented decision feature',
+  );
+  await expect(
+    article.getByRole('link', { name: 'educational ML Lab', exact: true }),
+  ).toHaveAttribute('href', '/lab/');
+  await expect(page.locator('astro-island')).toHaveCount(0);
+  await article
+    .getByRole('link', { name: 'Audit Portal', exact: true })
+    .click();
+  await expect(page.locator('article')).toContainText(
+    'proposed integration, not an implemented decision feature',
+  );
+  await page
+    .locator('article')
+    .getByRole('link', { name: 'machine-learning program', exact: true })
+    .click();
+  await expect(page.getByRole('heading', { level: 1 })).toHaveText(
+    'Developing machine-learning models for audit prioritization',
   );
 });
