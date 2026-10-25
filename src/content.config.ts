@@ -21,7 +21,19 @@ const entrySchema = z.object({
 
 const work = defineCollection({
   loader: glob({ pattern: '**/*.mdx', base: './src/content/work' }),
-  schema: entrySchema,
+  schema: entrySchema.extend({
+    workType: z.enum(['project', 'research']).default('project'),
+    overview: z
+      .object({
+        purpose: z.string().min(1),
+        role: z.string().min(1),
+        technologies: z.array(z.string().min(1)).min(1),
+        capabilities: z.string().min(1),
+        engineering: z.string().min(1),
+        context: z.string().min(1),
+      })
+      .optional(),
+  }),
 });
 
 const research = defineCollection({

@@ -1,9 +1,20 @@
 ---
 title: Designing an audit-tracking workspace
-description: Connecting analytical exploration, supporting documents, and operational oversight in an audit-tracking workspace.
+description: I developed the Audit Portal to bring record discovery, documents, analytical context, and audit progress into a shared workspace.
 category: Applications
-order: 2
+order: 1
 featured: true
+overview:
+  purpose: Connect analytical information, documents, and audit progress in one workspace.
+  role: Sole hands-on developer across notebooks, the data platform, and Audit Portal.
+  technologies:
+    - C# / ASP.NET Core
+    - Blazor Interactive Server
+    - Azure App Service
+    - Microsoft Entra ID
+  capabilities: Search, audit detail, progress, attachments, SharePoint folder sync, document-informed AI assistance, and workbook exports.
+  engineering: Server-side authorization, deliberate saves, conflicting updates, historical records, and reusable components.
+  context: A specialized Audit & Oversight department of approximately 10 staff users.
 methods:
   - Workflow design
   - Data integration
@@ -17,48 +28,44 @@ sources:
 
 import CaseStudyWorkflow from '../../components/CaseStudyWorkflow.astro';
 
-## The challenge
+## What I developed
 
-The project began with a gap between established reporting and the analytical investigation we wanted to pursue. Legacy databases and web-based reporting provided an existing information environment; consultation with Suffolk University on proposed machine-learning models in Jupyter notebooks opened up further questions. That exploration led to an analytical data platform and the Audit Portal: a front end connecting analytical access with operational oversight.
+I built the Audit Portal with ASP.NET Core and Blazor Interactive Server to connect analytical investigation with operational audit work. The application brings record search, audit detail, lifecycle and progress views, documents, change history, and workbook exports into a permission-controlled workspace.
 
-The portal supports an Audit & Oversight department of approximately 10 staff users. I estimate that the department's broader work involves more than 5,000 attorneys. That is an estimate of oversight scope, not a count of portal users or a verified current active-panel count. The challenge is to make complex information useful to a small, specialized team whose work supports investigation and management decision-making.
+The project grew from a gap between legacy reporting and the investigations we wanted to pursue. Consultation with Suffolk University on machine-learning proposals in Jupyter notebooks informed the early exploration. The analytical data platform supplied a reusable foundation; the portal connected that foundation with the team's workflows.
 
-The department operates within the Committee for Public Counsel Services (CPCS). Its [FY2027 agency appropriations](https://malegislature.gov/Budget/FY2027/FinalBudget) total approximately $380 million across agency operations, private counsel compensation, and court costs. This is agency-wide financial context, not spending controlled by the portal or a financial outcome of the project.
+## My role and collaboration
 
-## My role
+I am the sole hands-on developer across the analytical notebooks, data platform, and Audit Portal. Audit & Oversight colleagues contribute firsthand knowledge of attorney billing and casework. Their feedback informs analytical assumptions, model iteration, reports, and interface design.
 
-I am the sole hands-on developer across the analytical notebooks, data platform, and Audit Portal. I consult with Audit & Oversight colleagues whose firsthand experience of attorney billing and casework adds context that is not apparent from database records alone. Their feedback informs analytical assumptions, model iteration, reports, and the audit interface. Model tuning is part of the process; this account makes no claim of a measured improvement in predictive performance.
+An IT applications-team database analyst worked with me on scheduled master-data extracts. Infrastructure colleagues assisted with role-based access and application-identity permissions. These contributions and the university consultation are distinct from my coding responsibilities.
 
-University consultation informed the initial model proposals. IT colleagues contributed the data and access arrangements: an applications-team database analyst worked with me on scheduled master-data extracts, while infrastructure colleagues assisted with role-based access and application-identity permissions. These contributions are credited separately from the coding and development work.
+## From requirements to working capabilities
 
-## From requirements to design
+Search and filters lead from record discovery to a detailed audit workspace. The interface distinguishes stable context, subsequent progress, milestones, and recorded changes. Permitted users edit and save deliberately, with handling for unsaved work and conflicting changes. Validation accommodates specified gaps in historical records rather than inventing missing information.
 
-Departmental feedback connects analytical questions with the information people need to interpret a record and decide what to examine next. The tracker links record discovery with a detailed workspace: search and filters narrow the list, while the detail view distinguishes stable context, subsequent progress, and recorded changes.
-
-Updates are deliberate. Permitted users can edit and save information, with explicit handling for unsaved work and conflicting changes. Historical compatibility matters too: validation accommodates specified gaps in earlier records rather than inventing information to make them appear complete.
-
-Document attachments and functioning SharePoint folder synchronization connect supporting material to individual audits. Document-informed AI assistance lets users ask questions involving audit progress, analytical information, and policy guidance. The design must distinguish recorded facts, retrieved passages, and generated interpretations. A question spanning several documents is not evidence that every document has been read exhaustively or that the answer is correct; users retain responsibility for reviewing it.
+Attachments and functioning SharePoint folder synchronization connect supporting material to individual audits. Document-informed AI assistance supports questions involving audit progress, analytical information, and policy guidance. Recorded facts, retrieved passages, and generated interpretations have different evidentiary roles. A response involving several documents does not establish exhaustive review; users must check its sources.
 
 <CaseStudyWorkflow />
 
-## Why Blazor Interactive Server
+## Architecture and trade-offs
 
-I developed the portal with ASP.NET Core and Blazor Interactive Server, hosted on Azure App Service. This keeps application logic and data access on the server while providing a component-based interface. In departmental use, I have found the interface responsive for the team's workflows; this is an observation, not a performance benchmark.
+**Blazor Interactive Server on Azure App Service.** Application logic and data access stay on the server. Reusable Razor components let me refine the interface primarily in C#, without maintaining a separate JavaScript application. The architecture also requires interactive connections, server resources, reconnect handling, and application-state management.
 
-Working primarily in C# with reusable Razor components supports iterative refinement without maintaining a separate JavaScript application. Interface components, feature services, business rules, and persistence have distinct responsibilities. That introduces boundaries to maintain, but allows selected rules and failure conditions to be tested independently of a full screen. Departmental feedback can inform changes to shared patterns as well as individual views.
+**Separate responsibilities.** Interface components, feature services, business rules, and persistence have distinct responsibilities. Those boundaries add coordination work but let selected rules and failure conditions be tested independently of a full screen.
 
-Microsoft Entra ID provides authentication. Application roles and server-side service checks restrict permitted actions beyond the visible controls. Managed identities support appropriately scoped access to approved backend Azure services, including analytical and workflow storage; this does not give portal users unrestricted Azure access or put database credentials in their browsers. Version-aware writes can reject updates based on outdated records.
+**Authorization and data integrity.** Microsoft Entra ID provides authentication. Application roles and server-side checks restrict permitted actions beyond visible controls. Managed identities support scoped backend access. Version-aware writes can reject updates based on outdated records.
 
-The server-side approach also requires interactive connections, server resources, reconnect handling, and application-state management. Those responsibilities are part of the architecture and its trade-offs.
+## Observed result and limits
 
-## What the work enables
+Users can investigate related records, documents, analytical information, and audit progress within a shared workspace. I have observed users updating tracker details without instruction and found the interface responsive for departmental workflows. These are qualitative observations, not formal usability or performance studies. No measured productivity, financial, or predictive-accuracy improvement is claimed; generated answers require review.
 
-The implementation connects record creation and editing, searchable views, lifecycle information, progress and change-history views, document management, and workbook exports. Users work with synchronized supporting folders and document-informed questions in a common, permission-controlled workspace.
+## Operational context
 
-The practical value is helping a specialized team work with related analytical and operational information. Its significance is not a large login count: the workflow supports oversight questions involving records, documents, policy, and the data foundation behind them.
+The portal supports approximately 10 staff users in Audit & Oversight. I estimate that the department's broader work involves more than 5,000 attorneys: this is oversight scope, not a count of portal users or a verified current active-panel count.
 
-I have observed users updating tracker details without instruction. That is a qualitative observation, not a formal usability study or a measured reduction in time, cost, or errors. The integration enables review and investigation; it does not establish adoption levels, financial returns, or the accuracy of AI-generated answers.
+CPCS [FY2027 agency appropriations](https://malegislature.gov/Budget/FY2027/FinalBudget) total approximately $380 million across agency operations, private counsel compensation, and court costs. This is agency-wide context, not spending controlled by the portal or a project outcome.
 
 ## What I learned
 
-Software complexity is not determined solely by the number of users. A small team can work with information that has substantial financial and organizational significance. Building for that environment requires attention to authorization, data integrity, historical context, maintainability, and the practical judgment of the people using it. Colleagues' experience continues to help me question assumptions and refine what an analysis or interface should make visible.
+A small team's software can still demand careful authorization, data integrity, historical context, and maintainability. Domain feedback helps determine what an analysis or interface needs to make visible, beyond what a database alone can explain.

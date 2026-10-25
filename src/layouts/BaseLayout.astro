@@ -11,7 +11,7 @@ interface Props {
 const { title, description = site.description, noindex = false } = Astro.props;
 const pageTitle = title
   ? `${title} — ${site.name}`
-  : `${site.name} — Analysis, research & systems`;
+  : `${site.name} — Data platforms & applications`;
 const canonical = new URL(Astro.url.pathname, site.url).href;
 const active = (href: string) => Astro.url.pathname.startsWith(href);
 const structuredData = {

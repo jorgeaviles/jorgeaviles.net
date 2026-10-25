@@ -3,7 +3,9 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
 import PageIntro from '../../components/PageIntro.astro';
 import WorkList from '../../components/WorkList.astro';
 import { getPublishedEntries } from '../../lib/content';
-const entries = await getPublishedEntries('work');
+const entries = (await getPublishedEntries('work')).filter(
+  (entry) => entry.data.workType === 'project',
+);
 ---
 
 <BaseLayout
@@ -12,12 +14,14 @@ const entries = await getPublishedEntries('work');
 >
   <PageIntro
     label="Selected work"
-    title="Making information useful."
-    description="A few perspectives on the work connecting analysis, research, and the systems people use."
+    title="Data platforms & applications."
+    description="Two case studies of systems I developed: an audit workspace and the analytical data foundation behind it."
   />
   <WorkList entries={entries} />
   <p class="work-disclosure">
-    These are high-level accounts of my contribution. Internal data, code, and
+    For my academic contribution, see{' '}
+    <a href="/research/">research assistance and its published source</a>. These
+    are high-level accounts of my contribution. Internal data, code, and
     operational details are not published here.
   </p>
 </BaseLayout>

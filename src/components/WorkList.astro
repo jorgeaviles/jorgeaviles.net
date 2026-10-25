@@ -15,6 +15,11 @@ const { entries } = Astro.props;
         <span class="work-category">{entry.data.category}</span>
         <h3>{entry.data.title}</h3>
         <p>{entry.data.description}</p>
+        {entry.data.overview && (
+          <p class="work-technologies">
+            {entry.data.overview.technologies.join(' · ')}
+          </p>
+        )}
       </div>
       <Arrow />
     </a>

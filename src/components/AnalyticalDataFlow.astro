@@ -1,238 +1,48 @@
-<figure class="analytical-flow" aria-label="Conceptual analytical data flow">
+---
+const stages = [
+  [
+    'Source',
+    'Legacy extracts → ADLS Gen2',
+    'Scheduled source snapshots provide the input. Delivery and extract context determine the starting freshness.',
+  ],
+  [
+    'Prepare',
+    'Python / PySpark → Parquet',
+    'Transform types, align repeated groups, and check counts and grain. Separate malformed input for review.',
+  ],
+  [
+    'Serve',
+    'Validated files → Synapse serverless SQL',
+    'Selected workflows stage and publish serving data. External tables, views, and selected procedures provide SQL access.',
+  ],
+  [
+    'Apply',
+    'Investigation, reporting & application queries',
+    'Consumers reuse prepared information. Exploratory notebooks remain distinct from published data contracts.',
+  ],
+];
+---
+
+<figure
+  class="analytical-flow architecture-flow"
+  aria-label="Conceptual analytical data flow"
+>
   <ol>
-    <li>
-      <div class="flow-stage">
-        <span class="stage-number" aria-hidden="true">
-          01
+    {stages.map(([title, technology, description], index) => (
+      <li>
+        <span class="flow-number" aria-hidden="true">
+          {String(index + 1).padStart(2, '0')}
         </span>
-        <h3>Source</h3>
-        <span class="flow-arrow" aria-hidden="true">
-          ↓
-        </span>
-      </div>
-      <div class="flow-content">
-        <p class="stage-intro">
-          An invented workshop extract arrives with inconsistent labels and a
-          missing value.
-        </p>
-        <table>
-          <caption>Fictional source rows</caption>
-          <thead>
-            <tr>
-              <th scope="col">Activity</th>
-              <th scope="col">Units</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr>
-              <td>
-                <code> sketch </code>
-              </td>
-              <td>2</td>
-            </tr>
-            <tr>
-              <td>Sketch</td>
-              <td>3</td>
-            </tr>
-            <tr>
-              <td>Review</td>
-              <td>Missing</td>
-            </tr>
-          </tbody>
-        </table>
-      </div>
-    </li>
-    <li>
-      <div class="flow-stage">
-        <span class="stage-number" aria-hidden="true">
-          02
-        </span>
-        <h3>Prepare</h3>
-        <span class="flow-arrow" aria-hidden="true">
-          ↓
-        </span>
-      </div>
-      <div class="flow-content">
-        <p class="stage-intro">
-          Standardize labels and validate values before preparing reusable
-          files.
-        </p>
-        <p>
-          <code> sketch </code> → <strong>Sketch</strong>
-        </p>
-        <p class="quality-note">
-          Two rows are valid. The Review row is held for review because its
-          units are missing; it is not treated as zero.
-        </p>
-      </div>
-    </li>
-    <li>
-      <div class="flow-stage">
-        <span class="stage-number" aria-hidden="true">
-          03
-        </span>
-        <h3>Serve</h3>
-        <span class="flow-arrow" aria-hidden="true">
-          ↓
-        </span>
-      </div>
-      <div class="flow-content">
-        <p class="stage-intro">
-          Prepared Parquet data can be queried through a SQL layer.
-        </p>
-        <table>
-          <caption>Fictional summary · one row per activity</caption>
-          <thead>
-            <tr>
-              <th scope="col">Activity</th>
-              <th scope="col">Items</th>
-              <th scope="col">Units</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr>
-              <td>Sketch</td>
-              <td>2</td>
-              <td>5</td>
-            </tr>
-          </tbody>
-        </table>
-      </div>
-    </li>
-    <li>
-      <div class="flow-stage">
-        <span class="stage-number" aria-hidden="true">
-          04
-        </span>
-        <h3>Apply</h3>
-      </div>
-      <div class="flow-content">
-        <p class="stage-intro">
-          A report or notebook reads the same prepared summary.
-        </p>
-        <p>
-          <strong>Sketch accounts for 5 known units.</strong>
-        </p>
-        <p class="quality-note">
-          Review cannot be quantified until its missing value is resolved. A
-          modeling task would need its own feature design and evaluation.
-        </p>
-      </div>
-    </li>
+        <div>
+          <h3>{title}</h3>
+          <p class="flow-technology">{technology}</p>
+          <p>{description}</p>
+        </div>
+      </li>
+    ))}
   </ol>
   <figcaption>
-    Conceptual analytical workflow using fictional data. Not a diagram of the
-    internal production environment.
+    Conceptual architecture using technology categories and responsibilities.
+    Not a diagram of the internal production environment.
   </figcaption>
 </figure>
-<style>
-  .analytical-flow {
-    margin: 2rem 0;
-    container-type: inline-size;
-  }
-  .analytical-flow ol {
-    list-style: none;
-    margin: 0;
-    padding: 0;
-    border: 1px solid var(--line);
-  }
-  .analytical-flow li {
-    display: grid;
-    grid-template-columns: 112px minmax(0, 1fr);
-    gap: 24px;
-    padding: 24px;
-    margin: 0;
-  }
-  .analytical-flow li + li {
-    border-top: 1px solid var(--line);
-  }
-  .analytical-flow li:nth-child(2n) {
-    background: var(--light-green);
-  }
-  .analytical-flow .flow-stage {
-    border-left: 2px solid var(--green);
-    padding-left: 14px;
-  }
-  .analytical-flow .stage-number {
-    display: block;
-    color: var(--green);
-    font-size: 12px;
-    margin-bottom: 7px;
-  }
-  .analytical-flow h3 {
-    margin: 0;
-    font-size: 24px;
-  }
-  .analytical-flow .flow-arrow {
-    display: block;
-    font-size: 24px;
-    color: var(--green);
-    margin-top: 12px;
-  }
-  .analytical-flow .flow-content {
-    min-width: 0;
-  }
-  .analytical-flow p {
-    font-size: 14px;
-    line-height: 1.65;
-    margin: 0;
-  }
-  .analytical-flow .stage-intro {
-    margin-bottom: 12px;
-  }
-  .analytical-flow .quality-note {
-    margin-top: 10px;
-    color: var(--muted);
-  }
-  .analytical-flow code {
-    font-size: 14px;
-    white-space: pre;
-    background: transparent;
-  }
-  .analytical-flow table {
-    border-collapse: collapse;
-    width: 100%;
-    max-width: 360px;
-    font-size: 14px;
-    text-align: left;
-  }
-  .analytical-flow caption {
-    text-align: left;
-    color: var(--green);
-    font-size: 12px;
-    margin-bottom: 7px;
-  }
-  .analytical-flow th,
-  .analytical-flow td {
-    padding: 6px 8px;
-    border-bottom: 1px solid var(--line);
-  }
-  .analytical-flow th {
-    font-weight: 600;
-  }
-  .analytical-flow figcaption {
-    font-size: 13px;
-    line-height: 1.65;
-    margin-top: 12px;
-    color: var(--muted);
-  }
-  @container (max-width:540px) {
-    .analytical-flow li {
-      grid-template-columns: 1fr;
-      gap: 14px;
-      padding: 20px;
-    }
-    .analytical-flow .flow-stage {
-      display: flex;
-      align-items: baseline;
-      gap: 12px;
-    }
-    .analytical-flow .stage-number {
-      margin: 0;
-    }
-    .analytical-flow .flow-arrow {
-      margin: 0 0 0 auto;
-      font-size: 20px;
-    }
-  }
-</style>
