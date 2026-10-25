@@ -3,7 +3,7 @@ export const site = {
   url: 'https://jorgeaviles.net',
   email: 'jorge@jorgeaviles.net',
   description:
-    'Business analysis, data platforms, and applied research. Turning complex information into useful decisions and systems.',
+    'Business analysis, data engineering, applied research, and application development. Connecting complex information with practical decisions and useful systems.',
   headline: 'Turning complex information into useful decisions and systems.',
   github: 'https://github.com/jorgeaviles',
   linkedin: 'https://www.linkedin.com/in/jraviles/',
