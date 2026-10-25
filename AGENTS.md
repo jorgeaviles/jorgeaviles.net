@@ -1,6 +1,6 @@
 # Working on this website
 
-This is Jorge Aviles’s professional website: Astro static output, strict TypeScript, MDX content collections, Tailwind’s Vite integration, and one isolated React lab island. Preserve normal multipage routing. Do not add an application server, SSR adapter, SPA fallback, database, CMS, analytics, or external AI services without a new task requiring them.
+This is Jorge Avilés’s professional website: Astro static output, strict TypeScript, MDX content collections, Tailwind’s Vite integration, and one isolated React lab island. Preserve normal multipage routing. Do not add an application server, SSR adapter, SPA fallback, database, CMS, analytics, or external AI services without a new task requiring them.
 
 Use Node from `.nvmrc` and `npm ci`. Run `npm run verify` before publishing; install Chromium and WebKit with `npx playwright install chromium webkit` for local browser checks. `npm run dev` and `npm run preview` serve localhost. Deployment belongs to the gated GitHub Actions workflow; `npm run deploy` dispatches its remote-main workflow through GitHub CLI and never deploys local files.
 

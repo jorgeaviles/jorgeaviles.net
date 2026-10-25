@@ -1,5 +1,5 @@
 export const site = {
-  name: 'Jorge Aviles',
+  name: 'Jorge Avilés',
   url: 'https://jorgeaviles.net',
   email: 'jorge@jorgeaviles.net',
   description:

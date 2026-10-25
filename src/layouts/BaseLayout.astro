@@ -56,7 +56,7 @@ const structuredData = {
     <meta property="og:image:height" content="630" />
     <meta
       property="og:image:alt"
-      content="Jorge Aviles — Business analysis, data engineering, applied research, application development"
+      content={`${site.name} — Business analysis, data engineering, applied research, application development`}
     />
     <meta name="twitter:card" content="summary_large_image" />
     <title>{pageTitle}</title>
@@ -71,7 +71,7 @@ const structuredData = {
     </a>
     <div class="site-shell">
       <header class="site-header">
-        <a class="wordmark" href="/" aria-label="Jorge Aviles, home">
+        <a class="wordmark" href="/" aria-label={`${site.name}, home`}>
           <img
             class="monogram"
             src="/monogram.svg"
@@ -79,7 +79,7 @@ const structuredData = {
             width="35"
             height="42"
           />
-          <span>Jorge Aviles</span>
+          <span>{site.name}</span>
         </a>
         <nav aria-label="Main navigation">
           {navigation.map(({ label, href }) => (
@@ -95,7 +95,8 @@ const structuredData = {
       <footer class="site-footer">
         <div>
           <a class="footer-name" href="/">
-            Jorge Aviles<span aria-hidden="true">.</span>
+            {site.name}
+            <span aria-hidden="true">.</span>
           </a>
           <p>Thoughtful analysis. Useful systems.</p>
         </div>
@@ -108,7 +109,9 @@ const structuredData = {
           </a>
           <a href="/colophon/">Colophon</a>
         </div>
-        <p class="copyright">© {new Date().getFullYear()} Jorge Aviles</p>
+        <p class="copyright">
+          © {new Date().getFullYear()} {site.name}
+        </p>
       </footer>
     </div>
   </body>
