@@ -1148,3 +1148,85 @@ test('research methods retain paper authorship and the limited assistance attrib
   );
   await expectNoHorizontalOverflow(page);
 });
+
+test('About distinguishes academic education from compact technical coursework and provides a keyboard-accessible credential', async ({
+  page,
+  browserName,
+}) => {
+  await page.goto('/about/');
+  const education = page.getByRole('region', {
+    name: 'Education & Professional Development',
+    exact: true,
+  });
+  await expect(education).toHaveAttribute('id', 'education');
+  await expect(education.locator('.education-intro')).toContainText(
+    'My education in economics has been complemented by continuing technical coursework',
+  );
+  await expect(education.getByRole('heading', { level: 3 })).toHaveText([
+    'Academic Education',
+    'Selected Technical Coursework',
+  ]);
+  const academic = education.getByRole('region', {
+    name: 'Academic Education',
+    exact: true,
+  });
+  await expect(academic).toContainText('Bachelor of Arts in Economics');
+  await expect(academic).toContainText(
+    'Suffolk University · Boston, Massachusetts',
+  );
+  await expect(academic.locator('time')).toHaveAttribute('datetime', '2011');
+  const coursework = education.getByRole('region', {
+    name: 'Selected Technical Coursework',
+    exact: true,
+  });
+  await expect(coursework.locator('time')).toHaveText(['2015', '2024']);
+  for (const title of [
+    'Introduction to R Programming (DAT204x)',
+    'Intermediate Python',
+    'Developing Python Packages',
+    'Joining Data with pandas',
+    'Data Manipulation with pandas',
+    'Introduction to Python',
+  ]) {
+    await expect(coursework.getByText(title, { exact: true })).toBeVisible();
+  }
+  await expect(coursework).toContainText('Microsoft · edX');
+  await expect(coursework).toContainText('edX Honor Code Certificate');
+  await expect(coursework).toContainText('DataCamp');
+  const credential = coursework.getByRole('link', {
+    name: 'View credential for Introduction to R Programming (edX)',
+    exact: true,
+  });
+  await expect(credential).toHaveAttribute(
+    'href',
+    'https://verify.edx.org/cert/687402c185b84079a0fd00be4cd1a40a',
+  );
+  await expect(coursework.getByRole('link')).toHaveCount(1);
+  await expect(education).not.toContainText('Professional Certifications');
+  // Reach the link through sequential keyboard navigation, including the page's existing links.
+  for (let i = 0; i < 30; i++) {
+    await page.keyboard.press(
+      browserName === 'webkit' && process.platform === 'darwin'
+        ? 'Alt+Tab'
+        : 'Tab',
+    );
+    if (await credential.evaluate((link) => document.activeElement === link))
+      break;
+  }
+  await expect(credential).toBeFocused();
+  const outline = await credential.evaluate((link) => {
+    const style = getComputedStyle(link);
+    return { style: style.outlineStyle, width: style.outlineWidth };
+  });
+  expect(outline).toEqual({ style: 'solid', width: '2px' });
+  await expectNoHorizontalOverflow(page);
+  const placement = await page.evaluate(() => {
+    const experience = document.querySelector('.editorial-grid')!;
+    const educationSection = document.querySelector('#education')!;
+    return !!(
+      experience.compareDocumentPosition(educationSection) &
+      Node.DOCUMENT_POSITION_FOLLOWING
+    );
+  });
+  expect(placement).toBe(true);
+});
