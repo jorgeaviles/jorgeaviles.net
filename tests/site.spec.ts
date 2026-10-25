@@ -1069,10 +1069,27 @@ test('professional modeling explains the target, evaluation, and proposed integr
   ).toContainText('not a production-approved or deployed decision model');
   await expect(article).toContainText('not a label for fraud');
   await expect(article).toContainText('not present a verified winning model');
+  for (const boundary of [
+    'a recorded zero counts as positive',
+    'ten folds grouped by BBO',
+    'pandas supports fold-metric summaries',
+    'Completed evaluation is unverified',
+    'exports contain no execution outputs',
+    'label-name mismatch',
+    'not an estimate of recoverable funds',
+  ]) {
+    await expect(article).toContainText(boundary);
+  }
+  const candidates = article.getByRole('table');
+  await expect(candidates.getByRole('row')).toHaveCount(6);
+  await expect(
+    candidates.getByRole('row').filter({ hasText: 'CatBoost' }),
+  ).toContainText('disabled');
+
   for (const method of [
     'logistic regression',
     'Random Forest',
-    'gradient-boosted trees',
+    'Gradient-boosted trees',
     'LightGBM',
     'ROC AUC',
     'Brier score',
@@ -1113,4 +1130,21 @@ test('professional modeling explains the target, evaluation, and proposed integr
   await expect(page.getByRole('heading', { level: 1 })).toHaveText(
     'Developing machine-learning models for audit prioritization',
   );
+});
+
+test('research methods retain paper authorship and the limited assistance attribution', async ({
+  page,
+}) => {
+  await page.goto('/research/');
+  const entry = page.locator('.research-entry');
+  await expect(entry).toContainText('J. Avilés');
+  await expect(entry).toContainText('Anand N. Asthana');
+  await expect(entry).toContainText('randomized ten-fold cross-validation');
+  await expect(entry).toContainText(
+    'not a record of my individual technical tasks',
+  );
+  await expect(entry).toContainText(
+    'does not establish that I implemented algorithms',
+  );
+  await expectNoHorizontalOverflow(page);
 });
