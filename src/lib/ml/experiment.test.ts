@@ -4,6 +4,7 @@ import {
   labReducer,
   samples,
   lessonFromHash,
+  MAX_UPDATES,
 } from './experiment';
 import { loss, step } from './models';
 import { boundary, lossChange } from './presentation';
@@ -20,9 +21,8 @@ describe('lesson controller', () => {
     expect(state.linear.history.at(-1)?.loss).toBe(
       loss(samples.linear, model, false),
     );
-    expect(state.guidance).toEqual([false, true, true]);
   });
-  it('preserves independent histories, selections and dismissed hints on navigation', () => {
+  it('preserves independent histories and selections on navigation', () => {
     let s = labReducer(createLabState(), { type: 'step' });
     s = labReducer(s, { type: 'select', key: 'linear', id: 'TASK-8' });
     const linear = s.linear;
@@ -37,13 +37,10 @@ describe('lesson controller', () => {
     expect(s.logistic).toBe(logistic);
     s = labReducer(s, { type: 'navigate', lesson: 0 });
     expect(s.linear).toBe(linear);
-    expect(s.guidance).toEqual([false, false, false]);
     expect(s.selected).toMatchObject({
       linear: 'TASK-8',
       validation: 'SYN-60',
     });
-    s = labReducer(s, { type: 'guidance', visible: true });
-    expect(s.guidance).toEqual([true, false, false]);
   });
   it('distinguishes model reset, full reset and held-out test lock', () => {
     let s = labReducer(createLabState(), { type: 'step' });
@@ -63,7 +60,16 @@ describe('lesson controller', () => {
     s = labReducer(s, { type: 'reset-all' });
     expect(s.finished).toBeNull();
     expect(s.linear.steps).toBe(0);
-    expect(s.guidance).toEqual([false, false, true]);
+  });
+  it('stops continuous training at the existing update cap', () => {
+    let s = labReducer(createLabState(), { type: 'navigate', lesson: 1 });
+    s = labReducer(s, { type: 'toggle-running' });
+    for (let i = 0; i < MAX_UPDATES; i++) s = labReducer(s, { type: 'step' });
+    expect(s.logistic.steps).toBe(MAX_UPDATES);
+    expect(s.running).toBe(false);
+    const capped = s.logistic;
+    s = labReducer(s, { type: 'step' });
+    expect(s.logistic).toBe(capped);
   });
   it('manual exploration starts a trace and actual training replaces its status', () => {
     let s = labReducer(createLabState(), {

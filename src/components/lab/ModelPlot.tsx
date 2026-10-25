@@ -1,5 +1,14 @@
-import type { Boundary, DisplayRow } from '../../lib/ml/presentation';
-import { fmt, pct } from '../../lib/ml/presentation';
+import type {
+  Boundary,
+  DisplayRow,
+  ProbabilityCell,
+} from '../../lib/ml/presentation';
+import {
+  fmt,
+  pct,
+  probabilityColor,
+  reviewOutcome,
+} from '../../lib/ml/presentation';
 import type { Kind } from '../../lib/ml/experiment';
 type Props = {
   kind: Kind;
@@ -10,6 +19,7 @@ type Props = {
   ends: [number, number];
   boundary: Boundary;
   population: string;
+  field: ProbabilityCell[];
 };
 export function ModelPlot({
   kind,
@@ -20,6 +30,7 @@ export function ModelPlot({
   ends,
   boundary,
   population,
+  field,
 }: Props) {
   const logistic = kind === 'logistic';
   const x = (v: number) => 55 + v * 50,
@@ -32,7 +43,7 @@ export function ModelPlot({
     <figure className="model-figure">
       <figcaption>
         {logistic
-          ? `${points.length} ${population} examples · 50% estimated-probability boundary`
+          ? `${points.length} ${population} examples · estimated additional-review probability`
           : '24 synthetic task observations · Green line = predicted time'}
       </figcaption>
       <svg
@@ -44,12 +55,12 @@ export function ModelPlot({
       >
         <title id="model-chart-title">
           {logistic
-            ? 'Classification points and decision boundary'
+            ? 'Fictional task-review probabilities and 50% decision boundary'
             : 'Observed completion times, prediction line and residuals'}
         </title>
         <desc id="model-chart-description">
           {logistic
-            ? 'Circles mark positive outcomes; triangles mark negative outcomes. Use Inspect example to select any point with a keyboard.'
+            ? 'Background tiles show current model estimates at their centers, not calibrated real-world probabilities. Circles mean additional review needed; triangles mean no additional review needed. The dashed line marks 50%. Use Inspect example to select any point with a keyboard.'
             : 'Dots are observations. Dashed vertical segments are prediction errors. The inspected observation is emphasized. The untrained prediction is zero minutes.'}
         </desc>
         <defs>
@@ -57,6 +68,28 @@ export function ModelPlot({
             <rect x="47" y="17" width="516" height="326" />
           </clipPath>
         </defs>
+        {logistic && (
+          <g
+            aria-hidden="true"
+            data-testid="probability-field"
+            shapeRendering="crispEdges"
+            pointerEvents="none"
+          >
+            {field.map((cell, i) => (
+              <rect
+                key={i}
+                x={x(cell.x)}
+                y={y(cell.y + cell.size)}
+                width={cell.size * 50}
+                height={cell.size * 30}
+                fill={probabilityColor(cell.p)}
+                data-x={cell.x + cell.size / 2}
+                data-y={cell.y + cell.size / 2}
+                data-probability={cell.p}
+              />
+            ))}
+          </g>
+        )}
         <path d="M55 25V335H570" stroke="#62675f" fill="none" />
         {[0, 2, 4, 6, 8, 10].map((v) => (
           <g key={v}>
@@ -69,18 +102,40 @@ export function ModelPlot({
           </g>
         ))}
         <text x="315" y="385" textAnchor="middle">
-          {logistic
-            ? 'Feature 1 (synthetic units)'
-            : 'Task complexity (points)'}
+          {logistic ? 'Task complexity (0–10)' : 'Task complexity (points)'}
         </text>
         <text transform="translate(16 180) rotate(-90)" textAnchor="middle">
           {logistic
-            ? 'Feature 2 (synthetic units)'
+            ? 'Information uncertainty (0–10)'
             : 'Completion time (minutes)'}
         </text>
         <g clipPath="url(#lab-plot-window)">
+          {logistic && boundary.kind === 'visible' && (
+            <line
+              data-testid="decision-boundary"
+              x1={x(boundary.points[0][0])}
+              y1={y(boundary.points[0][1])}
+              x2={x(boundary.points[1][0])}
+              y2={y(boundary.points[1][1])}
+              stroke="#254f3e"
+              strokeWidth="2.5"
+              strokeDasharray="6 4"
+            />
+          )}
           {points.map((p) => (
-            <g key={p.id} className="plot-point" onClick={() => onSelect(p.id)}>
+            <g
+              key={p.id}
+              className="plot-point"
+              data-record-id={p.id}
+              data-probability={p.p}
+              onClick={() => onSelect(p.id)}
+            >
+              {logistic && (
+                <title>
+                  {p.id}: complexity {fmt(p.x[0])}, uncertainty {fmt(p.x[1])};{' '}
+                  {reviewOutcome(p.y)}; estimated probability {pct(p.p)}.
+                </title>
+              )}
               {!logistic && (
                 <line
                   x1={x(p.x[0])}
@@ -131,17 +186,6 @@ export function ModelPlot({
               strokeDasharray={initial ? '7 4' : undefined}
             />
           )}
-          {logistic && boundary.kind === 'visible' && (
-            <line
-              data-testid="decision-boundary"
-              x1={x(boundary.points[0][0])}
-              y1={y(boundary.points[0][1])}
-              x2={x(boundary.points[1][0])}
-              y2={y(boundary.points[1][1])}
-              stroke="#254f3e"
-              strokeWidth="2.5"
-            />
-          )}
         </g>
         {!logistic && initial && (
           <text
@@ -156,9 +200,20 @@ export function ModelPlot({
       </svg>
       <p className="plot-key">
         {logistic
-          ? '● positive outcome · △ negative outcome · outlined point = inspected example.'
+          ? '● Additional review needed · △ No additional review needed. Synthetic outcomes; outline = inspected task.'
           : `Dots = observations · dashed verticals = residuals (prediction errors). ${initial ? 'The initial dashed green prediction is zero and overlaps the bottom axis.' : 'Solid green line = current predicted time.'}`}
       </p>
+      {logistic && (
+        <div className="probability-legend">
+          <span>Lower estimated probability</span>
+          <span className="probability-swatch" aria-hidden="true" />
+          <span>Higher estimated probability</span>
+          <small>
+            Model estimates, not calibrated real-world probabilities. The dashed
+            line marks 50%.
+          </small>
+        </div>
+      )}
       {logistic && boundary.kind === 'constant' && (
         <p className="boundary-state">
           No unique 50% boundary: every example has an estimated probability of{' '}

@@ -1,5 +1,5 @@
 import type { DisplayRow } from '../../lib/ml/presentation';
-import { fmt, pct } from '../../lib/ml/presentation';
+import { fmt, pct, reviewOutcome } from '../../lib/ml/presentation';
 import type { Experiment, Kind, SelectionKey } from '../../lib/ml/experiment';
 import { regressionScale } from '../../lib/ml/experiment';
 import type { LabController } from './useLabExperiment';
@@ -45,28 +45,47 @@ export function RecordInspector({
       <p className="observed-value">
         {selected.id} · Observed{' '}
         {logistic
-          ? selected.y
-            ? 'positive'
-            : 'negative'
+          ? `synthetic outcome: ${reviewOutcome(selected.y)}`
           : `${fmt(selected.y)} minutes`}
       </p>
-      <ol className="calculation-flow" aria-label="Features to prediction">
-        <li>
-          <span>Features</span>
-          <strong>{selected.x.map(fmt).join(', ')}</strong>
-        </li>
-        <li>
-          <span>Weighted score z</span>
-          <strong>{fmt(selected.z)}</strong>
-        </li>
-        <li>
-          <span>{logistic ? 'Sigmoid → estimate' : 'Predicted minutes'}</span>
-          <strong>{logistic ? pct(selected.p) : fmt(selected.z)}</strong>
-        </li>
-      </ol>
+      {logistic ? (
+        <dl className="task-calculation" aria-label="Selected task prediction">
+          <div>
+            <dt>Task complexity</dt>
+            <dd>{fmt(selected.x[0])} / 10</dd>
+          </div>
+          <div>
+            <dt>Information uncertainty</dt>
+            <dd>{fmt(selected.x[1])} / 10</dd>
+          </div>
+          <div>
+            <dt>Estimated probability of additional review</dt>
+            <dd data-testid="selected-probability">{pct(selected.p)}</dd>
+          </div>
+          <div>
+            <dt>Weighted score z</dt>
+            <dd>{fmt(selected.z)}</dd>
+          </div>
+        </dl>
+      ) : (
+        <ol className="calculation-flow" aria-label="Features to prediction">
+          <li>
+            <span>Features</span>
+            <strong>{selected.x.map(fmt).join(', ')}</strong>
+          </li>
+          <li>
+            <span>Weighted score z</span>
+            <strong>{fmt(selected.z)}</strong>
+          </li>
+          <li>
+            <span>Predicted minutes</span>
+            <strong>{fmt(selected.z)}</strong>
+          </li>
+        </ol>
+      )}
       {logistic && (
         <p className="inspector-note">
-          A probability estimate, not an assessed calibration claim.
+          Fictional scores; this estimate is not calibrated against real work.
         </p>
       )}
       <details>
@@ -85,8 +104,8 @@ export function RecordInspector({
           <p>
             σ(z) = 1 / (1 + exp(−z)) = {pct(selected.p)}. Actual class:{' '}
             {selected.y}. Predicted class at 50%:{' '}
-            {selected.p >= 0.5 ? 'positive' : 'negative'}. The decision policy
-            in Evaluation is separate from these model parameters.
+            {reviewOutcome(selected.p >= 0.5 ? 1 : 0)}. The decision policy in
+            Evaluation is separate from these model parameters.
           </p>
         ) : (
           <p>
