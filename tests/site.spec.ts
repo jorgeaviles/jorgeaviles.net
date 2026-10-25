@@ -792,20 +792,29 @@ test('page metadata, canonical URLs, and identity remain coherent without third-
     'Jorge Avilés',
   );
   await expect(page.locator('.hero-description')).toContainText(
-    'I’m an Auditor Data Analyst',
-  );
-  await expect(page.locator('.hero-description')).not.toContainText(
-    'Senior Auditor',
+    'I’m a Senior Auditor Data Analyst',
   );
   await page.goto('/about/');
   await expect(page.locator('main')).toContainText(
-    'Auditor Data Analyst · current position',
+    'Senior Auditor Data Analyst · June 2020–present',
   );
-  await expect(page.locator('main')).toContainText(
-    'CPCS employment: June 2020–present.',
+  for (const path of [
+    '/work/analytical-applications/',
+    '/work/analytical-data-platforms/',
+    '/work/machine-learning-audit-prioritization/',
+  ]) {
+    await expect(
+      page.locator(`article a[href="${path}"], .prose a[href="${path}"]`),
+    ).toHaveCount(1);
+  }
+  await expect(page.locator('.prose')).toContainText(
+    'grouped cross-validation',
   );
-  await expect(page.locator('main')).not.toContainText(
-    'Senior Auditor Data Analyst',
+  await expect(page.locator('.prose')).toContainText(
+    'modeling remains experimental',
+  );
+  await expect(page.locator('.prose')).toContainText(
+    'Integrating predictive scores into the Audit Portal is proposed',
   );
   await page.goto('/contact/');
   await expect(page.locator('meta[name="description"]')).toHaveAttribute(
@@ -997,7 +1006,7 @@ test('recruiter, engineering, and admissions paths expose evidence without ambig
 }) => {
   await page.goto('/');
   await expect(page.locator('.hero-description')).toContainText(
-    'Auditor Data Analyst',
+    'Senior Auditor Data Analyst',
   );
   await page
     .getByRole('link', { name: 'Experience & education', exact: true })
