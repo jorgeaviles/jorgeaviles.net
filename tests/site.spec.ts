@@ -124,7 +124,7 @@ test('navigation and case-study links reach their intended pages', async ({
     await expect(page.getByRole('heading', { level: 1 })).toBeVisible();
   }
   await page
-    .getByRole('link', { name: 'Jorge Aviles, home', exact: true })
+    .getByRole('link', { name: 'Jorge Avilés, home', exact: true })
     .click();
   await expect(page).toHaveURL(/\/$/);
   await page
@@ -766,15 +766,60 @@ test('page metadata, canonical URLs, and identity remain coherent without third-
     const graph = JSON.parse(
       await page.locator('script[type="application/ld+json"]').innerText(),
     )['@graph'];
+    expect(graph[0].name).toBe('Jorge Avilés');
+    expect(graph[1].name).toBe('Jorge Avilés');
+    await expect(page.locator('.wordmark')).toHaveAccessibleName(
+      'Jorge Avilés, home',
+    );
+    await expect(page.locator('.wordmark')).toContainText('Jorge Avilés');
+    await expect(page.locator('.site-footer')).toContainText('Jorge Avilés');
+    await expect(page.locator('.copyright')).toContainText('Jorge Avilés');
+    await expect(page.locator('meta[property="og:image:alt"]')).toHaveAttribute(
+      'content',
+      /^Jorge Avilés —/,
+    );
     expect(graph[0].sameAs).toEqual([
       'https://github.com/jorgeaviles',
       'https://www.linkedin.com/in/jraviles/',
     ]);
     expect(graph[1].description).toContain('application development');
     if (route.path.startsWith('/work/') && route.path !== '/work/') {
-      await expect(page).toHaveTitle(`${route.heading} — Jorge Aviles`);
+      await expect(page).toHaveTitle(`${route.heading} — Jorge Avilés`);
     }
   }
+  await page.goto('/');
+  await expect(page.locator('.hero-main .eyebrow')).toContainText(
+    'Jorge Avilés',
+  );
+  await expect(page.locator('.hero-description')).toContainText(
+    'I’m an Auditor Data Analyst',
+  );
+  await expect(page.locator('.hero-description')).not.toContainText(
+    'Senior Auditor',
+  );
+  await page.goto('/about/');
+  await expect(page.locator('main')).toContainText(
+    'Auditor Data Analyst · current position',
+  );
+  await expect(page.locator('main')).toContainText(
+    'CPCS employment: June 2020–present.',
+  );
+  await expect(page.locator('main')).not.toContainText(
+    'Senior Auditor Data Analyst',
+  );
+  await page.goto('/contact/');
+  await expect(page.locator('meta[name="description"]')).toHaveAttribute(
+    'content',
+    /^Get in touch with Jorge Avilés /,
+  );
+  await page.goto('/research/');
+  await expect(page.locator('main')).toContainText('J. Avilés');
+  await expect(page.locator('main')).toContainText('Anand N. Asthana');
+  const social = await request.get('/social-preview.svg');
+  expect(await social.text()).toContain('Jorge Avilés</text>');
+  const png = await (await request.get('/social-preview.png')).body();
+  expect(png.subarray(1, 4).toString()).toBe('PNG');
+  expect([png.readUInt32BE(16), png.readUInt32BE(20)]).toEqual([1200, 630]);
   await page.goto('/lab/');
   await page
     .getByRole('navigation', { name: 'Lab lessons' })
@@ -952,7 +997,7 @@ test('recruiter, engineering, and admissions paths expose evidence without ambig
 }) => {
   await page.goto('/');
   await expect(page.locator('.hero-description')).toContainText(
-    'Senior Auditor Data Analyst',
+    'Auditor Data Analyst',
   );
   await page
     .getByRole('link', { name: 'Experience & education', exact: true })

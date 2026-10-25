@@ -1,4 +1,4 @@
-# Jorge Aviles · Professional website
+# Jorge Avilés · Professional website
 
 A quiet, content-first professional site connecting business analysis, data platforms, applied research, and practical technology. Canonical URL: <https://jorgeaviles.net>.
 
