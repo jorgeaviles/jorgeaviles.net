@@ -589,7 +589,7 @@ test('approved case study stays consistent across listings and renders a static 
   }
   await expect(
     page.getByText(
-      'I am the sole hands-on developer across the analytical notebooks, warehouse, and Audit Portal.',
+      'I am the sole hands-on developer across the analytical notebooks, data platform, and Audit Portal.',
       { exact: false },
     ),
   ).toBeVisible();
@@ -687,4 +687,94 @@ test('data platform case study shares metadata and explains a static fictional d
     path: screenshot,
     contentType: 'image/png',
   });
+});
+
+test('recent technical work leads both listings and related navigation', async ({
+  page,
+}) => {
+  const ordered = [
+    '/work/analytical-data-platforms/',
+    '/work/analytical-applications/',
+    '/work/applied-predictive-research/',
+  ];
+  for (const route of ['/', '/work/']) {
+    await page.goto(route);
+    expect(
+      await page
+        .locator('.work-row')
+        .evaluateAll((links) => links.map((link) => link.getAttribute('href'))),
+    ).toEqual(ordered);
+  }
+  await page.goto('/work/applied-predictive-research/');
+  expect(
+    await page
+      .locator('.related-work a')
+      .evaluateAll((links) => links.map((link) => link.getAttribute('href'))),
+  ).toEqual(ordered.slice(0, 2));
+  await expect(page.locator('article')).toContainText(
+    'Asthana is the paper’s author.',
+  );
+});
+
+test('page metadata, canonical URLs, and identity remain coherent without third-party requests', async ({
+  page,
+  request,
+}) => {
+  const external: string[] = [];
+  page.on('request', (r) => {
+    if (!new URL(r.url()).hostname.match(/^(127\.0\.0\.1|localhost)$/))
+      external.push(r.url());
+  });
+  for (const route of routes) {
+    await page.goto(route.path);
+    const description = await page
+      .locator('meta[name="description"]')
+      .getAttribute('content');
+    expect(description?.length).toBeGreaterThan(25);
+    await expect(
+      page.locator('meta[property="og:description"]'),
+    ).toHaveAttribute('content', description!);
+    await expect(page.locator('meta[property="og:title"]')).toHaveAttribute(
+      'content',
+      await page.title(),
+    );
+    const canonical = `https://jorgeaviles.net${route.path}`;
+    await expect(page.locator('link[rel="canonical"]')).toHaveAttribute(
+      'href',
+      canonical,
+    );
+    await expect(page.locator('meta[property="og:url"]')).toHaveAttribute(
+      'content',
+      canonical,
+    );
+    await expect(page.locator('meta[property="og:image"]')).toHaveAttribute(
+      'content',
+      'https://jorgeaviles.net/social-preview.png',
+    );
+    const graph = JSON.parse(
+      await page.locator('script[type="application/ld+json"]').innerText(),
+    )['@graph'];
+    expect(graph[0].sameAs).toEqual([
+      'https://github.com/jorgeaviles',
+      'https://www.linkedin.com/in/jraviles/',
+    ]);
+    expect(graph[1].description).toContain('application development');
+    if (route.path.startsWith('/work/') && route.path !== '/work/') {
+      await expect(page).toHaveTitle(`${route.heading} — Jorge Aviles`);
+    }
+  }
+  await page.goto('/lab/');
+  await page
+    .getByRole('navigation', { name: 'Lab lessons' })
+    .scrollIntoViewIfNeeded();
+  await page.waitForFunction(() =>
+    Array.from(document.querySelectorAll('astro-island')).every(
+      (island) => !island.hasAttribute('ssr'),
+    ),
+  );
+  expect(external).toEqual([]);
+  const sitemap = await request.get('/sitemap-0.xml');
+  const xml = await sitemap.text();
+  for (const route of routes)
+    expect(xml).toContain(`https://jorgeaviles.net${route.path}`);
 });

@@ -1,7 +1,7 @@
 <svg xmlns="http://www.w3.org/2000/svg" width="1200" height="630" viewBox="0 0 1200 630">
   <rect width="1200" height="630" fill="#f7f6f2"/>
   <path d="M72 146H1128M72 550H1128" stroke="#dcded5"/>
-  <g fill="#254f3e"><text x="72" y="102" font-family="Georgia,serif" font-size="48">ja.</text><text x="72" y="212" font-family="Arial,sans-serif" font-size="17" letter-spacing="3">BUSINESS ANALYSIS · DATA PLATFORMS · APPLIED RESEARCH</text></g>
+  <g fill="#254f3e"><text x="72" y="102" font-family="Georgia,serif" font-size="48">ja.</text><text x="72" y="212" font-family="Arial,sans-serif" font-size="17" letter-spacing="3">BUSINESS ANALYSIS · DATA ENGINEERING</text><text x="72" y="246" font-family="Arial,sans-serif" font-size="17" letter-spacing="3">APPLIED RESEARCH · APPLICATION DEVELOPMENT</text></g>
   <g fill="#272d29" font-family="Georgia,serif" font-size="66"><text x="72" y="310">Turning complex information</text><text x="72" y="394">into useful decisions and systems.</text></g>
   <text x="72" y="494" fill="#254f3e" font-family="Arial,sans-serif" font-size="25">Jorge Aviles</text>
   <text x="1128" y="593" fill="#62675f" text-anchor="end" font-family="Arial,sans-serif" font-size="19">jorgeaviles.net</text>
