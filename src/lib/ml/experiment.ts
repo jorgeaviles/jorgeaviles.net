@@ -53,7 +53,6 @@ export type LabState = {
   running: boolean;
   population: Population;
   selected: Record<SelectionKey, string>;
-  guidance: [boolean, boolean, boolean];
   policy: 'budget' | 'threshold';
   budget: number;
   threshold: number;
@@ -71,7 +70,6 @@ export function createLabState(): LabState {
       training: fixtures.train[0].id,
       validation: fixtures.validation[0].id,
     },
-    guidance: [true, true, true],
     policy: 'budget',
     budget: 6,
     threshold: 0.5,
@@ -88,27 +86,15 @@ export type LabAction =
   | { type: 'reset-all' }
   | { type: 'population'; value: Population }
   | { type: 'select'; key: SelectionKey; id: string }
-  | { type: 'guidance'; visible: boolean }
   | { type: 'policy'; value: 'budget' | 'threshold' }
   | { type: 'budget'; value: number }
   | { type: 'threshold'; value: number }
   | { type: 'test' };
-const hideGuidance = (state: LabState) =>
-  state.guidance.map((v, i) =>
-    i === state.lesson ? false : v,
-  ) as LabState['guidance'];
 /** Model, counter and historical loss advance atomically from the same previous state. */
 export function labReducer(state: LabState, action: LabAction): LabState {
   const kind: Kind = state.lesson === 0 ? 'linear' : 'logistic';
   if (action.type === 'navigate')
     return { ...state, lesson: action.lesson, running: false };
-  if (action.type === 'guidance')
-    return {
-      ...state,
-      guidance: state.guidance.map((v, i) =>
-        i === state.lesson ? action.visible : v,
-      ) as LabState['guidance'],
-    };
   if (action.type === 'population')
     return { ...state, population: action.value };
   if (action.type === 'select')
@@ -120,7 +106,6 @@ export function labReducer(state: LabState, action: LabAction): LabState {
     return {
       ...createLabState(),
       lesson: state.lesson,
-      guidance: state.guidance,
     };
   if (state.finished) return state;
   switch (action.type) {
@@ -150,14 +135,13 @@ export function labReducer(state: LabState, action: LabAction): LabState {
       return {
         ...state,
         [kind]: next,
-        guidance: hideGuidance(state),
         running: state.running && next.steps < MAX_UPDATES,
       };
     }
     case 'toggle-running':
       return state.lesson === 2 || state[kind].steps >= MAX_UPDATES
         ? state
-        : { ...state, running: !state.running, guidance: hideGuidance(state) };
+        : { ...state, running: !state.running };
     case 'rate':
       return { ...state, [kind]: { ...state[kind], rate: action.value } };
     case 'parameters': {
@@ -183,7 +167,7 @@ export function labReducer(state: LabState, action: LabAction): LabState {
     case 'reset-model':
       return { ...state, [kind]: createExperiment(kind), running: false };
     case 'policy':
-      return { ...state, policy: action.value, guidance: hideGuidance(state) };
+      return { ...state, policy: action.value };
     case 'budget':
       return {
         ...state,
@@ -191,13 +175,11 @@ export function labReducer(state: LabState, action: LabAction): LabState {
           0,
           Math.min(samples.validation.length, Math.floor(action.value)),
         ),
-        guidance: hideGuidance(state),
       };
     case 'threshold':
       return {
         ...state,
         threshold: Math.max(0, Math.min(1, action.value)),
-        guidance: hideGuidance(state),
       };
     case 'test':
       return {

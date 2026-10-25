@@ -1,3 +1,4 @@
+import { useMemo } from 'react';
 import { loss, score, transform } from '../../lib/ml/models';
 import {
   fixtures,
@@ -11,10 +12,9 @@ import {
   displayRows,
   boundary,
   fmt,
-  lossChange,
+  probabilityField,
 } from '../../lib/ml/presentation';
 import type { LabController } from './useLabExperiment';
-import { Guidance } from './Guidance';
 import { ModelPlot } from './ModelPlot';
 import { LossHistory } from './LossHistory';
 import { RecordInspector } from './RecordInspector';
@@ -38,53 +38,82 @@ export function TrainingLesson(controller: LabController) {
     selected = rows.find((r) => r.id === state.selected[key]) ?? rows[0],
     current = experiment.history.at(-1)!,
     previous = experiment.history.at(-2) ?? current,
-    change = lossChange(previous.loss, current.loss),
+    delta = current.loss - previous.loss,
     disabled = !!state.finished || experiment.steps >= MAX_UPDATES;
+  const field = useMemo(
+    () => (logistic ? probabilityField(m, classificationScale) : []),
+    [logistic, m],
+  );
   return (
     <div className="ml-workspace">
       <div className="ml-primary">
-        <Guidance {...controller}>
-          <div className="ml-actions">
-            <button
-              disabled={disabled || state.running}
-              onClick={() => dispatch({ type: 'step' })}
-            >
-              Train one step
-            </button>
-            <button
-              disabled={disabled}
-              aria-pressed={state.running}
-              onClick={() => dispatch({ type: 'toggle-running' })}
-            >
-              {state.running ? 'Pause' : 'Train'}
-            </button>
-            <button
-              disabled={!!state.finished}
-              onClick={() => dispatch({ type: 'reset-model' })}
-            >
-              Reset this model
-            </button>
-          </div>
-        </Guidance>
+        <div className="ml-actions">
+          <button
+            disabled={disabled || state.running}
+            onClick={() => dispatch({ type: 'step' })}
+          >
+            Train one step
+          </button>
+          <button
+            disabled={disabled}
+            aria-pressed={state.running}
+            onClick={() => dispatch({ type: 'toggle-running' })}
+          >
+            {state.running ? 'Pause' : 'Train'}
+          </button>
+          <button
+            disabled={!!state.finished}
+            onClick={() => dispatch({ type: 'reset-model' })}
+          >
+            Reset
+          </button>
+        </div>
         <p
           className="training-feedback"
           role="status"
           aria-live={state.running ? 'off' : 'polite'}
         >
-          <strong>
-            Step {experiment.steps} · {logistic ? 'Log loss' : 'MSE'}{' '}
-            {fmt(previous.loss)} → {fmt(current.loss)}
-          </strong>
-          <span>
-            {experiment.steps
-              ? `Error ${change.direction}${change.percent === null ? '' : ` ${change.percent.toFixed(1)}%`} since the previous step.`
-              : experiment.mode === 'manual'
-                ? 'Manual parameters; a new loss trace starts here.'
-                : 'Zero weights and bias. Train to make the first update.'}
-          </span>
+          Step {experiment.steps} · {logistic ? 'Log loss' : 'MSE'}{' '}
+          {fmt(current.loss)} ·{' '}
+          {experiment.steps
+            ? `${delta < 0 ? '↓' : delta > 0 ? '↑' : 'Unchanged'} ${fmt(Math.abs(delta))} since previous step`
+            : experiment.mode === 'manual'
+              ? 'Manual parameters · new baseline'
+              : 'Model not trained'}
         </p>
         {experiment.steps >= MAX_UPDATES && (
-          <p>Paused at 1,000 updates. Reset this model to start again.</p>
+          <p>Paused at 1,000 updates. Reset to start again.</p>
+        )}
+        <dl
+          className="learned-parameters"
+          aria-label="Current model parameters"
+        >
+          {(logistic
+            ? [
+                ['Complexity weight', m.w[0]],
+                ['Uncertainty weight', m.w[1]],
+                ['Bias', m.b],
+              ]
+            : [
+                ['Slope (min/point)', m.w[0] / regressionScale.scale[0]],
+                [
+                  'Intercept (min)',
+                  m.b -
+                    (m.w[0] * regressionScale.mean[0]) /
+                      regressionScale.scale[0],
+                ],
+              ]
+          ).map(([label, value]) => (
+            <div key={label}>
+              <dt>{label}</dt>
+              <dd>{fmt(Number(value))}</dd>
+            </div>
+          ))}
+        </dl>
+        {logistic && (
+          <p className="parameter-note">
+            Weights act on training-standardized scores.
+          </p>
         )}
         {logistic && (
           <label className="population-control">
@@ -122,6 +151,7 @@ export function TrainingLesson(controller: LabController) {
             logistic ? boundary(m, classificationScale) : { kind: 'outside' }
           }
           population={state.population}
+          field={field}
         />
       </div>
       <aside className="ml-controls">
@@ -157,7 +187,11 @@ export function TrainingLesson(controller: LabController) {
           )}
           {[...m.w, m.b].map((value, i) => (
             <label key={i}>
-              {i === m.w.length ? 'Bias' : `Weight ${i + 1}`}
+              {i === m.w.length
+                ? 'Bias'
+                : logistic
+                  ? ['Complexity weight', 'Uncertainty weight'][i]
+                  : `Weight ${i + 1}`}
               <input
                 type="number"
                 min="-100"

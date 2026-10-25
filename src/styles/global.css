@@ -1169,38 +1169,73 @@ strong {
   background: var(--green);
   color: white;
 }
-.lab-guidance-row {
-  display: flex;
-  align-items: start;
-  gap: 0.6rem;
-}
-.lab-guidance {
+.training-feedback {
+  margin: 0.5rem 0;
   font-size: 0.85rem;
   line-height: 1.5;
-  border-left: 2px solid var(--green);
-  padding: 0.3rem 0.65rem;
-  flex: 1;
-}
-.lab-guidance[hidden] {
-  display: none;
-}
-.learning-lab .lab-help {
-  font-size: 0.8rem;
-  padding: 0.35rem;
-  min-width: 44px;
-  margin-left: auto;
-}
-.training-feedback {
-  padding: 0.55rem 0.7rem;
-  border-left: 3px solid var(--green);
-  background: var(--light-green);
-  margin: 0.7rem 0;
   font-variant-numeric: tabular-nums;
 }
-.training-feedback strong,
-.training-feedback span {
-  display: block;
-  font-size: 0.88rem;
+.learned-parameters {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem 1.2rem;
+  margin: 0.65rem 0 0.4rem;
+  font-size: 0.8rem;
+  font-variant-numeric: tabular-nums;
+}
+.learned-parameters dt {
+  color: var(--muted);
+}
+.learned-parameters dd {
+  margin: 0.15rem 0 0;
+  font-weight: 600;
+}
+.parameter-note {
+  margin: 0 0 0.7rem;
+  font-size: 0.75rem;
+  color: var(--muted);
+}
+.probability-legend {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 64px minmax(0, 1fr);
+  align-items: center;
+  gap: 0.35rem 0.5rem;
+  font-size: 0.75rem;
+  line-height: 1.5;
+}
+.probability-swatch {
+  width: 64px;
+  height: 12px;
+  border: 1px solid var(--line);
+  background: linear-gradient(to right, rgb(247, 246, 242), rgb(151, 184, 161));
+}
+.probability-legend small {
+  grid-column: 1 / -1;
+  font-size: inherit;
+  color: var(--muted);
+}
+.probability-legend span:nth-of-type(3) {
+  text-align: right;
+}
+.task-calculation {
+  margin: 0.7rem 0;
+  font-size: 0.85rem;
+  font-variant-numeric: tabular-nums;
+}
+.task-calculation div {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 0.2rem 0.5rem;
+  margin-block: 0.5rem;
+}
+.task-calculation dt {
+  flex: 1;
+  min-width: 120px;
+}
+.task-calculation dd {
+  margin: 0;
+  font-weight: 600;
 }
 .learning-lab .population-control {
   display: flex;
@@ -1416,6 +1451,9 @@ strong {
   }
 }
 @media (max-width: 480px) {
+  .ml-plot text {
+    font-size: 18px;
+  }
   .lab-page-intro {
     padding-block: 1.2rem 0.5rem;
   }
@@ -1466,15 +1504,4 @@ strong {
   .essential-metrics dd {
     font-size: 1rem;
   }
-}
-
-.lab-guidance-content {
-  flex: 1;
-  min-width: 0;
-}
-.lab-guidance-row:has(.lab-guidance[hidden]) {
-  align-items: center;
-}
-.lab-guidance-row:has(.lab-guidance[hidden]) .ml-actions {
-  margin: 0;
 }

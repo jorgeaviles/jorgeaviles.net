@@ -1,4 +1,5 @@
 import {
+  probability,
   score,
   sigmoid,
   transform,
@@ -64,4 +65,38 @@ export function lossChange(previous: number, current: number) {
     direction: delta < 0 ? 'decreased' : delta > 0 ? 'increased' : 'unchanged',
     percent: previous === 0 ? null : Math.abs(delta / previous) * 100,
   };
+}
+
+/** Fictional task outcomes, shared by the plot, inspector and evaluation. */
+export const reviewOutcome = (outcome: number) =>
+  outcome ? 'Additional review needed' : 'No additional review needed';
+export const probabilityAt = (
+  model: Model,
+  scale: Scaler,
+  x: number,
+  y: number,
+) => probability(model, transform([x, y], scale));
+export type ProbabilityCell = { x: number; y: number; size: number; p: number };
+/** A fixed 25×25 grid: each tile estimates probability at its raw-coordinate center. */
+export function probabilityField(
+  model: Model,
+  scale: Scaler,
+): ProbabilityCell[] {
+  const size = 10 / 25;
+  return Array.from({ length: 625 }, (_, i) => {
+    const x = (i % 25) * size,
+      y = Math.floor(i / 25) * size;
+    return {
+      x,
+      y,
+      size,
+      p: probabilityAt(model, scale, x + size / 2, y + size / 2),
+    };
+  });
+}
+/** Muted neutral-to-green scale; the observation symbols remain independently readable. */
+export function probabilityColor(p: number): string {
+  const low = [247, 246, 242],
+    high = [151, 184, 161];
+  return `rgb(${low.map((v, i) => Math.round(v + (high[i] - v) * p)).join(', ')})`;
 }

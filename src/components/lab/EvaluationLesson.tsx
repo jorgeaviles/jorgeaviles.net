@@ -4,9 +4,13 @@ import {
   fixtures,
   classificationScale,
 } from '../../lib/ml/experiment';
-import { displayRows, pct, fmt } from '../../lib/ml/presentation';
+import {
+  displayRows,
+  pct,
+  fmt,
+  reviewOutcome,
+} from '../../lib/ml/presentation';
 import type { LabController } from './useLabExperiment';
-import { Guidance } from './Guidance';
 import { RecordInspector } from './RecordInspector';
 export function EvaluationLesson(controller: LabController) {
   const { state, dispatch, navigate } = controller,
@@ -26,7 +30,6 @@ export function EvaluationLesson(controller: LabController) {
     <>
       <div className="ml-workspace">
         <div className="ml-primary">
-          <Guidance {...controller} />
           {state.logistic.mode !== 'trained' ? (
             <p className="ranking-note">
               {state.logistic.mode === 'initial'
@@ -119,7 +122,7 @@ export function EvaluationLesson(controller: LabController) {
             {predictions.map((r, i) => (
               <button
                 key={r.id}
-                aria-description={`Rank ${i + 1}, ${r.id}, estimated probability ${pct(r.p)}, actual ${r.y ? 'positive' : 'negative'}, ${metrics.ids.has(r.id) ? 'selected for review' : 'not selected for review'}`}
+                aria-description={`Rank ${i + 1}, ${r.id}, estimated probability ${pct(r.p)}, actual ${reviewOutcome(r.y)}, ${metrics.ids.has(r.id) ? 'selected for review' : 'not selected for review'}`}
                 aria-pressed={selected.id === r.id}
                 className={metrics.ids.has(r.id) ? 'chosen' : ''}
                 onClick={() =>
@@ -134,9 +137,10 @@ export function EvaluationLesson(controller: LabController) {
             ))}
           </div>
           <p className="plot-key">
-            ● actual positive · △ actual negative. Green fill + Review =
-            selected for review. Outer outline = inspected record. Scores
-            descend; ties use record ID.
+            ● additional review needed · △ no additional review needed
+            (synthetic outcomes). Green fill + Review = selected for review.
+            Outer outline = inspected record. Scores descend; ties use record
+            ID.
           </p>
           <details>
             <summary>Understand the outcomes</summary>
@@ -203,8 +207,8 @@ export function EvaluationLesson(controller: LabController) {
                 {[
                   'Rank',
                   'Record',
-                  'Feature 1',
-                  'Feature 2',
+                  'Task complexity',
+                  'Information uncertainty',
                   'Score',
                   'Actual',
                   'Selected',
@@ -223,7 +227,7 @@ export function EvaluationLesson(controller: LabController) {
                     <td>{fmt(raw.x[0])}</td>
                     <td>{fmt(raw.x[1])}</td>
                     <td>{pct(r.p)}</td>
-                    <td>{r.y ? 'Positive' : 'Negative'}</td>
+                    <td>{reviewOutcome(r.y)}</td>
                     <td>{metrics.ids.has(r.id) ? 'Yes' : 'No'}</td>
                   </tr>
                 );

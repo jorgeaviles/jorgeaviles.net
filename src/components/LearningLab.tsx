@@ -37,8 +37,8 @@ export default function LearningLab() {
         {
           [
             'Fit completion time from task complexity through actual gradient updates.',
-            'Learn a weighted score, then use sigmoid to estimate a probability.',
-            'Explore decisions using validation predictions from the same classifier.',
+            'Estimate additional review needs from fictional task complexity and information uncertainty.',
+            'Choose which fictional tasks to review using validation estimates from the same classifier.',
           ][state.lesson]
         }
       </p>

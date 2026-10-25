@@ -1,4 +1,10 @@
 import AxeBuilder from '@axe-core/playwright';
+import {
+  createLabState,
+  labReducer,
+  classificationScale,
+} from '../src/lib/ml/experiment';
+import { probabilityAt, fmt, pct } from '../src/lib/ml/presentation';
 import { expect, test, type Page } from '@playwright/test';
 
 const routes = [
@@ -257,9 +263,7 @@ test('learning journeys train models and evaluate model-generated rankings', asy
     )
     .toBeGreaterThan(1);
   await page.getByRole('button', { name: 'Pause', exact: true }).click();
-  await page
-    .getByRole('button', { name: 'Reset this model', exact: true })
-    .click();
+  await page.getByRole('button', { name: 'Reset', exact: true }).click();
   await expect(workspace.locator('.training-feedback')).toHaveText(before);
   await page.getByText('Explore parameters manually', { exact: true }).click();
   await page
@@ -268,9 +272,7 @@ test('learning journeys train models and evaluate model-generated rankings', asy
   await expect(
     page.getByRole('spinbutton', { name: 'Weight 1', exact: true }),
   ).toHaveValue('0.3');
-  await page
-    .getByRole('button', { name: 'Reset this model', exact: true })
-    .click();
+  await page.getByRole('button', { name: 'Reset', exact: true }).click();
   await page
     .getByRole('link', { name: '2 Logistic regression', exact: true })
     .click();
@@ -368,7 +370,7 @@ test.describe('without JavaScript', () => {
   }
 });
 
-test('guidance, independent histories and population inspection remain coherent', async ({
+test('independent histories and population inspection remain coherent without help prompts', async ({
   page,
 }, testInfo) => {
   const errors = observeApplicationErrors(page);
@@ -379,8 +381,12 @@ test('guidance, independent histories and population inspection remain coherent'
   await page.waitForFunction(
     () => !document.querySelector('astro-island')?.hasAttribute('ssr'),
   );
-  const hint = page.getByRole('note', { name: 'Lesson guidance' });
-  await expect(hint).toBeVisible();
+  await expect(
+    page.getByRole('button', { name: 'Help', exact: true }),
+  ).toHaveCount(0);
+  await expect(page.getByRole('note', { name: 'Lesson guidance' })).toHaveCount(
+    0,
+  );
   await expect(
     page.getByText('Initial prediction: 0 minutes', { exact: true }),
   ).toBeVisible();
@@ -391,9 +397,8 @@ test('guidance, independent histories and population inspection remain coherent'
   await page
     .getByRole('button', { name: 'Train one step', exact: true })
     .press('Enter');
-  await expect(hint).toBeHidden();
   await expect(page.locator('.training-feedback')).toContainText(
-    'Error decreased',
+    'since previous step',
   );
   const linearFeedback = (await page
     .locator('.training-feedback')
@@ -407,13 +412,11 @@ test('guidance, independent histories and population inspection remain coherent'
   await page
     .getByRole('link', { name: '2 Logistic regression', exact: true })
     .click();
-  await expect(hint).toBeVisible();
   await expect(page.getByText(/No unique 50% boundary:/)).toBeVisible();
   await expect(page.locator('.model-figure figcaption')).toContainText(
     '54 training examples',
   );
   await page.getByRole('button', { name: 'Train', exact: true }).click();
-  await expect(hint).toBeHidden();
   await expect(page.locator('.training-feedback')).not.toContainText('Step 0');
   await page.getByRole('button', { name: 'Pause', exact: true }).click();
   await expect(page.getByTestId('decision-boundary')).toBeVisible();
@@ -443,11 +446,6 @@ test('guidance, independent histories and population inspection remain coherent'
   await expect(
     page.getByRole('combobox', { name: 'Inspect example', exact: true }),
   ).toHaveValue('TASK-8');
-  await expect(hint).toBeHidden();
-  await page.getByRole('button', { name: 'Help', exact: true }).press('Enter');
-  await expect(hint).toBeVisible();
-  await page.getByRole('button', { name: 'Help', exact: true }).press('Enter');
-  await expect(hint).toBeHidden();
   await page.screenshot({
     path: testInfo.outputPath('lab-linear-trained.png'),
     fullPage: true,
@@ -456,13 +454,11 @@ test('guidance, independent histories and population inspection remain coherent'
   await expect(
     page.getByRole('combobox', { name: 'Inspect example', exact: true }),
   ).toHaveValue('SYN-60');
-  await expect(hint).toBeVisible();
   const slider = page.getByRole('slider', {
     name: 'Review budget',
     exact: true,
   });
   await slider.fill('10');
-  await expect(hint).toBeHidden();
   await expect(page.locator('.ranked-strip .chosen')).toHaveCount(10);
   await expect(page.locator('.ranked-strip [aria-pressed=true]')).toHaveCount(
     1,
@@ -482,7 +478,6 @@ test('guidance, independent histories and population inspection remain coherent'
   await page
     .getByRole('link', { name: '2 Logistic regression', exact: true })
     .click();
-  await expect(hint).toBeHidden();
   await expect(
     page.getByRole('combobox', { name: 'Inspect example', exact: true }),
   ).toHaveValue('SYN-60');
@@ -508,7 +503,7 @@ test('lesson deep links explain an untrained ranking and off-window boundary', a
   await expect(page).toHaveURL(/#logistic-regression$/);
   await page.getByText('Explore parameters manually', { exact: true }).click();
   await page
-    .getByRole('spinbutton', { name: 'Weight 1', exact: true })
+    .getByRole('spinbutton', { name: 'Complexity weight', exact: true })
     .fill('1');
   await page.getByRole('spinbutton', { name: 'Bias', exact: true }).fill('100');
   await expect(
@@ -777,4 +772,160 @@ test('page metadata, canonical URLs, and identity remain coherent without third-
   const xml = await sitemap.text();
   for (const route of routes)
     expect(xml).toContain(`https://jorgeaviles.net${route.path}`);
+});
+
+test('logistic landscape, parameters, loss and inspected task share actual training state', async ({
+  page,
+}) => {
+  await page.goto('/lab/#logistic-regression');
+  await page
+    .getByRole('navigation', { name: 'Lab lessons' })
+    .scrollIntoViewIfNeeded();
+  await expect(page.getByTestId('probability-field')).toBeVisible();
+  await expect(
+    page.getByText('Lower estimated probability', { exact: true }),
+  ).toBeVisible();
+  await expect(
+    page.getByText('Higher estimated probability', { exact: true }),
+  ).toBeVisible();
+  const cells = page.getByTestId('probability-field').locator('rect');
+  let state = labReducer(createLabState(), { type: 'navigate', lesson: 1 });
+  let previousStep = 0;
+  for (const steps of [0, 1, 11, 100]) {
+    for (let i = previousStep; i < steps; i++) {
+      await page
+        .getByRole('button', { name: 'Train one step', exact: true })
+        .click();
+      state = labReducer(state, { type: 'step' });
+    }
+    const experiment = state.logistic;
+    await expect(page.locator('.training-feedback')).toContainText(
+      `Step ${steps} · Log loss ${fmt(experiment.history.at(-1)!.loss)}`,
+    );
+    await expect(page.locator('.learned-parameters dd')).toHaveText(
+      [...experiment.model.w, experiment.model.b].map(fmt),
+    );
+    await expect(cells).toHaveCount(625);
+    for (const index of [0, 150, 312, 624]) {
+      const cell = cells.nth(index),
+        x = Number(await cell.getAttribute('data-x')),
+        y = Number(await cell.getAttribute('data-y'));
+      expect(Number(await cell.getAttribute('data-probability'))).toBeCloseTo(
+        probabilityAt(experiment.model, classificationScale, x, y),
+        12,
+      );
+    }
+    const selectedProbability = Number(
+      await page
+        .locator('.plot-point[data-record-id="SYN-01"]')
+        .getAttribute('data-probability'),
+    );
+    await expect(page.getByTestId('selected-probability')).toHaveText(
+      pct(selectedProbability),
+    );
+    if (steps === 0) {
+      expect(
+        await cells.evaluateAll((rects) => [
+          ...new Set(rects.map((r) => r.getAttribute('data-probability'))),
+        ]),
+      ).toEqual(['0.5']);
+      await expect(page.getByTestId('decision-boundary')).toHaveCount(0);
+      await expect(page.locator('.training-feedback')).toContainText(
+        'Model not trained',
+      );
+    } else {
+      await expect(page.getByTestId('decision-boundary')).toBeVisible();
+      const delta =
+        experiment.history.at(-1)!.loss - experiment.history.at(-2)!.loss;
+      await expect(page.locator('.training-feedback')).toContainText(
+        `↓ ${fmt(Math.abs(delta))} since previous step`,
+      );
+    }
+    previousStep = steps;
+  }
+  await expect(page.locator('.model-figure')).toContainText(
+    'Task complexity (0–10)',
+  );
+  await expect(page.locator('.model-figure')).toContainText(
+    'Information uncertainty (0–10)',
+  );
+  await expect(
+    page.getByRole('button', { name: 'Help', exact: true }),
+  ).toHaveCount(0);
+  await expect(page.getByText('Try this', { exact: true })).toHaveCount(0);
+  await page.locator('.plot-point[data-record-id="SYN-03"]').click();
+  await expect(
+    page.getByRole('combobox', { name: 'Inspect example', exact: true }),
+  ).toHaveValue('SYN-03');
+  await expect(
+    page.locator('.plot-point[data-record-id="SYN-03"] circle[r="11"]'),
+  ).toHaveCount(1);
+  await page
+    .getByRole('combobox', { name: 'Inspect example', exact: true })
+    .selectOption('SYN-02');
+  const selectedProbability = Number(
+    await page
+      .locator('.plot-point[data-record-id="SYN-02"]')
+      .getAttribute('data-probability'),
+  );
+  await expect(page.getByTestId('selected-probability')).toHaveText(
+    pct(selectedProbability),
+  );
+  const before = await cells.evaluateAll((rects) =>
+    rects.map((r) => r.getAttribute('data-probability')),
+  );
+  await page.getByLabel('Show', { exact: true }).selectOption('validation');
+  await expect(page.locator('.plot-point')).toHaveCount(18);
+  expect(
+    await cells.evaluateAll((rects) =>
+      rects.map((r) => r.getAttribute('data-probability')),
+    ),
+  ).toEqual(before);
+  await page.getByRole('link', { name: '3 Evaluation', exact: true }).click();
+  await expect(
+    page.getByRole('button', { name: 'Help', exact: true }),
+  ).toHaveCount(0);
+  await page
+    .getByRole('radio', { name: 'Probability threshold', exact: true })
+    .check();
+  await page
+    .getByRole('slider', { name: 'Probability cutoff', exact: true })
+    .fill('0.8');
+  await page
+    .getByRole('link', { name: '2 Logistic regression', exact: true })
+    .click();
+  expect(
+    await cells.evaluateAll((rects) =>
+      rects.map((r) => r.getAttribute('data-probability')),
+    ),
+  ).toEqual(before);
+  await expectAccessible(page);
+  await page.getByRole('button', { name: 'Reset', exact: true }).click();
+  expect(
+    await cells.evaluateAll((rects) => [
+      ...new Set(rects.map((r) => r.getAttribute('data-probability'))),
+    ]),
+  ).toEqual(['0.5']);
+  await page.getByText('Explore parameters manually', { exact: true }).click();
+  await page.getByRole('button', { name: 'Train', exact: true }).click();
+  await page
+    .getByRole('spinbutton', { name: 'Complexity weight', exact: true })
+    .fill('1');
+  await expect(
+    page.getByRole('button', { name: 'Train', exact: true }),
+  ).toBeVisible();
+  await expect(page.locator('.training-feedback')).toContainText(
+    'Manual parameters · new baseline',
+  );
+  await expect(page.locator('.learned-parameters dd').first()).toHaveText(
+    '1.000',
+  );
+  expect(
+    new Set(
+      await cells.evaluateAll((rects) =>
+        rects.map((r) => r.getAttribute('data-probability')),
+      ),
+    ).size,
+  ).toBeGreaterThan(1);
+  await expectNoHorizontalOverflow(page);
 });
