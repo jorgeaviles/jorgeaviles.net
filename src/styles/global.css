@@ -1,9 +1,9 @@
 @import 'tailwindcss';
 
 @theme {
-  --color-paper: #f7f6f2;
-  --color-ink: #272d29;
-  --color-accent: #254f3e;
+  --color-paper: var(--paper);
+  --color-ink: var(--ink);
+  --color-accent: var(--green);
   --font-sans: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
   --font-serif:
     'Iowan Old Style', 'Palatino Linotype', 'Book Antiqua', Georgia, serif;
@@ -17,6 +17,29 @@
   --line: #dcded5;
   --green: #254f3e;
   --light-green: #edf0e7;
+  /* Shared roles; initial values preserve the established editorial appearance. */
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 12px;
+  --space-4: 16px;
+  --space-6: 24px;
+  --space-8: 32px;
+  --space-12: 48px;
+  --space-16: 64px;
+  --text-body: 15px;
+  --text-supporting: 13px;
+  --text-metadata: 12px;
+  --text-article-heading: 29px;
+  --text-section-heading: clamp(1.9rem, 3vw, 2.5rem);
+  --leading-body: 1.9;
+  --measure-reading: 690px;
+  --measure-page: 1120px;
+  --gutter-page: 56px;
+  --gap-editorial: 100px;
+  --width-sidebar: 220px;
+  --rule-width: 1px;
+  --color-focus: var(--green);
+  --color-prose: #515a51;
 }
 * {
   box-sizing: border-box;
@@ -56,7 +79,7 @@ input {
   -webkit-tap-highlight-color: transparent;
 }
 :focus-visible {
-  outline: 2px solid var(--green);
+  outline: 2px solid var(--color-focus);
   outline-offset: 5px;
   border-radius: 2px;
 }
@@ -82,7 +105,7 @@ h1 {
   font-size: clamp(2.6rem, 4.65vw, 4.35rem);
 }
 h2 {
-  font-size: clamp(1.9rem, 3vw, 2.5rem);
+  font-size: var(--text-section-heading);
 }
 h3 {
   font-size: 1.55rem;
@@ -95,7 +118,7 @@ strong {
   color: var(--ink);
 }
 .site-shell {
-  width: min(1120px, calc(100% - 112px));
+  width: min(var(--measure-page), calc(100% - 2 * var(--gutter-page)));
   margin-inline: auto;
 }
 .site-header {
@@ -469,18 +492,18 @@ strong {
 }
 .editorial-grid {
   display: grid;
-  grid-template-columns: minmax(0, 690px) 220px;
-  gap: 100px;
+  grid-template-columns: minmax(0, var(--measure-reading)) var(--width-sidebar);
+  gap: var(--gap-editorial);
   padding-bottom: 35px;
 }
 .prose {
-  color: #515a51;
-  font-size: 15px;
-  line-height: 1.9;
+  color: var(--color-prose);
+  font-size: var(--text-body);
+  line-height: var(--leading-body);
 }
 .prose h2 {
   color: var(--ink);
-  font-size: 29px;
+  font-size: var(--text-article-heading);
   margin-block: 34px 18px;
 }
 .prose h3 {
