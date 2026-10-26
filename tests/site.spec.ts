@@ -1654,3 +1654,222 @@ test('About full-page composition review captures', async ({
     });
   }
 });
+
+test('Lab training controls and inspector use the available workspace width', async ({
+  page,
+}) => {
+  await page.goto('/lab/');
+  await page.locator('.lesson-nav').scrollIntoViewIfNeeded();
+  await page.waitForFunction(
+    () => !document.querySelector('astro-island')?.hasAttribute('ssr'),
+  );
+  const training = page.getByRole('group', {
+    name: 'Model training',
+    exact: true,
+  });
+  await expect(training.getByRole('button')).toHaveCount(3);
+  await expect(training.getByRole('status')).toContainText('Step 0');
+  for (const width of [
+    320, 390, 430, 480, 481, 699, 700, 800, 801, 999, 1000, 1001, 1280, 1440,
+  ]) {
+    await page.setViewportSize({ width, height: 1000 });
+    const boxes = await page.evaluate(() => ({
+      links: [...document.querySelectorAll('.lesson-nav a')].map((element) =>
+        element.getBoundingClientRect().toJSON(),
+      ),
+      buttons: [...document.querySelectorAll('.ml-actions button')].map(
+        (element) => element.getBoundingClientRect().toJSON(),
+      ),
+      columns: getComputedStyle(
+        document.querySelector('.ml-workspace')!,
+      ).gridTemplateColumns.split(' ').length,
+      primary: document
+        .querySelector('.ml-primary')!
+        .getBoundingClientRect()
+        .toJSON(),
+      controls: document
+        .querySelector('.ml-controls')!
+        .getBoundingClientRect()
+        .toJSON(),
+      rate: document
+        .querySelector('.ml-controls select')!
+        .getBoundingClientRect()
+        .toJSON(),
+      loss: document
+        .querySelector('.loss-history')!
+        .getBoundingClientRect()
+        .toJSON(),
+      advanced: document
+        .querySelector('.parameter-explorer')!
+        .getBoundingClientRect()
+        .toJSON(),
+      workspace: document
+        .querySelector('.ml-workspace')!
+        .getBoundingClientRect()
+        .toJSON(),
+    }));
+    expect(boxes.columns).toBe(width > 1000 ? 2 : 1);
+    expect(boxes.links.every((box) => box.height >= 48)).toBe(true);
+    expect(boxes.buttons.every((box) => box.height >= 48)).toBe(true);
+    expect(
+      Math.max(...boxes.buttons.map((box) => box.height)) -
+        Math.min(...boxes.buttons.map((box) => box.height)),
+    ).toBeLessThan(1);
+    if (width <= 480) {
+      expect(boxes.links[1].top).toBeGreaterThanOrEqual(boxes.links[0].bottom);
+      expect(boxes.links[2].top).toBeGreaterThanOrEqual(boxes.links[1].bottom);
+    }
+    if (width > 1000)
+      expect(boxes.primary.width).toBeGreaterThan(boxes.controls.width);
+    else
+      expect(boxes.controls.top).toBeGreaterThanOrEqual(boxes.primary.bottom);
+    if (width >= 700 && width <= 1000)
+      expect(boxes.loss.top - boxes.rate.bottom).toBeLessThan(48);
+    expect(boxes.advanced.width).toBeCloseTo(boxes.workspace.width, 0);
+    expect(boxes.advanced.top).toBeGreaterThanOrEqual(boxes.workspace.bottom);
+    await expectNoHorizontalOverflow(page);
+  }
+  await page
+    .getByRole('button', { name: 'Train one step', exact: true })
+    .focus();
+  await expect(
+    page.getByRole('button', { name: 'Train one step', exact: true }),
+  ).toHaveCSS('outline-width', '2px');
+  await page.keyboard.press('Enter');
+  await expect(training.getByRole('status')).toContainText('Step 1');
+  await expectAccessible(page);
+});
+
+test('Lab expanded controls reflow with 200 percent HTML text', async ({
+  page,
+}) => {
+  await page.setViewportSize({ width: 1280, height: 1000 });
+  for (const [index, lesson] of [
+    'Linear regression',
+    'Logistic regression',
+    'Evaluation',
+  ].entries()) {
+    await page.goto(`/lab/?text-review=${index}`);
+    await page.locator('.lesson-nav').scrollIntoViewIfNeeded();
+    await page.waitForFunction(
+      () => !document.querySelector('astro-island')?.hasAttribute('ssr'),
+    );
+    await page
+      .getByRole('link', { name: `${index + 1} ${lesson}`, exact: true })
+      .click();
+    const maths = page.getByText('Inspect the mathematics', { exact: true });
+    await maths.click();
+    if (index < 2)
+      await page
+        .getByText('Explore parameters manually', { exact: true })
+        .click();
+    // Controlled HTML text enlargement; SVG geometry and model calculations remain unchanged.
+    await page.locator('.learning-lab').evaluate((lab) => {
+      const elements = [...lab.querySelectorAll('*')].filter(
+        (element): element is HTMLElement =>
+          element instanceof HTMLElement &&
+          [...element.childNodes].some(
+            (node) =>
+              node.nodeType === Node.TEXT_NODE &&
+              Boolean(node.textContent?.trim()),
+          ),
+      );
+      const sizes = elements.map((element) => ({
+        font: parseFloat(getComputedStyle(element).fontSize),
+        line: parseFloat(getComputedStyle(element).lineHeight),
+      }));
+      elements.forEach((element, i) => {
+        element.style.fontSize = `${sizes[i].font * 2}px`;
+        if (Number.isFinite(sizes[i].line))
+          element.style.lineHeight = `${sizes[i].line * 2}px`;
+      });
+    });
+    await expectNoHorizontalOverflow(page);
+    await expect(maths).toBeVisible();
+    await expect(
+      page.getByLabel('Inspect example', { exact: true }),
+    ).toBeEnabled();
+    const clipped = await page
+      .locator('.learning-lab')
+      .evaluate((lab) =>
+        [
+          ...lab.querySelectorAll<HTMLElement>(
+            'button, select, summary, p, label',
+          ),
+        ]
+          .filter(
+            (element) =>
+              ['hidden', 'clip'].includes(
+                getComputedStyle(element).overflowY,
+              ) && element.scrollHeight > element.clientHeight + 1,
+          )
+          .map((element) => element.textContent),
+      );
+    expect(clipped).toEqual([]);
+  }
+});
+
+test('Lab interface review captures trained and expanded lesson states', async ({
+  page,
+}, testInfo) => {
+  test.skip(
+    !['chromium-desktop', 'webkit-desktop'].includes(testInfo.project.name),
+    'Two engines capture representative interaction states.',
+  );
+  for (const width of [320, 430, 1024, 1440]) {
+    await page.setViewportSize({ width, height: 1000 });
+    await page.goto('/lab/');
+    await page.locator('.lesson-nav').scrollIntoViewIfNeeded();
+    await page.waitForFunction(
+      () => !document.querySelector('astro-island')?.hasAttribute('ssr'),
+    );
+    for (const [index, lesson] of [
+      'Linear regression',
+      'Logistic regression',
+      'Evaluation',
+    ].entries()) {
+      await page
+        .getByRole('link', { name: `${index + 1} ${lesson}`, exact: true })
+        .click();
+      if (index < 2)
+        await page
+          .getByRole('button', { name: 'Train one step', exact: true })
+          .press('Enter');
+      else
+        await page
+          .getByRole('slider', { name: 'Review budget', exact: true })
+          .fill('10');
+      const maths = page.getByText('Inspect the mathematics', { exact: true });
+      if (
+        !(await maths.evaluate(
+          (element) => (element.parentElement as HTMLDetailsElement).open,
+        ))
+      )
+        await maths.click();
+      if (index < 2) {
+        const manual = page.getByText('Explore parameters manually', {
+          exact: true,
+        });
+        if (
+          !(await manual.evaluate(
+            (element) => (element.parentElement as HTMLDetailsElement).open,
+          ))
+        )
+          await manual.click();
+      }
+      await expectNoHorizontalOverflow(page);
+      await page.evaluate(() => scrollTo(0, 0));
+      await page.setViewportSize({
+        width,
+        height: await page.evaluate(() =>
+          Math.max(1000, document.documentElement.scrollHeight),
+        ),
+      });
+      await testInfo.attach(`lab-${index + 1}-${width}-expanded`, {
+        body: await page.screenshot({ fullPage: true, animations: 'disabled' }),
+        contentType: 'image/png',
+      });
+      await page.setViewportSize({ width, height: 1000 });
+    }
+  }
+});
