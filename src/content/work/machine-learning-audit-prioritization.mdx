@@ -21,6 +21,8 @@ methods:
   - Probability calibration and ranking
 ---
 
+import ArticleTable from '../../components/ArticleTable.astro';
+
 import ModelingFlow from '../../components/ModelingFlow.astro';
 
 ## What I developed
@@ -47,13 +49,37 @@ The preparation separates outcome labels from model inputs and excludes the curr
 
 The modeling engine is **Spark ML**, using Python/PySpark in Azure Synapse. Spark pipelines combine categorical indexing, model-appropriate encoding, median imputation, and vector assembly with the estimator. Learned preprocessing is fitted within each training fold. pandas supports fold-metric summaries; it is not the training engine.
 
-| Candidate              | Framework                 | Verified implementation status                                                                                               |
-| ---------------------- | ------------------------- | ---------------------------------------------------------------------------------------------------------------------------- |
-| Logistic regression    | Spark ML                  | Training and evaluation path implemented; disabled in the latest saved comparison configuration.                             |
-| Random Forest          | Spark ML                  | Enabled for cross-validation in the latest saved configuration; also configured as the fixed fallback candidate.             |
-| Gradient-boosted trees | Spark ML                  | Training and evaluation path implemented; disabled in the latest saved comparison configuration.                             |
-| LightGBM               | SynapseML                 | Conditional training and evaluation path; requires the runtime and is disabled in the latest saved comparison configuration. |
-| CatBoost               | CatBoost for Apache Spark | Conditional implementation; disabled in the latest saved comparison configuration. Completed evaluation is unverified.       |
+<ArticleTable
+  label="Model candidate comparison"
+  columns={['Candidate', 'Framework', 'Verified implementation status']}
+  rows={[
+    [
+      'Logistic regression',
+      'Spark ML',
+      'Training and evaluation path implemented; disabled in the latest saved comparison configuration.',
+    ],
+    [
+      'Random Forest',
+      'Spark ML',
+      'Enabled for cross-validation in the latest saved configuration; also configured as the fixed fallback candidate.',
+    ],
+    [
+      'Gradient-boosted trees',
+      'Spark ML',
+      'Training and evaluation path implemented; disabled in the latest saved comparison configuration.',
+    ],
+    [
+      'LightGBM',
+      'SynapseML',
+      'Conditional training and evaluation path; requires the runtime and is disabled in the latest saved comparison configuration.',
+    ],
+    [
+      'CatBoost',
+      'CatBoost for Apache Spark',
+      'Conditional implementation; disabled in the latest saved comparison configuration. Completed evaluation is unverified.',
+    ],
+  ]}
+/>
 
 An earlier notebook also implements an optional XGBoost Spark candidate. The later unified pipeline does not retain that candidate. References to scikit-learn alternatives in notebook notes do not establish that those estimators trained the models.
 
