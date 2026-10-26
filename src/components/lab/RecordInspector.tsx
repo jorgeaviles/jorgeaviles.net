@@ -26,6 +26,9 @@ export function RecordInspector({
       className="record-inspector"
       aria-label="Selected example calculation"
     >
+      <h3 className="inspection-heading" aria-live="polite">
+        Inspecting {selected.id}
+      </h3>
       <label>
         Inspect example
         <select

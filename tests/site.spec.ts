@@ -481,9 +481,21 @@ test('independent histories and population inspection remain coherent without he
   await expect(page.locator('.ranked-strip [aria-pressed=true]')).toHaveCount(
     1,
   );
-  const metrics = await page.locator('.essential-metrics').boundingBox(),
-    control = await slider.boundingBox(),
-    strip = await page.locator('.ranked-strip').boundingBox();
+  // Read relative geometry in one frame so smooth scrolling cannot mix coordinate origins.
+  const { metrics, control, strip } = await page.evaluate(() => ({
+    metrics: document
+      .querySelector('.essential-metrics')!
+      .getBoundingClientRect()
+      .toJSON(),
+    control: document
+      .querySelector('.learning-lab input[type="range"]')!
+      .getBoundingClientRect()
+      .toJSON(),
+    strip: document
+      .querySelector('.ranked-strip')!
+      .getBoundingClientRect()
+      .toJSON(),
+  }));
   expect(metrics!.y - control!.y).toBeLessThan(110);
   expect(strip!.y - (metrics!.y + metrics!.height)).toBeLessThan(40);
   await expectNoHorizontalOverflow(page);
@@ -1763,16 +1775,13 @@ test('Lab expanded controls reflow with 200 percent HTML text', async ({
       await page
         .getByText('Explore parameters manually', { exact: true })
         .click();
+    const originalSize = await page
+      .locator('.learning-lab h2')
+      .evaluate((element) => parseFloat(getComputedStyle(element).fontSize));
     // Controlled HTML text enlargement; SVG geometry and model calculations remain unchanged.
     await page.locator('.learning-lab').evaluate((lab) => {
       const elements = [...lab.querySelectorAll('*')].filter(
-        (element): element is HTMLElement =>
-          element instanceof HTMLElement &&
-          [...element.childNodes].some(
-            (node) =>
-              node.nodeType === Node.TEXT_NODE &&
-              Boolean(node.textContent?.trim()),
-          ),
+        (element): element is HTMLElement => element instanceof HTMLElement,
       );
       const sizes = elements.map((element) => ({
         font: parseFloat(getComputedStyle(element).fontSize),
@@ -1784,7 +1793,30 @@ test('Lab expanded controls reflow with 200 percent HTML text', async ({
           element.style.lineHeight = `${sizes[i].line * 2}px`;
       });
     });
+    expect(
+      await page
+        .locator('.learning-lab h2')
+        .evaluate((element) => parseFloat(getComputedStyle(element).fontSize)),
+    ).toBeCloseTo(originalSize * 2, 1);
     await expectNoHorizontalOverflow(page);
+    if (index === 2) {
+      const clippedRecords = await page
+        .locator('.ranked-strip')
+        .evaluate((strip) =>
+          [
+            ...strip.querySelectorAll<HTMLElement>(
+              '.record-id, .record-rank, .record-score, .record-outcome, .record-policy, .inspection-flag',
+            ),
+          ]
+            .filter(
+              (element) =>
+                element.scrollWidth > element.clientWidth + 1 ||
+                element.scrollHeight > element.clientHeight + 1,
+            )
+            .map((element) => element.textContent),
+        );
+      expect(clippedRecords).toEqual([]);
+    }
     await expect(maths).toBeVisible();
     await expect(
       page.getByLabel('Inspect example', { exact: true }),
@@ -1871,5 +1903,231 @@ test('Lab interface review captures trained and expanded lesson states', async (
       });
       await page.setViewportSize({ width, height: 1000 });
     }
+  }
+});
+
+test('Evaluation records expose actual values and keep review policy separate from inspection', async ({
+  page,
+}) => {
+  await page.goto('/lab/#evaluation');
+  await page.locator('.lesson-nav').scrollIntoViewIfNeeded();
+  await expect(
+    page.getByRole('slider', { name: 'Review budget', exact: true }),
+  ).toBeVisible();
+  await page
+    .getByRole('slider', { name: 'Review budget', exact: true })
+    .fill('10');
+  const records = page
+    .getByRole('group', { name: 'Ranked validation records' })
+    .getByRole('button');
+  await expect(records).toHaveCount(18);
+  const tableRows = await page
+    .locator('.ml-table tbody tr')
+    .evaluateAll((rows) =>
+      rows.map((row) =>
+        [...row.querySelectorAll('td')].map((cell) => cell.textContent!.trim()),
+      ),
+    );
+  const metrics = (await page.locator('.essential-metrics').textContent())!;
+  for (const [index, row] of tableRows.entries()) {
+    const button = records.nth(index);
+    await expect(button.locator('.record-id')).toHaveText(row[1]);
+    await expect(button.locator('.record-rank')).toHaveText(
+      `#${String(index + 1).padStart(2, '0')}`,
+    );
+    await expect(button.locator('.record-score strong')).toHaveText(row[4]);
+    await expect(button.locator('.record-policy')).toHaveText(
+      row[6] === 'Yes' ? '✓ Review' : '– Leave',
+    );
+    await expect(button).toHaveAttribute(
+      'aria-description',
+      new RegExp(`Rank ${index + 1}, ${row[1]}, estimated probability`),
+    );
+    await button.focus();
+    await page.keyboard.press('Enter');
+    await expect(button).toHaveAttribute('aria-pressed', 'true');
+    await expect(button.locator('.inspection-flag')).toHaveText('Inspecting');
+    await expect(button).toHaveCSS('outline-width', '2px');
+    await expect(
+      page.locator('.ranked-strip [aria-pressed="true"]'),
+    ).toHaveCount(1);
+    await expect(
+      page.getByLabel('Inspect example', { exact: true }),
+    ).toHaveValue(row[1]);
+    await expect(
+      page.getByRole('heading', { name: `Inspecting ${row[1]}`, exact: true }),
+    ).toBeVisible();
+    await expect(page.locator('.essential-metrics')).toHaveText(metrics);
+  }
+  await expect(page.locator('.ranked-strip .chosen')).toHaveCount(10);
+  await expect(records.last()).not.toHaveClass(/chosen/);
+  await expect(records.last()).toHaveAttribute('aria-pressed', 'true');
+  await page.getByLabel('Probability threshold', { exact: true }).check();
+  await page
+    .getByRole('slider', { name: 'Probability cutoff', exact: true })
+    .fill('1');
+  await expect(page.locator('.ranked-strip .chosen')).toHaveCount(0);
+  await expect(records.last()).toHaveAttribute('aria-pressed', 'true');
+  await page.getByText('Final test assessment', { exact: true }).click();
+  await page
+    .getByRole('button', {
+      name: 'Lock experiment and evaluate test',
+      exact: true,
+    })
+    .click();
+  await expect(page.locator('.test-metrics dt')).toHaveText([
+    'Precision',
+    'Recall',
+    'Accuracy',
+  ]);
+  await expect(
+    page.getByRole('slider', { name: 'Probability cutoff', exact: true }),
+  ).toBeDisabled();
+  await expectAccessible(page);
+});
+
+test('Lab axes and loss values remain readable and reflect unchanged training histories', async ({
+  page,
+}, testInfo) => {
+  await page.goto('/lab/');
+  await page.locator('.lesson-nav').scrollIntoViewIfNeeded();
+  await page.waitForFunction(
+    () => !document.querySelector('astro-island')?.hasAttribute('ssr'),
+  );
+  let state = createLabState();
+  for (const [index, lesson] of [
+    'Linear regression',
+    'Logistic regression',
+  ].entries()) {
+    await page
+      .getByRole('link', { name: `${index + 1} ${lesson}`, exact: true })
+      .click();
+    state = labReducer(state, { type: 'navigate', lesson: index as 0 | 1 });
+    let previous = 0;
+    for (const updates of [0, 1, 11, 100]) {
+      await page.evaluate((count) => {
+        const button = [...document.querySelectorAll('button')].find(
+          (button) => button.textContent === 'Train one step',
+        )!;
+        for (let i = 0; i < count; i++) button.click();
+      }, updates - previous);
+      for (let i = previous; i < updates; i++)
+        state = labReducer(state, { type: 'step' });
+      await expect(page.locator('.training-feedback')).toContainText(
+        `Step ${updates} ·`,
+      );
+      const history = (index === 0 ? state.linear : state.logistic).history;
+      await expect(page.locator('.loss-values dd')).toHaveText([
+        fmt(history[0].loss),
+        fmt(history.at(-1)!.loss),
+      ]);
+      await expect(
+        page.getByRole('img', { name: /Loss history:/ }),
+      ).toHaveAttribute(
+        'aria-label',
+        new RegExp(
+          `Vertical scale zero to ${fmt(Math.max(...history.map((point) => point.loss), Number.EPSILON) * 1.05).replace('.', '\\.')}`,
+        ),
+      );
+      if (
+        ['chromium-desktop', 'webkit-desktop'].includes(testInfo.project.name)
+      ) {
+        const width = page.viewportSize()!.width;
+        await page.evaluate(() => scrollTo(0, 0));
+        await page.setViewportSize({
+          width,
+          height: await page.evaluate(() =>
+            Math.max(1000, document.documentElement.scrollHeight),
+          ),
+        });
+        await testInfo.attach(
+          `${index === 0 ? 'linear' : 'logistic'}-${updates}-updates`,
+          {
+            body: await page.screenshot({
+              fullPage: true,
+              animations: 'disabled',
+            }),
+            contentType: 'image/png',
+          },
+        );
+        await page.setViewportSize({ width, height: 1000 });
+      }
+      previous = updates;
+    }
+    for (const width of [320, 390, 430, 768, 1024, 1280, 1440]) {
+      await page.setViewportSize({ width, height: 1000 });
+      await expect(page.locator('.ml-plot')).toHaveAttribute(
+        'viewBox',
+        '0 0 600 390',
+      );
+      const labels = await page
+        .locator('.ml-plot text, .loss-history text')
+        .evaluateAll((elements) =>
+          elements.map((element) => {
+            const text = element as unknown as SVGTextElement;
+            const matrix = text.getScreenCTM()!;
+            const bounds = text.getBBox();
+            const svg = text.ownerSVGElement!.viewBox.baseVal;
+            return {
+              paintedSize:
+                parseFloat(getComputedStyle(text).fontSize) *
+                Math.hypot(matrix.a, matrix.b),
+              fits:
+                bounds.x >= 0 &&
+                bounds.y >= 0 &&
+                bounds.x + bounds.width <= svg.width + 1 &&
+                bounds.y + bounds.height <= svg.height + 1,
+            };
+          }),
+        );
+      expect(labels.every((label) => label.paintedSize >= 12)).toBe(true);
+      expect(labels.every((label) => label.fits)).toBe(true);
+      await expect(page.locator('.axis-y')).toContainText(
+        index === 0
+          ? 'Completion time (minutes)'
+          : 'Information uncertainty (0–10)',
+      );
+      await expect(page.locator('.axis-x')).toContainText(
+        index === 0 ? 'Task complexity (points)' : 'Task complexity (0–10)',
+      );
+      await expectNoHorizontalOverflow(page);
+    }
+  }
+});
+
+test('Evaluation grid and metrics respond to their container without clipping record labels', async ({
+  page,
+}) => {
+  await page.setViewportSize({ width: 1000, height: 1000 });
+  await page.goto('/lab/#evaluation');
+  await page.locator('.lesson-nav').scrollIntoViewIfNeeded();
+  await expect(page.locator('.ranked-strip button')).toHaveCount(18);
+  for (const width of [280, 350, 480, 481, 599, 600, 819, 820]) {
+    await page.locator('.evaluation-primary').evaluate((element, value) => {
+      (element as HTMLElement).style.width = `${value}px`;
+    }, width);
+    const layout = await page.evaluate(() => ({
+      records: getComputedStyle(
+        document.querySelector('.ranked-strip')!,
+      ).gridTemplateColumns.split(' ').length,
+      metrics: getComputedStyle(
+        document.querySelector('.essential-metrics')!,
+      ).gridTemplateColumns.split(' ').length,
+      clipped: [
+        ...document.querySelectorAll<HTMLElement>(
+          '.record-id, .record-rank, .record-score, .record-outcome, .record-policy, .inspection-flag',
+        ),
+      ]
+        .filter(
+          (element) =>
+            element.scrollWidth > element.clientWidth + 1 ||
+            element.scrollHeight > element.clientHeight + 1,
+        )
+        .map((element) => element.textContent),
+    }));
+    expect(layout.records).toBe(width >= 820 ? 4 : width >= 600 ? 3 : 2);
+    expect(layout.metrics).toBe(width <= 480 ? 2 : 4);
+    expect(layout.clipped).toEqual([]);
+    await expectNoHorizontalOverflow(page);
   }
 });
