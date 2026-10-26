@@ -1247,14 +1247,16 @@ strong {
 }
 .probability-legend {
   display: grid;
-  grid-template-columns: minmax(0, 1fr) 64px minmax(0, 1fr);
+  grid-template-columns: repeat(2, minmax(0, 1fr));
   align-items: center;
-  gap: 0.35rem 0.5rem;
-  font-size: 0.75rem;
+  gap: var(--space-2);
+  font-size: var(--text-supporting);
   line-height: 1.5;
 }
 .probability-swatch {
-  width: 64px;
+  grid-column: 1 / -1;
+  grid-row: 2;
+  width: 100%;
   height: 12px;
   border: 1px solid var(--line);
   background: linear-gradient(to right, rgb(247, 246, 242), rgb(151, 184, 161));
@@ -1297,15 +1299,18 @@ strong {
   width: auto;
   margin: 0;
 }
+.model-figure {
+  container: model-plot / inline-size;
+}
 .model-figure,
 .loss-history {
   margin: 1rem 0;
 }
 .model-figure figcaption,
 .loss-history figcaption {
-  font-size: 0.85rem;
+  font-size: var(--text-supporting);
   font-weight: 600;
-  margin-bottom: 0.5rem;
+  margin-bottom: var(--space-2);
 }
 .ml-plot {
   width: 100%;
@@ -1328,9 +1333,9 @@ strong {
 .inspector-note,
 .observed-value,
 .ranking-note {
-  font-size: 0.85rem;
+  font-size: var(--text-supporting);
   line-height: 1.55;
-  margin: 0.6rem 0;
+  margin: var(--space-3) 0;
 }
 .boundary-state {
   border-left: 2px solid var(--green);
@@ -1341,14 +1346,14 @@ strong {
   max-height: 165px;
 }
 .loss-history text {
-  font: 11px var(--font-sans);
+  font: 14px var(--font-sans);
   fill: var(--ink);
 }
 .loss-history p,
 .loss-history small {
   display: block;
-  font-size: 0.8rem;
-  margin: 0.4rem 0;
+  font-size: var(--text-supporting);
+  margin: var(--space-2) 0;
 }
 .calculation-flow {
   list-style: none;
@@ -1420,14 +1425,15 @@ strong {
 .essential-metrics {
   display: grid;
   grid-template-columns: repeat(4, minmax(0, 1fr));
-  gap: 0.35rem;
-  margin: 0.65rem 0;
-  padding: 0.6rem 0;
+  gap: var(--space-3);
+  margin: var(--space-3) 0 var(--space-4);
+  padding: var(--space-3) 0;
   border-bottom: 1px solid var(--line);
 }
 .essential-metrics dt {
-  min-height: 2.6em;
-  font-size: 0.75rem;
+  min-height: 1.5em;
+  font-size: var(--text-supporting);
+  line-height: 1.5;
 }
 .essential-metrics dd {
   font-size: 1.1rem;
@@ -1435,34 +1441,123 @@ strong {
   color: var(--green);
   margin: 0.15rem 0 0;
 }
+.evaluation-primary {
+  container: evaluation / inline-size;
+}
 .ranked-strip {
   display: grid;
-  grid-template-columns: repeat(6, minmax(0, 1fr));
-  gap: 0.35rem;
-  margin-top: 0.8rem;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: var(--space-3);
+  margin-top: var(--space-4);
 }
 .learning-lab .ranked-strip button {
+  display: grid;
+  align-content: start;
+  gap: var(--space-2);
+  padding: var(--space-3);
+  border: 0;
+  border-bottom: var(--rule-width) solid var(--line);
+  border-left: 3px solid transparent;
+  border-radius: 0;
+  text-align: left;
+  font-size: var(--text-supporting);
+  line-height: 1.5;
+  font-variant-numeric: tabular-nums;
+  min-width: 0;
+}
+.record-heading {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: var(--space-1);
+}
+.record-rank {
+  font-size: var(--text-metadata);
+  color: var(--muted);
+}
+.record-id {
+  font-size: var(--text-supporting);
+  font-weight: 600;
+}
+.record-score {
   display: flex;
   flex-direction: column;
-  align-items: center;
-  font-size: 0.8rem;
-  padding: 0.3rem 0.1rem;
-  line-height: 1.4;
 }
-.ranked-strip .chosen {
-  background: var(--light-green);
-  border: 2px solid var(--green);
+.record-score strong {
+  font-size: 18px;
+  font-weight: 600;
 }
-.ranked-strip strong {
-  font-size: 1.2rem;
-  color: var(--green);
+.record-score > span,
+.record-outcome {
+  font-size: var(--text-metadata);
+  color: var(--muted);
 }
-.ranked-strip small {
-  font-size: 0.75rem;
+.record-outcome {
+  display: flex;
+  align-items: baseline;
+  gap: var(--space-1);
+  min-height: 3em;
+}
+.record-policy {
+  justify-self: start;
+  padding: 2px var(--space-2);
+  font-size: var(--text-metadata);
+  color: var(--muted);
+}
+.chosen .record-policy {
+  background: var(--green);
+  color: var(--paper);
+}
+.inspection-flag {
+  min-height: 1.5em;
+  font-size: var(--text-metadata);
+  font-weight: 600;
 }
 .ranked-strip button[aria-pressed='true'] {
-  outline: 2px solid var(--green);
-  outline-offset: 2px;
+  border-left-color: var(--ink);
+}
+.ranked-strip button[aria-pressed='true'] .record-id {
+  text-decoration: underline;
+  text-underline-offset: 4px;
+}
+@container evaluation (min-width: 37.5em) {
+  .ranked-strip {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+  .learning-lab .ranked-strip button {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+  .record-heading {
+    grid-column: 1 / -1;
+  }
+  .record-score {
+    grid-column: 1;
+    grid-row: 2;
+  }
+  .record-outcome {
+    grid-column: 2;
+    grid-row: 2;
+  }
+  .record-policy {
+    grid-column: 1;
+    grid-row: 3;
+  }
+  .inspection-flag {
+    grid-column: 2;
+    grid-row: 3;
+    align-self: center;
+    text-align: right;
+  }
+}
+@container evaluation (min-width: 51.25em) {
+  .ranked-strip {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+  }
+}
+@container evaluation (max-width: 30em) {
+  .essential-metrics {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
 }
 .confusion-metrics {
   display: flex;
@@ -1506,9 +1601,6 @@ strong {
   }
 }
 @media (max-width: 480px) {
-  .ml-plot text {
-    font-size: 18px;
-  }
   .lab-page-intro {
     padding-block: 1.2rem 0.5rem;
   }
@@ -1547,15 +1639,6 @@ strong {
   .ml-actions button {
     font-size: var(--text-supporting);
     padding: var(--space-2) var(--space-3);
-  }
-  .ranked-strip {
-    gap: 0.3rem;
-  }
-  .learning-lab .ranked-strip button {
-    font-size: 0.75rem;
-  }
-  .essential-metrics dt {
-    font-size: 0.72rem;
   }
   .essential-metrics dd {
     font-size: 1rem;
@@ -1815,4 +1898,79 @@ strong {
 }
 .learning-lab .parameter-fields input {
   font-size: var(--text-body);
+}
+
+.axis-label {
+  color: var(--muted);
+  font-size: var(--text-supporting);
+  line-height: 1.5;
+  margin-block: var(--space-2);
+}
+.axis-x {
+  text-align: center;
+}
+@container model-plot (max-width: 680px) {
+  .ml-plot text {
+    font-size: 16px;
+  }
+}
+@container model-plot (max-width: 520px) {
+  .ml-plot text {
+    font-size: 22px;
+  }
+}
+@container model-plot (max-width: 360px) {
+  .ml-plot text {
+    font-size: 26px;
+  }
+}
+.loss-values,
+.test-metrics {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: var(--space-3);
+  margin-block: var(--space-3);
+  font-variant-numeric: tabular-nums;
+}
+.loss-values dt,
+.test-metrics dt {
+  font-size: var(--text-metadata);
+  color: var(--muted);
+}
+.loss-values dd,
+.test-metrics dd {
+  margin: var(--space-1) 0 0;
+  font-size: var(--text-body);
+  font-weight: 600;
+}
+.inspection-heading,
+.final-test-results h3 {
+  font-family: var(--font-sans);
+  font-size: var(--text-body);
+  font-weight: 600;
+  line-height: 1.5;
+  letter-spacing: normal;
+  margin-bottom: var(--space-3);
+}
+.ml-table tbody tr[aria-current='true'] {
+  box-shadow: inset 3px 0 var(--ink);
+  background: var(--light-green);
+}
+.ml-table .table-context {
+  white-space: normal;
+  font-size: var(--text-supporting);
+}
+.final-test-results {
+  border-top: var(--rule-width) solid var(--line);
+  margin-top: var(--space-4);
+  padding-top: var(--space-4);
+}
+.test-metrics {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
+.ranking-guide {
+  font-size: var(--text-supporting);
+  line-height: 1.5;
+  margin-block: var(--space-2) var(--space-4);
 }

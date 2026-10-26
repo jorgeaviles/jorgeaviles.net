@@ -46,6 +46,12 @@ export function ModelPlot({
           ? `${points.length} ${population} examples · estimated additional-review probability`
           : '24 synthetic task observations · Green line = predicted time'}
       </figcaption>
+      <p className="axis-label axis-y">
+        Vertical:{' '}
+        {logistic
+          ? 'Information uncertainty (0–10)'
+          : 'Completion time (minutes)'}
+      </p>
       <svg
         className="ml-plot"
         viewBox="0 0 600 390"
@@ -101,14 +107,6 @@ export function ModelPlot({
             </text>
           </g>
         ))}
-        <text x="315" y="385" textAnchor="middle">
-          {logistic ? 'Task complexity (0–10)' : 'Task complexity (points)'}
-        </text>
-        <text transform="translate(16 180) rotate(-90)" textAnchor="middle">
-          {logistic
-            ? 'Information uncertainty (0–10)'
-            : 'Completion time (minutes)'}
-        </text>
         <g clipPath="url(#lab-plot-window)">
           {logistic && boundary.kind === 'visible' && (
             <line
@@ -118,7 +116,8 @@ export function ModelPlot({
               x2={x(boundary.points[1][0])}
               y2={y(boundary.points[1][1])}
               stroke="#254f3e"
-              strokeWidth="2.5"
+              strokeWidth="1.5"
+              vectorEffect="non-scaling-stroke"
               strokeDasharray="6 4"
             />
           )}
@@ -145,6 +144,7 @@ export function ModelPlot({
                   stroke={p.id === selected ? '#254f3e' : '#62675f'}
                   strokeWidth={p.id === selected ? 2.5 : 1}
                   strokeDasharray="3 3"
+                  vectorEffect="non-scaling-stroke"
                 />
               )}
               {!logistic || p.y ? (
@@ -162,14 +162,15 @@ export function ModelPlot({
                   strokeWidth="2"
                 />
               )}
-              {logistic && p.id === selected && (
+              {p.id === selected && (
                 <circle
                   cx={x(p.x[0])}
-                  cy={y(p.x[1])}
+                  cy={y(logistic ? p.x[1] : p.y)}
                   r="11"
                   fill="none"
-                  stroke="#254f3e"
+                  stroke="#272d29"
                   strokeWidth="2"
+                  vectorEffect="non-scaling-stroke"
                 />
               )}
             </g>
@@ -183,6 +184,7 @@ export function ModelPlot({
               y2={y(ends[1])}
               stroke="#254f3e"
               strokeWidth="3"
+              vectorEffect="non-scaling-stroke"
               strokeDasharray={initial ? '7 4' : undefined}
             />
           )}
@@ -198,9 +200,13 @@ export function ModelPlot({
           </text>
         )}
       </svg>
+      <p className="axis-label axis-x">
+        Horizontal:{' '}
+        {logistic ? 'Task complexity (0–10)' : 'Task complexity (points)'}
+      </p>
       <p className="plot-key">
         {logistic
-          ? '● Additional review needed · △ No additional review needed. Synthetic outcomes; outline = inspected task.'
+          ? '● Additional review needed · △ No additional review needed. Synthetic outcomes; dark ring = inspected task.'
           : `Dots = observations · dashed verticals = residuals (prediction errors). ${initial ? 'The initial dashed green prediction is zero and overlaps the bottom axis.' : 'Solid green line = current predicted time.'}`}
       </p>
       {logistic && (

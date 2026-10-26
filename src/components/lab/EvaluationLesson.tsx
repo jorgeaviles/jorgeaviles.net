@@ -29,7 +29,7 @@ export function EvaluationLesson(controller: LabController) {
   return (
     <>
       <div className="ml-workspace">
-        <div className="ml-primary">
+        <div className="ml-primary evaluation-primary">
           {state.logistic.mode !== 'trained' ? (
             <p className="ranking-note">
               {state.logistic.mode === 'initial'
@@ -52,6 +52,10 @@ export function EvaluationLesson(controller: LabController) {
               validation records.
             </p>
           )}
+          <p className="ranking-guide">
+            Choose a record to inspect its calculation. The policy controls
+            Review or Leave.
+          </p>
           <fieldset disabled={!!state.finished}>
             <legend>Decision policy</legend>
             <label>
@@ -118,29 +122,52 @@ export function EvaluationLesson(controller: LabController) {
               </div>
             ))}
           </dl>
-          <div className="ranked-strip" aria-label="Ranked validation records">
+          <div
+            className="ranked-strip"
+            role="group"
+            aria-label="Ranked validation records"
+          >
             {predictions.map((r, i) => (
               <button
                 key={r.id}
-                aria-description={`Rank ${i + 1}, ${r.id}, estimated probability ${pct(r.p)}, actual ${reviewOutcome(r.y)}, ${metrics.ids.has(r.id) ? 'selected for review' : 'not selected for review'}`}
+                aria-description={`Rank ${i + 1}, ${r.id}, estimated probability ${pct(r.p)}, actual ${reviewOutcome(r.y)}, ${metrics.ids.has(r.id) ? 'selected for review' : 'not selected for review'}, ${selected.id === r.id ? 'inspecting this record' : 'activate to inspect'}`}
                 aria-pressed={selected.id === r.id}
                 className={metrics.ids.has(r.id) ? 'chosen' : ''}
                 onClick={() =>
                   dispatch({ type: 'select', key: 'validation', id: r.id })
                 }
               >
-                <span>{i + 1}</span>
-                <strong>{r.y ? '●' : '△'}</strong>
-                <span>{pct(r.p)}</span>
-                <small>{metrics.ids.has(r.id) ? 'Review' : 'Leave'}</small>
+                <span className="record-heading">
+                  <span className="record-rank">
+                    #{String(i + 1).padStart(2, '0')}
+                  </span>
+                  <strong className="record-id">{r.id}</strong>
+                </span>
+                <span className="record-score">
+                  <strong>{pct(r.p)}</strong>
+                  <span>probability</span>
+                </span>
+                <span className="record-outcome">
+                  <span aria-hidden="true">{r.y ? '●' : '△'}</span>
+                  <span>{r.y ? 'Review needed' : 'No review needed'}</span>
+                </span>
+                <span className="record-policy">
+                  <span aria-hidden="true">
+                    {metrics.ids.has(r.id) ? '✓ ' : '– '}
+                  </span>
+                  {metrics.ids.has(r.id) ? 'Review' : 'Leave'}
+                </span>
+                <span className="inspection-flag" aria-hidden="true">
+                  {selected.id === r.id ? 'Inspecting' : '\u00a0'}
+                </span>
               </button>
             ))}
           </div>
           <p className="plot-key">
             ● additional review needed · △ no additional review needed
-            (synthetic outcomes). Green fill + Review = selected for review.
-            Outer outline = inspected record. Scores descend; ties use record
-            ID.
+            (synthetic outcomes). Green Review flag = selected for review. Dark
+            marker + Inspecting = inspected record. Scores descend; ties use
+            record ID.
           </p>
           <details>
             <summary>Understand the outcomes</summary>
@@ -198,6 +225,10 @@ export function EvaluationLesson(controller: LabController) {
             }
           }}
         >
+          <p className="table-context">
+            Inspecting {selected.id}. “Selected for review” follows the decision
+            policy.
+          </p>
           <table>
             <caption>
               All validation predictions from the current logistic model
@@ -211,9 +242,11 @@ export function EvaluationLesson(controller: LabController) {
                   'Information uncertainty',
                   'Score',
                   'Actual',
-                  'Selected',
+                  'Selected for review',
                 ].map((v) => (
-                  <th key={v}>{v}</th>
+                  <th key={v} scope="col">
+                    {v}
+                  </th>
                 ))}
               </tr>
             </thead>
@@ -221,7 +254,10 @@ export function EvaluationLesson(controller: LabController) {
               {predictions.map((r, i) => {
                 const raw = rows.find((v) => v.id === r.id)!;
                 return (
-                  <tr key={r.id}>
+                  <tr
+                    key={r.id}
+                    aria-current={selected.id === r.id ? 'true' : undefined}
+                  >
                     <td>{i + 1}</td>
                     <td>{r.id}</td>
                     <td>{fmt(raw.x[0])}</td>
@@ -253,11 +289,22 @@ export function EvaluationLesson(controller: LabController) {
           Lock experiment and evaluate test
         </button>
         {state.finished && (
-          <p>
-            Held-out test: precision {pct(state.finished.precision)}, recall{' '}
-            {pct(state.finished.recall)}, accuracy{' '}
-            {pct(state.finished.accuracy)}. Experiment locked.
-          </p>
+          <div className="final-test-results" role="status">
+            <h3>Held-out test results</h3>
+            <dl className="test-metrics">
+              {[
+                ['Precision', pct(state.finished.precision)],
+                ['Recall', pct(state.finished.recall)],
+                ['Accuracy', pct(state.finished.accuracy)],
+              ].map(([label, value]) => (
+                <div key={label}>
+                  <dt>{label}</dt>
+                  <dd>{value}</dd>
+                </div>
+              ))}
+            </dl>
+            <p>Experiment locked.</p>
+          </div>
         )}
       </details>
     </>
