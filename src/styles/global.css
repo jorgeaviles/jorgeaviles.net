@@ -1106,16 +1106,27 @@ strong {
 .lesson-nav {
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: 0.35rem;
-  margin-bottom: 1.5rem;
+  gap: var(--space-2);
+  margin-bottom: var(--space-6);
 }
 .lesson-nav a {
-  padding: 0.7rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-2);
+  min-height: 48px;
+  padding: var(--space-2) var(--space-3);
   border: 1px solid var(--line);
   text-decoration: none;
-  font-size: 0.9rem;
+  font-size: var(--text-supporting);
+  line-height: 1.5;
   text-align: center;
   border-radius: 3px;
+}
+.lesson-nav span {
+  flex: 0 0 auto;
+  font-size: var(--text-metadata);
+  font-variant-numeric: tabular-nums;
 }
 .lesson-nav [aria-current] {
   background: var(--green);
@@ -1125,12 +1136,13 @@ strong {
 .learning-lab select,
 .learning-lab input[type='number'] {
   border: 1px solid var(--muted);
-  padding: 0.55rem 0.65rem;
-  min-height: 44px;
+  padding: var(--space-2) var(--space-3);
+  min-height: 48px;
   background: var(--paper);
   color: var(--ink);
   border-radius: 3px;
   font: inherit;
+  line-height: 1.5;
 }
 .learning-lab button {
   cursor: pointer;
@@ -1147,18 +1159,45 @@ strong {
 }
 .ml-workspace {
   display: grid;
-  grid-template-columns: minmax(0, 2fr) minmax(250px, 1fr);
-  gap: 1.5rem;
+  grid-template-columns: minmax(0, 2fr) minmax(280px, 1fr);
+  gap: var(--space-8);
   align-items: start;
-  margin-block: 1rem;
+  margin-block: var(--space-6);
 }
 .ml-primary,
 .ml-controls {
   min-width: 0;
 }
 .ml-controls {
-  background: var(--light-green);
-  padding: 1rem;
+  border-left: var(--rule-width) solid var(--line);
+  padding-left: var(--space-6);
+}
+.ml-controls label {
+  font-size: var(--text-supporting);
+}
+.ml-controls select,
+.ml-controls input[type='number'] {
+  font-size: var(--text-body);
+}
+.ml-controls .record-inspector {
+  margin-top: var(--space-6);
+}
+.ml-primary > .model-figure:first-child {
+  margin-top: 0;
+}
+.training-session {
+  display: grid;
+  grid-template-columns: minmax(260px, 1fr) minmax(0, 2fr);
+  gap: var(--space-6);
+  align-items: start;
+  border-block: var(--rule-width) solid var(--line);
+  padding-block: var(--space-6);
+  margin-block: var(--space-6);
+}
+.training-label {
+  font-size: var(--text-supporting);
+  font-weight: 600;
+  margin-bottom: var(--space-2);
 }
 .learning-lab label {
   display: block;
@@ -1172,26 +1211,26 @@ strong {
 }
 .ml-actions {
   display: flex;
-  gap: 0.4rem;
+  gap: var(--space-2);
   flex-wrap: wrap;
-  margin-block: 0.65rem;
+  margin: 0;
 }
 .ml-actions button:first-child {
   background: var(--green);
   color: white;
 }
 .training-feedback {
-  margin: 0.5rem 0;
-  font-size: 0.85rem;
+  margin: 0 0 var(--space-2);
+  font-size: var(--text-supporting);
   line-height: 1.5;
   font-variant-numeric: tabular-nums;
 }
 .learned-parameters {
   display: flex;
   flex-wrap: wrap;
-  gap: 0.5rem 1.2rem;
-  margin: 0.65rem 0 0.4rem;
-  font-size: 0.8rem;
+  gap: var(--space-2) var(--space-6);
+  margin: var(--space-2) 0;
+  font-size: var(--text-supporting);
   font-variant-numeric: tabular-nums;
 }
 .learned-parameters dt {
@@ -1202,8 +1241,8 @@ strong {
   font-weight: 600;
 }
 .parameter-note {
-  margin: 0 0 0.7rem;
-  font-size: 0.75rem;
+  margin: 0;
+  font-size: var(--text-metadata);
   color: var(--muted);
 }
 .probability-legend {
@@ -1334,11 +1373,14 @@ strong {
 }
 .learning-lab details {
   border-top: 1px solid var(--line);
-  padding-block: 0.85rem;
+  padding-block: var(--space-2);
 }
 .learning-lab summary {
   cursor: pointer;
   font-weight: 600;
+  min-height: 44px;
+  padding-block: var(--space-2);
+  line-height: 1.5;
 }
 .learning-lab details p {
   font-size: 0.85rem;
@@ -1352,6 +1394,12 @@ strong {
 .learning-lab fieldset label {
   font-size: 0.9rem;
   margin-block: 0.35rem;
+}
+.learning-lab fieldset label:not(.policy-slider) {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  min-height: 44px;
 }
 .learning-lab input[type='radio'] {
   accent-color: var(--green);
@@ -1453,10 +1501,6 @@ strong {
   margin-block: 0.4rem;
 }
 @media (max-width: 800px) {
-  .ml-workspace {
-    grid-template-columns: 1fr;
-    gap: 1rem;
-  }
   .ml-plot {
     max-height: 390px;
   }
@@ -1479,13 +1523,14 @@ strong {
     margin-top: 0.5rem;
   }
   .lesson-nav {
-    margin-bottom: 1rem;
-    gap: 0.25rem;
+    grid-template-columns: 1fr;
+    margin-bottom: var(--space-4);
+    gap: var(--space-1);
   }
   .lesson-nav a {
-    font-size: 0.85rem;
-    padding: 0.55rem 0.2rem;
-    line-height: 1.25;
+    justify-content: flex-start;
+    font-size: var(--text-body);
+    text-align: left;
   }
   .lesson-nav span {
     display: inline;
@@ -1500,8 +1545,8 @@ strong {
     margin-top: 0.7rem;
   }
   .ml-actions button {
-    font-size: 0.85rem;
-    padding: 0.5rem;
+    font-size: var(--text-supporting);
+    padding: var(--space-2) var(--space-3);
   }
   .ranked-strip {
     gap: 0.3rem;
@@ -1722,4 +1767,53 @@ strong {
     border-top: var(--rule-width) solid var(--line);
     padding-top: 25px;
   }
+}
+
+/* Lab workspace space requirements differ from editorial prose sidebars. */
+@media (max-width: 1000px) {
+  .ml-workspace {
+    grid-template-columns: 1fr;
+    gap: var(--space-6);
+  }
+  .ml-controls {
+    border-left: 0;
+    border-top: var(--rule-width) solid var(--line);
+    padding: var(--space-6) 0 0;
+  }
+}
+@media (min-width: 700px) and (max-width: 1000px) {
+  .training-workspace .ml-controls {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: var(--space-6);
+  }
+  .training-workspace .ml-controls > label,
+  .training-workspace .ml-controls > .loss-history {
+    grid-column: 1;
+  }
+  .training-workspace .ml-controls > .record-inspector {
+    grid-column: 2;
+    grid-row: 1 / span 2;
+    margin-top: 0;
+  }
+}
+@media (max-width: 800px) {
+  .training-session {
+    grid-template-columns: 1fr;
+    gap: var(--space-4);
+    padding-block: var(--space-4);
+    margin-block: var(--space-4);
+  }
+}
+
+.parameter-fields {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 220px), 1fr));
+  gap: var(--space-4) var(--space-6);
+}
+.parameter-fields label {
+  font-size: var(--text-supporting);
+}
+.learning-lab .parameter-fields input {
+  font-size: var(--text-body);
 }
