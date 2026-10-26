@@ -109,87 +109,60 @@ import { site } from '../config/site';
     line-height: 1.5;
     margin-bottom: 20px;
   }
-  .education-section :global(h4) {
-    font-family: var(--font-serif);
-    font-size: 22px;
-    font-weight: 400;
-    line-height: 1.3;
-    letter-spacing: -0.025em;
+  .education-section :global(.institution-header) {
+    margin-bottom: 16px;
   }
-  .education-section :global(.education-provider) {
-    color: var(--muted);
-    font-size: 13px;
-    margin-top: 8px;
-  }
-  .education-section :global(.education-detail) {
-    color: var(--muted);
-    font-size: 12px;
-    margin-top: 4px;
-  }
-  .education-section :global(.course-heading) {
+  .education-section :global(.institution-brand) {
     display: flex;
-    align-items: baseline;
-    justify-content: space-between;
-    gap: 20px;
-  }
-  .education-section :global(time) {
-    color: var(--muted);
-    font-size: 13px;
-    flex-shrink: 0;
-  }
-  .education-section :global(.coursework-list) {
-    margin: 0;
-    padding: 0;
-    list-style: none;
-  }
-  .education-section :global(.coursework-list > li + li) {
-    border-top: 1px solid var(--line);
-    margin-top: 18px;
-    padding-top: 18px;
-  }
-  .education-section :global(.education-credential) {
-    font-size: 13px;
-    margin-top: 8px;
-  }
-  .education-section :global(.text-link) {
-    min-height: 44px;
-    font-size: 13px;
-  }
-  .education-section :global(.datacamp-group) {
-    container: coursework / inline-size;
-  }
-  .education-section :global(.provider-heading) {
-    display: flex;
-    align-items: center;
-    flex-wrap: wrap;
-    gap: 4px 16px;
-    margin-bottom: 12px;
-  }
-  .education-section :global(.provider-heading p) {
-    color: var(--muted);
-    font-size: 12px;
-    margin-left: auto;
-  }
-  .education-section :global(.provider-link) {
-    display: inline-flex;
     align-items: center;
     gap: 8px;
     min-height: 44px;
-    font-size: 14px;
+    font-size: 18px;
+    color: var(--ink);
   }
-  .education-section :global(.provider-link img) {
+  .education-section :global(.institution-brand a) {
+    display: inline-flex;
+    align-items: center;
+    min-height: 44px;
+  }
+  .education-section :global(.institution-brand img) {
     display: block;
     width: 19px;
     height: 24px;
+  }
+  .education-section :global(.institution-brand .edx-brand) {
+    width: 64px;
+    height: auto;
+  }
+  .education-section :global(.university-name) {
+    font-family: var(--font-serif);
+    font-size: 26px;
+    letter-spacing: -0.035em;
+    line-height: 1.2;
+  }
+  .education-section :global(.institution-header p) {
+    color: var(--muted);
+    font-size: 12px;
+    line-height: 20px;
+    margin-top: 4px;
+  }
+  .education-section :global(.coursework-list),
+  .education-section :global(.course-grid) {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+  }
+  .education-section :global(.coursework-list > li + li) {
+    margin-top: 28px;
+  }
+  .education-section :global(.datacamp-group) {
+    container: coursework / inline-size;
   }
   .education-section :global(.course-grid) {
     display: grid;
     grid-template-columns: repeat(2, minmax(0, 1fr));
     grid-auto-rows: 1fr;
-    gap: 10px;
-    list-style: none;
-    margin: 0;
-    padding: 0;
+    gap: 18px 24px;
   }
   .education-section :global(.course-grid li) {
     min-width: 0;
@@ -197,39 +170,37 @@ import { site } from '../config/site';
   .education-section :global(.course-grid li:last-child:nth-child(odd)) {
     grid-column: 1 / -1;
   }
-  .education-section :global(.course-tile) {
-    display: grid;
-    grid-template-columns: minmax(0, 1fr) auto;
-    align-items: start;
-    gap: 6px 12px;
+  .education-section :global(.credential-entry) {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 6px;
+    min-height: 54px;
     height: 100%;
-    padding: 12px 14px;
-    border: 1px solid var(--line);
-    background: rgba(237, 240, 231, 0.3);
+    color: var(--ink);
   }
-  .education-section :global(.course-tile:hover) {
-    border-color: var(--green);
-    background: var(--light-green);
-  }
-  .education-section :global(.course-tile h4) {
+  .education-section :global(.credential-entry h4) {
+    font-family: var(--font-serif);
     font-size: 18px;
+    font-weight: 400;
+    line-height: 1.3;
     letter-spacing: -0.02em;
   }
-  .education-section :global(.course-tile time) {
-    grid-column: 1;
-    align-self: end;
+  .education-section :global(.credential-entry time) {
+    color: var(--muted);
     font-size: 12px;
+    line-height: 20px;
   }
-  .education-section :global(.course-tile .arrow) {
-    grid-column: 2;
-    grid-row: 1 / 3;
-    align-self: center;
-    width: 15px;
-    height: 15px;
+  .education-section :global(.credential-link h4) {
+    text-decoration: underline;
+    text-decoration-color: var(--line);
+    text-underline-offset: 4px;
+    text-decoration-thickness: 1px;
+  }
+  .education-section :global(.credential-link:hover h4),
+  .education-section :global(.credential-link:focus-visible h4) {
     color: var(--green);
-  }
-  .education-section :global(.foundation .course-tile) {
-    background: transparent;
+    text-decoration-color: currentColor;
   }
   .education-section :global(.foundation h4) {
     color: var(--muted);

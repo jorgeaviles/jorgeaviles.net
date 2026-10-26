@@ -1171,9 +1171,13 @@ test('About distinguishes academic education from compact technical coursework a
     exact: true,
   });
   await expect(academic).toContainText('Bachelor of Arts in Economics');
-  await expect(academic).toContainText(
-    'Suffolk University · Boston, Massachusetts',
+  await expect(academic).toContainText('Suffolk University');
+  await expect(academic.locator('.university-name')).toHaveCSS(
+    'font-size',
+    '26px',
   );
+  await expect(academic.locator('.university-name p')).toHaveCount(0);
+  await expect(academic).toContainText('Boston, Massachusetts');
   await expect(academic.locator('time')).toHaveAttribute('datetime', '2011');
   const coursework = education.getByRole('region', {
     name: 'Selected Technical Coursework',
@@ -1197,12 +1201,12 @@ test('About distinguishes academic education from compact technical coursework a
   ]) {
     await expect(coursework.getByText(title, { exact: true })).toBeVisible();
   }
-  await expect(coursework).toContainText('Microsoft · edX');
+  await expect(coursework).toContainText('Microsoft ·');
+  await expect(coursework.getByAltText('edX')).toBeVisible();
   await expect(coursework).toContainText('edX Honor Code Certificate');
   await expect(coursework).toContainText('DataCamp');
   const credential = coursework.getByRole('link', {
-    name: 'View credential for Introduction to R Programming (edX)',
-    exact: true,
+    name: /Introduction to R Programming \(DAT204x\)/,
   });
   await expect(credential).toHaveAttribute(
     'href',
@@ -1218,7 +1222,7 @@ test('About distinguishes academic education from compact technical coursework a
     ['Intermediate Python', 'c073b50b12424055585ca2e578d0930040f8f746'],
   ];
   await expect(coursework).toContainText('Statements of Accomplishment');
-  await expect(coursework.getByRole('link')).toHaveCount(7);
+  await expect(coursework.getByRole('link')).toHaveCount(8);
   await expect(
     coursework.locator(
       'a[href*="statement-of-accomplishment"], a[href*="verify.edx.org"]',
@@ -1282,6 +1286,8 @@ test('About distinguishes academic education from compact technical coursework a
   await expect(education).not.toContainText('Professional Certifications');
   // Reach every credential through sequential keyboard navigation.
   for (const link of [
+    academic.getByRole('link'),
+    coursework.getByRole('link', { name: 'Visit edX platform' }),
     credential,
     provider,
     ...accomplishments.map(([title]) =>
@@ -1326,7 +1332,17 @@ test('About distinguishes academic education from compact technical coursework a
   ).toBeLessThan(1);
   expect(geometry.tiles[4].width).toBeCloseTo(geometry.width, 0);
   await expect(coursework.locator('a a')).toHaveCount(0);
-  await expect(education.locator('img')).toHaveCount(1);
+  await expect(education.locator('img')).toHaveCount(2);
+  await expect(education.locator('svg')).toHaveCount(0);
+  for (const entry of await coursework.locator('.credential-link').all()) {
+    await expect(entry).toHaveCSS('padding', '0px');
+    await expect(entry).toHaveCSS('border-width', '0px');
+    await expect(entry.locator('h4')).toHaveCSS(
+      'text-decoration-line',
+      'underline',
+    );
+  }
+  await expect(academic.locator('.credential-entry a')).toHaveCount(0);
   await expectNoHorizontalOverflow(page);
   const placement = await page.evaluate(() => {
     const experience = document.querySelector('.editorial-grid')!;
@@ -1341,7 +1357,7 @@ test('About distinguishes academic education from compact technical coursework a
     route.fulfill({ body: 'Credential navigation test' }),
   );
   await coursework
-    .locator('.course-tile')
+    .locator('.course-grid .credential-link')
     .first()
     .click({ position: { x: 6, y: 6 } });
   await expect(page).toHaveURL(
