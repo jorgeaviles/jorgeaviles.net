@@ -34,13 +34,6 @@ import { site } from '../config/site';
       </a>
     </aside>
   </div>
-  <section
-    class="education-section section-space"
-    id="education"
-    aria-labelledby="education-heading"
-  >
-    <Education />
-  </section>
   <section class="section-space capabilities">
     <div class="section-heading">
       <div>
@@ -79,9 +72,53 @@ import { site } from '../config/site';
       <a href={site.profileSource}>public professional profile</a>.
     </p>
   </section>
+  <section
+    class="education-section section-space"
+    id="education"
+    aria-labelledby="education-heading"
+  >
+    <Education />
+  </section>
 </BaseLayout>
 
 <style>
+  .capabilities {
+    margin-top: 0;
+  }
+  .major-sections :global(.experience-entry) {
+    display: flow-root;
+  }
+  .major-sections :global(.experience-entry + .experience-entry) {
+    margin-top: var(--space-8);
+  }
+  .major-sections :global(.experience-entry h3) {
+    margin-block: 0 var(--space-4);
+  }
+  .major-sections :global(.experience-entry > :last-child) {
+    margin-bottom: 0;
+  }
+  .major-sections :global(.experience-roles) {
+    list-style: none;
+    padding: 0;
+    margin-block: 0 var(--space-4);
+  }
+  .major-sections :global(.experience-roles li + li) {
+    margin-top: var(--space-2);
+  }
+  .major-sections :global(.experience-links) {
+    margin-block: var(--space-6);
+  }
+  .major-sections :global(.experience-links ul) {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-2);
+  }
+  .major-sections :global(.experience-links li + li) {
+    margin-top: 0;
+  }
   .education-section {
     border-top: 1px solid var(--line);
     padding-top: 36px;
