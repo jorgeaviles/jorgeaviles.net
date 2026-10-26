@@ -70,3 +70,13 @@ On 2026-10-23, the following official action release tags were resolved through 
 | [actions/download-artifact](https://github.com/actions/download-artifact/releases/tag/v8.0.2) | v8.0.2           | `9000827ccba6bdab643e8b6fd33ac0654aef8333` |
 
 The configuration follows Cloudflare's [static generation and 404 routing](https://developers.cloudflare.com/workers/static-assets/routing/static-site-generation/), [Wrangler configuration](https://developers.cloudflare.com/workers/wrangler/configuration/), and [external GitHub Actions authentication](https://developers.cloudflare.com/workers/ci-cd/external-cicd/github-actions/) documentation. Browser tests use local production output; production infrastructure and edge behavior require separate live checks.
+
+### Public-release readiness checks
+
+The read-only smoke check requires the exact expected commit, complete Lab HTML,
+valid JavaScript/CSS/SVG assets and a real custom 404. It retries up to 12 times,
+with five seconds between attempts (55 seconds of waits plus request time).
+Every failed attempt logs its error; commit mismatches include the expected and
+observed commit, HTTP status and cache status. A persistent mismatch still fails
+the workflow. This allows a short rollout interval without weakening provenance
+or changing deployment permissions, artifact verification or the current-main gate.

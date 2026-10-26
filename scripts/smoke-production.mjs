@@ -11,11 +11,12 @@ export async function smokeProduction(base, expectedCommit, fetcher = fetch) {
     return response;
   };
   const provenance = await get('/deployment.json');
-  if (
-    provenance.status !== 200 ||
-    (await provenance.json()).commit !== expectedCommit
-  )
-    throw new Error('Deployed commit mismatch');
+  const observed =
+    provenance.status === 200 ? (await provenance.json()).commit : null;
+  if (provenance.status !== 200 || observed !== expectedCommit)
+    throw new Error(
+      `Deployed commit mismatch: expected ${expectedCommit}, received ${observed ?? 'unavailable'} (HTTP ${provenance.status}; cache ${provenance.headers.get('cf-cache-status') ?? 'unknown'}).`,
+    );
   const page = await get('/lab/');
   const html = await page.text();
   if (
@@ -69,28 +70,38 @@ export async function smokeProduction(base, expectedCommit, fetcher = fetch) {
     unknown: 404,
   };
 }
+// Deployment completion can precede the public edge serving the new assets.
+// Retry read-only checks, retaining the exact commit and all asset/404 assertions.
+export async function smokeProductionWithRetry(
+  base,
+  expectedCommit,
+  {
+    fetcher = fetch,
+    wait = (milliseconds) =>
+      new Promise((resolve) => globalThis.setTimeout(resolve, milliseconds)),
+    report = console.warn,
+  } = {},
+) {
+  for (let attempt = 1; attempt <= 12; attempt++) {
+    try {
+      return await smokeProduction(base, expectedCommit, fetcher);
+    } catch (error) {
+      report(`Production check ${attempt}/12: ${error.message}`);
+      if (attempt === 12) throw error;
+      await wait(5000);
+    }
+  }
+}
 if (
   process.argv[1] &&
   import.meta.url === new URL(process.argv[1], 'file:').href
 ) {
-  let failure;
-  for (let attempt = 0; attempt < 3; attempt++) {
-    try {
-      console.log(
-        JSON.stringify(
-          await smokeProduction(
-            'https://jorgeaviles.net',
-            process.env.GITHUB_SHA,
-          ),
-        ),
-      );
-      failure = null;
-      break;
-    } catch (error) {
-      failure = error;
-      if (attempt < 2)
-        await new Promise((resolve) => globalThis.setTimeout(resolve, 5000));
-    }
-  }
-  if (failure) throw failure;
+  console.log(
+    JSON.stringify(
+      await smokeProductionWithRetry(
+        'https://jorgeaviles.net',
+        process.env.GITHUB_SHA,
+      ),
+    ),
+  );
 }

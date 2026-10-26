@@ -117,3 +117,20 @@ Professional content was checked against the current [public profile](https://gi
 Automated external HEAD requests returned HTTP 200 for GitHub, the publisher PDF, and the PUCP record. LinkedIn returned HTTP 405 to HEAD; the supplied profile URL is retained and is not claimed as independently verified through an anonymous browser. Every first-party page/asset reference passed local checks.
 
 No original article, private source code, agency records, internal schema, unrelated personal details, or third-party photograph was copied into this project. Synthetic fixtures are independently fabricated. No license was automatically applied.
+
+## D3 merge release verification — 2026-10-26
+
+[Run 40388888613](https://github.com/jorgeaviles/jorgeaviles.net/actions/runs/40388888613)
+passed Quality and artifact provenance and completed the deployment command for
+`54f766275115a2f96d460c101b8a5d1e60d92fb8`. Its immediate public smoke check failed
+with `Deployed commit mismatch` after three attempts over approximately ten
+seconds. The old diagnostic did not record the response commit/status, so the
+exact response from that runner cannot be reconstructed.
+
+A later read-only check found that exact merged commit at both the ordinary and
+query-qualified public `/deployment.json` URL. The complete production smoke
+check passed: five assets, Lab HTTP 200 and a genuine custom HTTP 404. This is
+consistent with a temporary public rollout delay, not proof of its precise cause.
+No deployment rerun or infrastructure/account change was performed for this check.
+The historical workflow remains failed; a later successful check does not rewrite
+its result.
