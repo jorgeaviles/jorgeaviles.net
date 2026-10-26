@@ -1691,6 +1691,14 @@ test('Lab training controls and inspector use the available workspace width', as
         .querySelector('.ml-controls')!
         .getBoundingClientRect()
         .toJSON(),
+      rate: document
+        .querySelector('.ml-controls select')!
+        .getBoundingClientRect()
+        .toJSON(),
+      loss: document
+        .querySelector('.loss-history')!
+        .getBoundingClientRect()
+        .toJSON(),
       advanced: document
         .querySelector('.parameter-explorer')!
         .getBoundingClientRect()
@@ -1715,6 +1723,8 @@ test('Lab training controls and inspector use the available workspace width', as
       expect(boxes.primary.width).toBeGreaterThan(boxes.controls.width);
     else
       expect(boxes.controls.top).toBeGreaterThanOrEqual(boxes.primary.bottom);
+    if (width >= 700 && width <= 1000)
+      expect(boxes.loss.top - boxes.rate.bottom).toBeLessThan(48);
     expect(boxes.advanced.width).toBeCloseTo(boxes.workspace.width, 0);
     expect(boxes.advanced.top).toBeGreaterThanOrEqual(boxes.workspace.bottom);
     await expectNoHorizontalOverflow(page);

@@ -171,21 +171,23 @@ export function TrainingLesson(controller: LabController) {
           className="ml-controls"
           aria-label="Model controls and inspected example"
         >
-          <label>
-            Learning rate
-            <select
-              disabled={!!state.finished || state.running}
-              value={experiment.rate}
-              onChange={(e) =>
-                dispatch({ type: 'rate', value: +e.target.value })
-              }
-            >
-              <option value="0.01">Careful · 0.01</option>
-              <option value="0.05">Steady · 0.05</option>
-              <option value="0.1">Faster · 0.1</option>
-            </select>
-          </label>
-          <LossHistory experiment={experiment} logistic={logistic} />
+          <div className="model-settings">
+            <label>
+              Learning rate
+              <select
+                disabled={!!state.finished || state.running}
+                value={experiment.rate}
+                onChange={(e) =>
+                  dispatch({ type: 'rate', value: +e.target.value })
+                }
+              >
+                <option value="0.01">Careful · 0.01</option>
+                <option value="0.05">Steady · 0.05</option>
+                <option value="0.1">Faster · 0.1</option>
+              </select>
+            </label>
+            <LossHistory experiment={experiment} logistic={logistic} />
+          </div>
           <RecordInspector
             rows={rows}
             selected={selected}
