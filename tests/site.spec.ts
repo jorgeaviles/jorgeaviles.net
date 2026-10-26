@@ -1482,3 +1482,175 @@ test('article comparison preserves table relationships and readable narrow recor
   }
   await expectAccessible(page);
 });
+
+test('About connects experience to capabilities before supporting education', async ({
+  page,
+}) => {
+  await page.goto('/about/');
+  await expect(page.locator('main h2')).toHaveText([
+    'Professional experience',
+    'How I work',
+    'Different tools. A shared purpose.',
+    'Education & Professional Development',
+  ]);
+  const employer = page.getByRole('region', {
+    name: 'Committee for Public Counsel Services',
+    exact: true,
+  });
+  await expect(employer.locator(':scope > ul > li')).toHaveCount(2);
+  await expect(employer).toContainText(
+    'The ML evaluation pipelines are implemented, while modeling remains experimental.',
+  );
+  await expect(employer).toContainText(
+    'Integrating predictive scores into the Audit Portal is proposed, not an approved production decision capability.',
+  );
+  await expect(employer).toContainText(
+    'Audit & Oversight colleagues contribute firsthand knowledge',
+  );
+  const links = page.getByRole('navigation', { name: 'CPCS case studies' });
+  await expect(links.getByRole('link')).toHaveText([
+    'Audit Portal case study',
+    'Analytical data platform case study',
+    'Machine-learning case study',
+  ]);
+  for (const [index, path] of [
+    '/work/analytical-applications/',
+    '/work/analytical-data-platforms/',
+    '/work/machine-learning-audit-prioritization/',
+  ].entries()) {
+    await expect(links.getByRole('link').nth(index)).toHaveAttribute(
+      'href',
+      path,
+    );
+  }
+  expect(
+    await employer.evaluate((element) => {
+      const status = [...element.querySelectorAll('p')].find((paragraph) =>
+        paragraph.textContent?.startsWith('The ML evaluation pipelines'),
+      )!;
+      return Boolean(
+        status.compareDocumentPosition(element.querySelector('nav')!) &
+        Node.DOCUMENT_POSITION_FOLLOWING,
+      );
+    }),
+  ).toBe(true);
+  await expect(
+    page
+      .getByRole('region', { name: 'Santander Bank, N.A.', exact: true })
+      .locator('.experience-roles > li'),
+  ).toHaveText([
+    'Change Management Business Analyst · October 2018–June 2020',
+    'Retail Operations Database Analyst · March 2017–October 2018',
+    'Operations Data Quality Specialist · March 2015–March 2017',
+  ]);
+  await expect(
+    page.getByRole('region', {
+      name: 'CENTRUM Católica Graduate Business School',
+      exact: true,
+    }),
+  ).toContainText('Graduate Research Assistant · April 2012–September 2014');
+  await expectAccessible(page);
+});
+
+test('About reflows with text enlarged to 200 percent', async ({
+  page,
+}, testInfo) => {
+  await page.setViewportSize({ width: 1280, height: 1000 });
+  await page.goto('/about/');
+  const originalTitleSize = await page
+    .locator('main h1')
+    .evaluate((element) => parseFloat(getComputedStyle(element).fontSize));
+  // Controlled text-only enlargement; this does not claim native browser zoom.
+  await page.locator('main').evaluate((main) => {
+    const textElements = [...main.querySelectorAll<HTMLElement>('*')].filter(
+      (element) =>
+        [...element.childNodes].some(
+          (node) =>
+            node.nodeType === Node.TEXT_NODE && node.textContent?.trim(),
+        ),
+    );
+    const sizes = textElements.map((element) => ({
+      font: parseFloat(getComputedStyle(element).fontSize),
+      line: parseFloat(getComputedStyle(element).lineHeight),
+    }));
+    textElements.forEach((element, index) => {
+      element.style.fontSize = `${sizes[index].font * 2}px`;
+      if (Number.isFinite(sizes[index].line))
+        element.style.lineHeight = `${sizes[index].line * 2}px`;
+    });
+  });
+  expect(
+    await page
+      .locator('main h1')
+      .evaluate((element) => parseFloat(getComputedStyle(element).fontSize)),
+  ).toBeCloseTo(originalTitleSize * 2, 1);
+  await expectNoHorizontalOverflow(page);
+  await expect(
+    page
+      .getByRole('navigation', { name: 'CPCS case studies' })
+      .getByRole('link'),
+  ).toHaveCount(3);
+  const clipped = await page
+    .locator('main')
+    .evaluate((main) =>
+      [...main.querySelectorAll<HTMLElement>('h1, h2, h3, h4, p, li, time')]
+        .filter(
+          (element) =>
+            ['hidden', 'clip'].includes(getComputedStyle(element).overflowY) &&
+            element.scrollHeight > element.clientHeight + 1,
+        )
+        .map((element) => element.textContent),
+    );
+  expect(clipped).toEqual([]);
+  if (['chromium-desktop', 'webkit-desktop'].includes(testInfo.project.name)) {
+    await testInfo.attach('about-text-200-percent', {
+      body: await page.screenshot({ fullPage: true }),
+      contentType: 'image/png',
+    });
+  }
+});
+
+test('About full-page composition review captures', async ({
+  page,
+}, testInfo) => {
+  test.skip(
+    !['chromium-desktop', 'webkit-desktop'].includes(testInfo.project.name),
+    'One desktop context per engine captures the six review widths.',
+  );
+  for (const width of [320, 390, 768, 1024, 1280, 1440]) {
+    await page.setViewportSize({ width, height: 1000 });
+    await page.goto('/about/');
+    await page.locator('img').evaluateAll((images) =>
+      Promise.all(
+        images.map((image) => {
+          const img = image as HTMLImageElement;
+          img.loading = 'eager';
+          return img.decode();
+        }),
+      ),
+    );
+    await expectNoHorizontalOverflow(page);
+    await page.setViewportSize({
+      width,
+      height: await page.evaluate(() =>
+        Math.max(1000, document.documentElement.scrollHeight),
+      ),
+    });
+    await page.evaluate(() => scrollTo(0, 0));
+    await testInfo.attach(`about-B-proposed-order-${width}`, {
+      body: await page.screenshot({ fullPage: true, animations: 'disabled' }),
+      contentType: 'image/png',
+    });
+    // Compare the current order with the same content refinements, isolating composition.
+    await page.evaluate(() =>
+      document
+        .querySelector('#education')!
+        .after(document.querySelector('.capabilities')!),
+    );
+    await page.evaluate(() => scrollTo(0, 0));
+    await testInfo.attach(`about-A-current-order-${width}`, {
+      body: await page.screenshot({ fullPage: true, animations: 'disabled' }),
+      contentType: 'image/png',
+    });
+  }
+});
