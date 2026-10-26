@@ -1384,3 +1384,101 @@ test('education course columns follow the available container width', async ({
     expect(columns).toBe(width > 520 ? 2 : 1);
   }
 });
+
+test('editorial reading width stays stable around layout breakpoints', async ({
+  page,
+}) => {
+  await page.goto('/about/');
+  let previous = 0;
+  for (const width of [
+    320, 390, 639, 640, 641, 768, 999, 1000, 1001, 1024, 1099, 1100, 1101, 1280,
+    1440,
+  ]) {
+    await page.setViewportSize({ width, height: 1000 });
+    const measure = await page
+      .locator('.editorial-grid .prose')
+      .evaluate((element) => element.getBoundingClientRect().width);
+    expect(measure).toBeGreaterThanOrEqual(previous - 1);
+    expect(measure).toBeLessThanOrEqual(691);
+    previous = measure;
+    const headings = await page
+      .locator('.major-sections h2, #education h2, .capabilities h2')
+      .evaluateAll((elements) =>
+        elements.map((element) => getComputedStyle(element).fontSize),
+      );
+    expect(new Set(headings).size).toBe(1);
+    await expectNoHorizontalOverflow(page);
+  }
+  const headings = await page
+    .locator('.major-sections h2, #education h2, .capabilities h2')
+    .evaluateAll((elements) =>
+      elements.map((element) => getComputedStyle(element).fontSize),
+    );
+  expect(new Set(headings).size).toBe(1);
+});
+
+test('Work titles use contextual heading levels without changing their visual role', async ({
+  page,
+}) => {
+  await page.goto('/');
+  await expect(page.locator('.work-list h3.work-title')).toHaveCount(3);
+  const size = await page
+    .locator('.work-title')
+    .first()
+    .evaluate((element) => getComputedStyle(element).fontSize);
+  await page.goto('/work/');
+  await expect(page.locator('.work-list h2.work-title')).toHaveCount(3);
+  await expect(page.locator('.work-list h3')).toHaveCount(0);
+  await expect(page.locator('.work-title').first()).toHaveCSS(
+    'font-size',
+    size,
+  );
+});
+
+test('article comparison preserves table relationships and readable narrow records', async ({
+  page,
+}) => {
+  await page.goto('/work/machine-learning-audit-prioritization/');
+  const table = page.getByRole('table', { name: 'Model candidate comparison' });
+  await expect(table.getByRole('columnheader')).toHaveText([
+    'Candidate',
+    'Framework',
+    'Verified implementation status',
+  ]);
+  await expect(table.getByRole('rowheader')).toHaveCount(5);
+  for (const width of [320, 390, 760, 761, 768, 1101, 1440]) {
+    await page.setViewportSize({ width, height: 1000 });
+    await expectNoHorizontalOverflow(page);
+    await expect(table.locator('td').first()).toHaveCSS(
+      'vertical-align',
+      'top',
+    );
+    await expect(table.locator('tbody tr').first()).toHaveCSS(
+      'display',
+      width <= 760 ? 'block' : 'table-row',
+    );
+    const cells = await table
+      .locator('tbody tr')
+      .first()
+      .locator('th, td')
+      .evaluateAll((elements) =>
+        elements.map((element) => element.getBoundingClientRect().toJSON()),
+      );
+    if (width <= 760) {
+      const tableWidth = await table.evaluate(
+        (element) => element.getBoundingClientRect().width,
+      );
+      for (const cell of cells)
+        expect(cell.width).toBeGreaterThanOrEqual(tableWidth - 1);
+      expect(cells[1].top).toBeGreaterThan(cells[0].bottom);
+      expect(cells[2].top).toBeGreaterThan(cells[1].bottom);
+    } else {
+      expect(cells[0].top).toBe(cells[2].top);
+      await expect(table.locator('td').first()).toHaveCSS(
+        'padding-top',
+        '12px',
+      );
+    }
+  }
+  await expectAccessible(page);
+});

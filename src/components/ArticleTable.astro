@@ -1,0 +1,40 @@
+---
+interface Props {
+  label: string;
+  columns: string[];
+  rows: string[][];
+}
+const { label, columns, rows } = Astro.props;
+---
+
+<table class="article-table" role="table" aria-label={label}>
+  <thead role="rowgroup">
+    <tr role="row">
+      {columns.map((column) => (
+        <th role="columnheader" scope="col">
+          {column}
+        </th>
+      ))}
+    </tr>
+  </thead>
+  <tbody role="rowgroup">
+    {rows.map((row) => (
+      <tr role="row">
+        {row.map((cell, index) =>
+          index === 0 ? (
+            <th role="rowheader" scope="row">
+              {cell}
+            </th>
+          ) : (
+            <td role="cell">
+              <span class="cell-label" aria-hidden="true">
+                {columns[index]}
+              </span>
+              {cell}
+            </td>
+          ),
+        )}
+      </tr>
+    ))}
+  </tbody>
+</table>
