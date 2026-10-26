@@ -213,6 +213,11 @@ test('keyboard users can see focus and skip directly to the main content', async
   browserName,
 }) => {
   await page.goto('/');
+  const skipBounds = () =>
+    page
+      .locator('.skip-link')
+      .evaluate((element) => element.getBoundingClientRect().bottom);
+  expect(await skipBounds()).toBeLessThanOrEqual(0);
   // WebKit on macOS follows its platform preference: Option-Tab includes links.
   await page.keyboard.press(
     browserName === 'webkit' && process.platform === 'darwin'
@@ -234,6 +239,7 @@ test('keyboard users can see focus and skip directly to the main content', async
   await page.keyboard.press('Enter');
   await expect(page.getByRole('main')).toBeFocused();
   await expect(page).toHaveURL(/#main$/);
+  expect(await skipBounds()).toBeLessThanOrEqual(0);
 });
 
 test('learning journeys train models and evaluate model-generated rankings', async ({

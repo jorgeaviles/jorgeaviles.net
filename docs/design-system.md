@@ -50,3 +50,12 @@ changes the display. This avoids the hidden status text and inconsistent native
 keyboard scrolling found when comparing a horizontal-scroller prototype. The
 pattern does not target Lab tables. Work listing headings use H2 on the index
 and H3 under Home's Selected work section, with the same visual title class.
+
+## Stabilization reference
+
+See [the D3 findings and repeatable audit](site-stabilization.md) before changing
+shared roles or removing selectors. The visual audit supplements `npm run verify`
+with all-route, seven-width, two-engine captures. Preserve intentional differences
+and inspect source plus built JavaScript and interactive states before treating
+CSS as unused. Native zoom and spoken screen-reader checks have separate evidence
+requirements.
