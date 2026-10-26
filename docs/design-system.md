@@ -29,3 +29,24 @@ artifacts, not a second committed image gallery. Record the source revision,
 browser, viewport, and limitations. WebKit automation is not native Safari
 verification. Check neighboring widths when changing a breakpoint; a passing
 no-overflow assertion alone does not establish readable composition.
+
+## Responsive reading contracts
+
+Page gutters vary continuously from 20px to 56px. Editorial prose has a 690px
+maximum measure. The 220px sidebar appears above 1100px, with a 48px gap; below
+that width it follows the reading column. At the transition the capped reading
+column already fits beside it, so it does not suddenly shrink. Education and
+Lab keep their independent layout thresholds.
+
+About's major-section headings use the section role; case-study subsections
+retain the article role. Prose uses 16px body text, sidebar supporting text 14px,
+and the research attribution marker 12px. These are scoped roles, not a global
+resizing of every label or chart.
+
+`ArticleTable.astro` renders native table headers and row headers from one set of
+content-owned rows. Below 761px each candidate becomes a vertical record with
+visible field labels; explicit table roles preserve its relationships when CSS
+changes the display. This avoids the hidden status text and inconsistent native
+keyboard scrolling found when comparing a horizontal-scroller prototype. The
+pattern does not target Lab tables. Work listing headings use H2 on the index
+and H3 under Home's Selected work section, with the same visual title class.

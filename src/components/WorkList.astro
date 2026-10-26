@@ -3,8 +3,9 @@ import type { CollectionEntry } from 'astro:content';
 import Arrow from './Arrow.astro';
 interface Props {
   entries: CollectionEntry<'work'>[];
+  headingLevel?: 'h2' | 'h3';
 }
-const { entries } = Astro.props;
+const { entries, headingLevel: Heading = 'h3' } = Astro.props;
 ---
 
 <div class="work-list">
@@ -13,7 +14,7 @@ const { entries } = Astro.props;
       <span class="work-number">{String(index + 1).padStart(2, '0')}</span>
       <div>
         <span class="work-category">{entry.data.category}</span>
-        <h3>{entry.data.title}</h3>
+        <Heading class="work-title">{entry.data.title}</Heading>
         <p>{entry.data.description}</p>
         {entry.data.overview && (
           <p class="work-technologies">
