@@ -1319,13 +1319,14 @@ test('About distinguishes academic education from compact technical coursework a
     .evaluate((grid) => ({
       columns: getComputedStyle(grid).gridTemplateColumns.split(' ').length,
       width: grid.getBoundingClientRect().width,
+      containerWidth: grid.parentElement!.getBoundingClientRect().width,
       tiles: [...grid.querySelectorAll('a')].map((tile) => ({
         height: tile.getBoundingClientRect().height,
         width: tile.getBoundingClientRect().width,
       })),
     }));
   expect(geometry.tiles).toHaveLength(5);
-  expect(geometry.columns).toBe(page.viewportSize()!.width >= 768 ? 2 : 1);
+  expect(geometry.columns).toBe(geometry.containerWidth > 520 ? 2 : 1);
   expect(
     Math.max(...geometry.tiles.map((tile) => tile.height)) -
       Math.min(...geometry.tiles.map((tile) => tile.height)),
@@ -1363,4 +1364,23 @@ test('About distinguishes academic education from compact technical coursework a
   await expect(page).toHaveURL(
     'https://www.datacamp.com/completed/statement-of-accomplishment/course/fd798f0e03cdecc2e81e24371c2beb9e5bda853c',
   );
+});
+
+test('education course columns follow the available container width', async ({
+  page,
+}) => {
+  await page.setViewportSize({ width: 1440, height: 1000 });
+  await page.goto('/about/');
+  const group = page.locator('.datacamp-group');
+  for (const width of [519, 520, 521, 600]) {
+    await group.evaluate((element, size) => {
+      (element as HTMLElement).style.width = `${size}px`;
+    }, width);
+    const columns = await group
+      .locator('.course-grid')
+      .evaluate(
+        (grid) => getComputedStyle(grid).gridTemplateColumns.split(' ').length,
+      );
+    expect(columns).toBe(width > 520 ? 2 : 1);
+  }
 });
