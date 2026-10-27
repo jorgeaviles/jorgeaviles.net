@@ -3,6 +3,8 @@ import { render } from 'astro:content';
 import BaseLayout from '../layouts/BaseLayout.astro';
 import PageIntro from '../components/PageIntro.astro';
 import Arrow from '../components/Arrow.astro';
+import ResearchBackground from '../content/research-background.mdx';
+import ResearchDevelopment from '../content/research-development.mdx';
 import { getPublishedEntries } from '../lib/content';
 const entries = await Promise.all(
   (await getPublishedEntries('research')).map(async (entry) => ({
@@ -14,19 +16,15 @@ const entries = await Promise.all(
 
 <BaseLayout
   title="Research"
-  description="Verified research assistance and quantitative interests, including an acknowledged contribution to a 2014 cattle-ranch profitability study."
+  description="Faculty research experience and acknowledged research assistance in a 2014 study, connecting economics, business questions, and quantitative methods."
 >
   <PageIntro
     label="Research & writing"
     title="Research assistance & quantitative inquiry."
-    description="Academic research assistance, its published acknowledgment, and the connection to my current analytical interests."
+    description="Economic and business questions, quantitative methods, and the development of my analytical practice."
   />
-  <div class="research-context">
-    <p>
-      At CENTRUM PUCP, I supported faculty research on profitability
-      forecasting, consumer spending, choice-based conjoint analysis, and
-      pricing. The contribution below is documented in the published research.
-    </p>
+  <div class="research-context prose">
+    <ResearchBackground />
   </div>
   {entries.map(({ entry, Content }) => (
     <article class="research-entry">
@@ -50,35 +48,6 @@ const entries = await Promise.all(
     </article>
   ))}
   <section class="research-context prose">
-    <h2>Current analytical work and experimentation</h2>
-    <p>
-      My <a href="/work/">technical case studies</a> describe the data
-      preparation and applications I develop today. The{' '}
-      <a href="/lab/">machine-learning lab</a> is a separate teaching
-      demonstration: visitors train small models with invented data. It
-      illustrates methods, rather than reporting employer findings or
-      reproducing the academic study.
-    </p>
+    <ResearchDevelopment />
   </section>
-  <section class="research-context prose">
-    <h2>Professional machine-learning development</h2>
-    <p>
-      The{' '}
-      <a href="/work/machine-learning-audit-prioritization/">
-        audit-prioritization modeling case study
-      </a>{' '}
-      describes my feature engineering, supervised-learning pipelines, grouped
-      validation, calibration, and backtesting. This recent experimental work is
-      distinct from both academic research assistance and the synthetic teaching
-      Lab.
-    </p>
-  </section>
-  <aside class="research-note">
-    <p class="eyebrow">On attribution</p>
-    <p>
-      Research assistance is described separately from authorship. The lab on
-      this site uses invented data and does not reproduce the findings of this
-      study.
-    </p>
-  </aside>
 </BaseLayout>

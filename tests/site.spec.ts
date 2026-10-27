@@ -19,10 +19,6 @@ const routes = [
     heading: 'Building an analytical data platform',
   },
   {
-    path: '/work/applied-predictive-research/',
-    heading: 'Applied predictive-model research',
-  },
-  {
     path: '/work/analytical-applications/',
     heading: 'Designing an audit-tracking workspace',
   },
@@ -131,10 +127,7 @@ test('navigation and case-study links reach their intended pages', async ({
     .getByRole('link', { name: 'View technical case studies', exact: true })
     .click();
   for (const route of routes.filter(
-    (item) =>
-      item.path.startsWith('/work/') &&
-      item.path !== '/work/' &&
-      item.path !== '/work/applied-predictive-research/',
+    (item) => item.path.startsWith('/work/') && item.path !== '/work/',
   )) {
     await page
       .getByRole('link', { name: new RegExp(route.heading) })
@@ -700,7 +693,7 @@ test('data platform case study shares metadata and explains a static technology 
     page.getByRole('region', { name: 'Project at a glance' }),
   ).toContainText('Sole hands-on developer');
   await expect(page.locator('article.prose')).toContainText(
-    'It is not a dedicated provisioned SQL warehouse',
+    'This serverless access layer',
   );
   await expect(
     page.getByRole('link', { name: 'Synapse serverless SQL', exact: true }),
@@ -735,15 +728,12 @@ test('recent technical work leads both listings and related navigation', async (
         .evaluateAll((links) => links.map((link) => link.getAttribute('href'))),
     ).toEqual(ordered);
   }
-  await page.goto('/work/applied-predictive-research/');
+  await page.goto('/work/analytical-applications/');
   expect(
     await page
       .locator('.related-work a')
       .evaluateAll((links) => links.map((link) => link.getAttribute('href'))),
-  ).toEqual(ordered);
-  await expect(page.locator('article')).toContainText(
-    'Asthana is the paper’s author.',
-  );
+  ).toEqual(ordered.slice(1));
 });
 
 test('page metadata, canonical URLs, and identity remain coherent without third-party requests', async ({
@@ -829,10 +819,10 @@ test('page metadata, canonical URLs, and identity remain coherent without third-
     'grouped cross-validation',
   );
   await expect(page.locator('.prose')).toContainText(
-    'modeling remains experimental',
+    'modeling program remains experimental',
   );
   await expect(page.locator('.prose')).toContainText(
-    'Integrating predictive scores into the Audit Portal is proposed',
+    'predictive-score integration into the Portal proposed',
   );
   await page.goto('/contact/');
   await expect(page.locator('meta[name="description"]')).toHaveAttribute(
@@ -1056,9 +1046,10 @@ test('recruiter, engineering, and admissions paths expose evidence without ambig
     .getByRole('link', { name: 'Research', exact: true })
     .click();
   await expect(page.locator('main')).toContainText('Asthana');
-  await expect(page.locator('.research-note')).toContainText(
-    'separately from authorship',
+  await expect(page.locator('.research-entry')).toContainText(
+    'research assistance',
   );
+  await expect(page.locator('.research-note')).toHaveCount(0);
   await page
     .locator('.research-context')
     .getByRole('link', { name: 'machine-learning lab', exact: true })
@@ -1084,9 +1075,12 @@ test('professional modeling explains the target, evaluation, and proposed integr
   const article = page.locator('article.prose');
   await expect(
     page.getByRole('region', { name: 'Project at a glance' }),
-  ).toContainText('not a production-approved or deployed decision model');
+  ).toContainText('Experimental modeling program');
+  await expect(
+    page.getByRole('region', { name: 'Project at a glance' }),
+  ).toContainText('integration into the Audit Portal is proposed');
   await expect(article).toContainText('not a label for fraud');
-  await expect(article).toContainText('not present a verified winning model');
+  await expect(article).toContainText('rather than a measured model ranking');
   for (const boundary of [
     'a recorded zero counts as positive',
     'ten folds grouped by BBO',
@@ -1128,8 +1122,9 @@ test('professional modeling explains the target, evaluation, and proposed integr
     'Validate & calibrate',
     'Score & investigate',
   ]);
+  await expect(article).toContainText('Predictive-score integration');
   await expect(article).toContainText(
-    'proposed integration, not an implemented decision feature',
+    'Review, validation, and approval are required before operational use',
   );
   await expect(
     article.getByRole('link', { name: 'educational ML Lab', exact: true }),
@@ -1139,7 +1134,7 @@ test('professional modeling explains the target, evaluation, and proposed integr
     .getByRole('link', { name: 'Audit Portal', exact: true })
     .click();
   await expect(page.locator('article')).toContainText(
-    'proposed integration, not an implemented decision feature',
+    'Predictive-score integration',
   );
   await page
     .locator('article')
@@ -1150,7 +1145,7 @@ test('professional modeling explains the target, evaluation, and proposed integr
   );
 });
 
-test('research methods retain paper authorship and the limited assistance attribution', async ({
+test('research methods retain named authorship and acknowledged assistance', async ({
   page,
 }) => {
   await page.goto('/research/');
@@ -1158,12 +1153,12 @@ test('research methods retain paper authorship and the limited assistance attrib
   await expect(entry).toContainText('J. Avilés');
   await expect(entry).toContainText('Anand N. Asthana');
   await expect(entry).toContainText('randomized ten-fold cross-validation');
-  await expect(entry).toContainText(
-    'not a record of my individual technical tasks',
+  await expect(entry).toContainText('study by Anand N. Asthana');
+  await expect(entry).toContainText('acknowledged as J. Avilés on page 478');
+  await expect(page.locator('main')).toContainText(
+    'April 2012 to September 2014',
   );
-  await expect(entry).toContainText(
-    'does not establish that I implemented algorithms',
-  );
+  await expect(entry).not.toContainText('does not establish');
   await expectNoHorizontalOverflow(page);
 });
 
@@ -1461,7 +1456,7 @@ test('article comparison preserves table relationships and readable narrow recor
   await expect(table.getByRole('columnheader')).toHaveText([
     'Candidate',
     'Framework',
-    'Verified implementation status',
+    'Implementation and configuration',
   ]);
   await expect(table.getByRole('rowheader')).toHaveCount(5);
   for (const width of [320, 390, 760, 761, 768, 1101, 1440]) {
@@ -1517,10 +1512,10 @@ test('About connects experience to capabilities before supporting education', as
   });
   await expect(employer.locator(':scope > ul > li')).toHaveCount(2);
   await expect(employer).toContainText(
-    'The ML evaluation pipelines are implemented, while modeling remains experimental.',
+    'The data platform and Audit Portal support analytical and operational workflows.',
   );
   await expect(employer).toContainText(
-    'Integrating predictive scores into the Audit Portal is proposed, not an approved production decision capability.',
+    'predictive-score integration into the Portal proposed for future evaluation and approval.',
   );
   await expect(employer).toContainText(
     'Audit & Oversight colleagues contribute firsthand knowledge',
@@ -1544,7 +1539,7 @@ test('About connects experience to capabilities before supporting education', as
   expect(
     await employer.evaluate((element) => {
       const status = [...element.querySelectorAll('p')].find((paragraph) =>
-        paragraph.textContent?.startsWith('The ML evaluation pipelines'),
+        paragraph.textContent?.startsWith('The data platform and Audit Portal'),
       )!;
       return Boolean(
         status.compareDocumentPosition(element.querySelector('nav')!) &
@@ -2136,4 +2131,22 @@ test('Evaluation grid and metrics respond to their container without clipping re
     expect(layout.clipped).toEqual([]);
     await expectNoHorizontalOverflow(page);
   }
+});
+
+test('the former research route has a static fallback and one canonical destination', async ({
+  page,
+  request,
+}) => {
+  const response = await request.get('/work/applied-predictive-research/');
+  const html = await response.text();
+  expect(html).toContain('/research/');
+  await page.goto('/work/applied-predictive-research/');
+  await expect(page).toHaveURL(/\/research\/$/);
+  await expect(page.locator('link[rel="canonical"]')).toHaveAttribute(
+    'href',
+    'https://jorgeaviles.net/research/',
+  );
+  const sitemap = await (await request.get('/sitemap-0.xml')).text();
+  expect(sitemap).toContain('https://jorgeaviles.net/research/');
+  expect(sitemap).not.toContain('/work/applied-predictive-research/');
 });

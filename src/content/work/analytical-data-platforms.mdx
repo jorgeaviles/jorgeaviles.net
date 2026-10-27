@@ -39,7 +39,7 @@ The work began in Python and Jupyter notebooks, exploring questions beyond estab
 
 I am the sole hands-on developer of the analytical notebooks and data platform. My responsibilities span transformations, prepared datasets, and SQL access structures. Departmental colleagues contribute practical knowledge of billing and casework, helping me revisit assumptions and refine requirements.
 
-IT colleagues helped establish scheduled source extracts and infrastructure access. Those contributions are separate from development: I did not design every upstream source system or independently administer the organization's Azure environment.
+I designed and developed the analytical preparation and SQL access layers, coordinating with IT colleagues on scheduled source extracts, infrastructure access, and application permissions.
 
 <AnalyticalDataFlow />
 
@@ -51,15 +51,15 @@ IT colleagues helped establish scheduled source extracts and infrastructure acce
 
 **Keep prepared files reusable.** Parquet provides columnar data in ADLS Gen2, available independently of one notebook. Source representations, normalized detail, and serving datasets have different logical responsibilities without requiring an identical physical layout everywhere. The trade-off is maintaining schemas, file layouts, and the relationship between dated snapshots and serving data.
 
-**Provide serverless analytical access.** [Synapse serverless SQL](https://learn.microsoft.com/en-us/azure/synapse-analytics/sql/on-demand-workspace-overview) queries lake data through external tables, views, and selected stored procedures. It is not a dedicated provisioned SQL warehouse. File layout, query shape, and data scanned still affect how consumers use this layer.
+**Provide serverless analytical access.** [Synapse serverless SQL](https://learn.microsoft.com/en-us/azure/synapse-analytics/sql/on-demand-workspace-overview) queries lake data through external tables, views, and selected stored procedures. This serverless access layer makes file layout, query shape, and data scanned important design considerations.
 
-**Validate before publication.** Selected workflows validate prepared results, stage a serving copy, and promote it to a stable location. Extract context, transformation information, and counts help explain what was produced. This boundary adds orchestration, failure handling, and recovery work; a successful write alone does not prove analytical correctness.
+**Validate before publication.** Selected workflows validate prepared results, stage a serving copy, and promote it to a stable location. Extract context, transformation information, and counts help explain what was produced. Orchestration, failure handling, recovery, and analytical validation are part of that publication boundary.
 
 ## What the platform enables
 
 Prepared information supports repeatable investigation and selected application queries. The [Audit Portal case study](/work/analytical-applications/) describes the application-facing work. The prepared data also supports bill-level feature engineering and model development. The [machine-learning case study](/work/machine-learning-audit-prioritization/) describes the implemented training, validation, calibration, and scoring pipelines, which remain experimental.
 
-Freshness depends on upstream extract delivery, preparation, and publication rather than a real-time connection to the operational database. Keeping those stages visible helps investigate stale or incomplete results. No measured accuracy, query-speed, cost, financial-return, or guaranteed freshness improvement is claimed.
+Freshness depends on upstream extract delivery, preparation, and publication rather than a real-time connection to the operational database. Keeping those stages visible helps investigate stale or incomplete results and gives consumers a clear basis for interpreting dataset freshness.
 
 ## What I learned
 

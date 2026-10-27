@@ -25,10 +25,17 @@ async function files(dir) {
     )
   ).flat();
 }
-const routes = (await files(dist))
+const routes = [];
+const redirects = [];
+for (const file of (await files(dist))
   .filter((f) => f.endsWith('.html'))
-  .map((f) => '/' + relative(dist, f).replace(/index\.html$/, ''))
-  .sort();
+  .sort()) {
+  const route = '/' + relative(dist, file).replace(/index\.html$/, '');
+  // Redirect documents have no page composition; navigation tests cover them.
+  const html = await readFile(file, 'utf8');
+  if (/<meta\s+http-equiv="refresh"/i.test(html)) redirects.push(route);
+  else routes.push(route);
+}
 const widths = [320, 390, 430, 768, 1024, 1280, 1440];
 const captures = [];
 const legacy = [
@@ -210,7 +217,14 @@ if (args.reference) {
 await writeFile(
   join(out, 'manifest.json'),
   JSON.stringify(
-    { routes, widths, inventory, captures, changedScreenshots: comparison },
+    {
+      routes,
+      redirects,
+      widths,
+      inventory,
+      captures,
+      changedScreenshots: comparison,
+    },
     null,
     2,
   ),

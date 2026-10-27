@@ -14,7 +14,7 @@ overview:
     - SynapseML candidate integration
   capabilities: Feature engineering, candidate-model comparisons, grouped validation, calibration, backtests, scoring outputs, and drift diagnostics.
   engineering: Label meaning, temporal leakage, related records, probability quality, and limited review capacity.
-  context: Experimental modeling work; not a production-approved or deployed decision model.
+  context: Experimental modeling program; predictive-score integration into the Audit Portal is proposed.
 methods:
   - Supervised learning and feature engineering
   - Grouped and time-based evaluation
@@ -27,7 +27,7 @@ import ModelingFlow from '../../components/ModelingFlow.astro';
 
 ## What I developed
 
-I implemented a supervised-learning program in Python and PySpark to investigate audit prioritization. The work connects bill-level features with candidate models, repeatable evaluation, probability calibration, and scoring outputs. It extends beyond exploratory analysis into an implemented training and evaluation pipeline, while remaining experimental.
+I implemented a supervised-learning program in Python and PySpark to investigate audit prioritization. The work connects bill-level features with candidate models, repeatable evaluation, probability calibration, and scoring outputs. The program remains experimental. Saved notebooks document implemented code paths and configurations; execution records are needed to substantiate completed evaluations, model selection, and operational readiness.
 
 I am the sole hands-on developer of these notebooks and pipelines. Suffolk University consultation informed the early modeling proposals. Audit & Oversight colleagues contribute practical knowledge of billing and casework; their feedback helps me question features, interpret labels, and refine what an investigation needs to explain.
 
@@ -43,15 +43,15 @@ Bills outside the matched reviewed sample do not become negative examples simply
 
 I developed features covering billed amounts and hours, service timing, submission lag, case context, and attorney billing history. Rolling 30-, 90-, and 365-day measurements describe prior attorney activity, while case-level cumulative features distinguish earlier work from the current bill. Assignment timing, certification, and court and case attributes add context to the bill-level prediction; they are not separate case or attorney predictors.
 
-The preparation separates outcome labels from model inputs and excludes the current bill from selected historical windows. Missing grouping information needs deliberate handling so unrelated records do not acquire a shared history. These measures address leakage risks; they do not by themselves prove that every source value was available at the time a reviewer would have made a decision.
+The preparation separates outcome labels from model inputs and excludes the current bill from selected historical windows. Missing grouping information needs deliberate handling so unrelated records do not acquire a shared history. These measures address leakage risks. Point-in-time availability of source values remains a separate validation requirement for a reviewer-facing prediction.
 
 ## Compare candidates on a common evaluation path
 
-The modeling engine is **Spark ML**, using Python/PySpark in Azure Synapse. Spark pipelines combine categorical indexing, model-appropriate encoding, median imputation, and vector assembly with the estimator. Learned preprocessing is fitted within each training fold. pandas supports fold-metric summaries; it is not the training engine.
+The modeling engine is **Spark ML**, using Python/PySpark in Azure Synapse. Spark pipelines combine categorical indexing, model-appropriate encoding, median imputation, and vector assembly with the estimator. Learned preprocessing is fitted within each training fold. pandas supports fold-metric summaries around the Spark training workflow.
 
 <ArticleTable
   label="Model candidate comparison"
-  columns={['Candidate', 'Framework', 'Verified implementation status']}
+  columns={['Candidate', 'Framework', 'Implementation and configuration']}
   rows={[
     [
       'Logistic regression',
@@ -81,9 +81,9 @@ The modeling engine is **Spark ML**, using Python/PySpark in Azure Synapse. Spar
   ]}
 />
 
-An earlier notebook also implements an optional XGBoost Spark candidate. The later unified pipeline does not retain that candidate. References to scikit-learn alternatives in notebook notes do not establish that those estimators trained the models.
+An earlier notebook also implements an optional XGBoost Spark candidate. The later unified pipeline uses the candidates listed above; scikit-learn alternatives appear only in notebook notes.
 
-Random Forest is configured for continued experimentation. I do not present a verified winning model or comparative performance figures here: saved source establishes implementation and configuration, but the reviewed notebook exports contain no execution outputs. Completed comparisons, runtime package availability, and selection based on measured performance require evaluation records.
+Random Forest is configured for continued experimentation, including the fixed fallback path. The reviewed notebook exports contain no execution outputs, so the candidate table describes implementation and configuration rather than a measured model ranking. Runtime package availability and comparative results remain evaluation requirements.
 
 ## Evaluate ranking, probabilities, and time
 
@@ -91,14 +91,14 @@ Random Forest is configured for continued experimentation. I do not present a ve
 
 **Several measures, different questions.** ROC AUC examines discrimination across thresholds. Brier score and log loss assess probability quality. Precision at a fixed review capacity, including P@50, measures the share of historically positive labels among the top-ranked bills at that capacity. That capacity-aware measure connects evaluation to a constrained human workflow; it is not a measure of recovered funds.
 
-**Calibration and backtesting.** I implemented Platt calibration using Spark logistic regression on the raw model probability, with a separate calibration window, a later test window, a buffer for delayed labels, and rolling time-based backtests. These routines distinguish fitting a model from checking whether its scores remain useful on later data; their presence in source does not establish completed backtests or stable performance. Calibration can change probability interpretation without necessarily improving ranking.
+**Calibration and backtesting.** I implemented Platt calibration using Spark logistic regression on the raw model probability, with a separate calibration window, a later test window, a buffer for delayed labels, and rolling time-based backtests. The separate windows distinguish model fitting, probability calibration, and assessment on later data. Calibration can change probability interpretation without necessarily improving ranking.
 
 **Drift diagnostics.** Prediction summaries and feature-distribution comparisons help investigate changes over time. Distribution drift is a signal to examine, not proof that performance has deteriorated or that a model should automatically retrain.
 
 ## Outputs and operational boundary
 
-The workflows implement evaluation-record and calibration registries, bill-scoring outputs, and ranked candidate views. Attorney and NAC/case history supply context for bill-level predictions; these are not independently trained attorney or case risk models. An amount-weighted ranking option multiplies a score by the bill amount; it is a prioritization heuristic, not an estimate of recoverable funds. A source review also identified a label-name mismatch between the newer feature builder and the training notebook, so the saved versions do not establish a working end-to-end run together. No numerical performance, savings, or operational impact is claimed in this public account.
+The workflows implement evaluation-record and calibration registries, bill-scoring outputs, and ranked candidate views. Attorney and NAC/case history supply context for bill-level predictions; these are not independently trained attorney or case risk models. An amount-weighted ranking option multiplies a score by the bill amount; it is a prioritization heuristic, not an estimate of recoverable funds. Before an end-to-end run can be validated, a label-name mismatch between the newer feature builder and the training notebook needs to be reconciled.
 
-The [analytical data platform](/work/analytical-data-platforms/) provides the preparation foundation. Connecting predictive scores to reviewer workflows in the [Audit Portal](/work/analytical-applications/) is proposed integration, not an implemented decision feature. Scores would need review, validation, and approval before operational use, with human judgment retained.
+The [analytical data platform](/work/analytical-data-platforms/) provides the preparation foundation. Predictive-score integration into reviewer workflows in the [Audit Portal](/work/analytical-applications/) is proposed. Review, validation, and approval are required before operational use, with human judgment retained.
 
-This professional modeling work is separate from the site's [educational ML Lab](/lab/), which uses independently fabricated data to explain learning and evaluation.
+For an interactive explanation of learning and evaluation with independently fabricated data, explore the [educational ML Lab](/lab/).

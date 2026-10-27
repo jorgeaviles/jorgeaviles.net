@@ -10,7 +10,7 @@ const entries = (await getPublishedEntries('work')).filter(
 
 <BaseLayout
   title="Selected work"
-  description="Selected perspectives on analytical data platforms, applied research, and making information useful through applications."
+  description="Hands-on application development, analytical data engineering, and experimental machine learning for audit workflows."
 >
   <PageIntro
     label="Selected work"
@@ -20,8 +20,9 @@ const entries = (await getPublishedEntries('work')).filter(
   <WorkList entries={entries} headingLevel="h2" />
   <p class="work-disclosure">
     For my academic contribution, see{' '}
-    <a href="/research/">research assistance and its published source</a>. These
-    are high-level accounts of my contribution. Internal data, code, and
-    operational details are not published here.
+    <a href="/research/">
+      faculty research experience and published acknowledgment
+    </a>
+    .
   </p>
 </BaseLayout>
