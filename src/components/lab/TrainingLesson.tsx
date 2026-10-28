@@ -17,9 +17,14 @@ export function TrainingLesson({ state, dispatch }: LabController) {
   const inspected = state.inspected
     ? developmentRanch(state.inspected)
     : undefined;
-  const disabled = !!state.finished || experiment.steps >= MAX_UPDATES;
+  const disabled = experiment.steps >= MAX_UPDATES;
   return (
     <div className="ranch-training">
+      <p className="lesson-instruction">
+        {logistic
+          ? 'Adjust cattle sales and feed costs to see how the estimated probability changes.'
+          : 'Move the cattle-sold slider to see how the model’s prediction changes.'}
+      </p>
       <div className="ranch-workspace">
         <div className="ranch-controls">
           <label htmlFor="ranch-cattle">
@@ -74,7 +79,7 @@ export function TrainingLesson({ state, dispatch }: LabController) {
           >
             {logistic ? (
               <>
-                <p>Estimated chance of profitability</p>
+                <p>Chance of profitability</p>
                 <strong data-testid="profitability-prediction">
                   {pct(chance)}
                 </strong>
@@ -89,14 +94,14 @@ export function TrainingLesson({ state, dispatch }: LabController) {
                 <strong data-testid="profit-prediction">
                   {dollars(Math.abs(profit))}
                 </strong>
-                <p>
-                  Based on cattle sold, the fitted model predicts{' '}
-                  {profit < 0 ? 'a loss' : 'a profit'} of{' '}
-                  {dollars(Math.abs(profit))}.
-                </p>
               </>
             )}
           </div>
+          <p className="ranch-takeaway">
+            {logistic
+              ? 'The percentage is the model’s estimate of how likely this ranch is to make a profit. At 50% or above, it predicts “Profitable.”'
+              : 'The highlighted point shows the prediction for your cattle sales. Moving the slider changes the ranch being predicted, not the trained line.'}
+          </p>
         </div>
         <ModelPlot
           kind={kind}
@@ -106,13 +111,23 @@ export function TrainingLesson({ state, dispatch }: LabController) {
           inspected={inspected}
         />
       </div>
+      <p className="lesson-takeaway">
+        <b>What you learned:</b>{' '}
+        {logistic
+          ? 'Logistic regression estimates the probability of a category, rather than predicting a dollar amount.'
+          : 'Linear regression finds a relationship in observed data and uses it to predict a number.'}
+      </p>
       <details
         className="ranch-details"
         onToggle={(e) => {
           if (!e.currentTarget.open) dispatch({ type: 'pause' });
         }}
       >
-        <summary>Explore model training</summary>
+        <summary>
+          {logistic
+            ? 'Watch the classifier learn from data'
+            : 'Watch the line learn from data'}
+        </summary>
         <p>
           The model starts fitted to 72 development ranches. Reset training to
           start from zero, then watch actual gradient updates change its
@@ -132,10 +147,7 @@ export function TrainingLesson({ state, dispatch }: LabController) {
           >
             {state.running ? 'Pause training' : 'Train automatically'}
           </button>
-          <button
-            disabled={!!state.finished}
-            onClick={() => dispatch({ type: 'reset-model' })}
-          >
+          <button onClick={() => dispatch({ type: 'reset-model' })}>
             Reset training
           </button>
         </div>
@@ -150,13 +162,7 @@ export function TrainingLesson({ state, dispatch }: LabController) {
           {experiment.steps >= MAX_UPDATES ? ' · Training limit reached' : ''}
         </p>
         <LossHistory experiment={experiment} logistic={logistic} />
-      </details>
-      <details className="ranch-details">
-        <summary>
-          {logistic
-            ? 'How probabilities are learned'
-            : 'How the line is learned'}
-        </summary>
+        <h3>How the model learns</h3>
         {logistic ? (
           <p>
             Unlike linear regression, this model estimates a probability between

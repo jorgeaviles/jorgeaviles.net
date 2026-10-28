@@ -153,7 +153,11 @@ for (const [engine, launcher] of [
           .getByRole('slider', { name: /Feed cost per animal/ })
           .fill('1300');
       await capture('/lab/', `${index}-adjusted`);
-      await page.getByText('Explore model training', { exact: true }).click();
+      await page
+        .getByText(/Watch the (line|classifier) learn from data/, {
+          exact: true,
+        })
+        .click();
       await capture('/lab/', `${index}-training-expanded`);
       await page
         .getByRole('button', { name: 'Reset training', exact: true })
@@ -170,14 +174,6 @@ for (const [engine, launcher] of [
           .querySelector('.training-feedback')
           ?.textContent.includes('Step 11 ·'),
       );
-      await page
-        .getByText(
-          index === 0
-            ? 'How the line is learned'
-            : 'How probabilities are learned',
-          { exact: true },
-        )
-        .click();
       await capture('/lab/', `${index}-trained-details`);
     }
     await page
@@ -185,18 +181,17 @@ for (const [engine, launcher] of [
       .click();
     await capture('/lab/', 'validation-before');
     await page
-      .getByRole('button', { name: 'Run five-fold validation', exact: true })
+      .getByRole('button', { name: 'Run five validation checks', exact: true })
       .click();
     await capture('/lab/', 'validation-results');
-    await page.getByRole('button', { name: /Fold 4/ }).click();
-    for (const title of [
-      'Explore evaluation details',
-      'Other ways to validate models',
-    ])
-      await page.getByText(title, { exact: true }).click();
+    await page.getByRole('button', { name: /Round 4/ }).click();
+    await page.getByText('Explore evaluation details', { exact: true }).click();
     await capture('/lab/', 'validation-fold-details');
     await page
-      .getByRole('button', { name: 'Test on unseen ranches', exact: true })
+      .getByRole('button', {
+        name: 'Test on 18 untouched ranches',
+        exact: true,
+      })
       .click();
     await capture('/lab/', 'final-test');
     await page.close();
