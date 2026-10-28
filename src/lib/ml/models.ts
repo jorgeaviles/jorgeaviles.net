@@ -12,28 +12,6 @@ export function random(seed: number) {
     return state / 4294967296;
   };
 }
-export function datasets(seed = 42) {
-  const rng = random(seed);
-  const regression: Row[] = Array.from({ length: 24 }, (_, i) => ({
-    id: `TASK-${i + 1}`,
-    x: [(i / 23) * 10],
-    y: 12 + ((4 * i) / 23) * 10 + (rng() - 0.5) * 16,
-  }));
-  const classification: Row[] = Array.from({ length: 90 }, (_, i) => {
-    const x = [rng() * 10, rng() * 10];
-    return {
-      id: `SYN-${String(i + 1).padStart(2, '0')}`,
-      x,
-      y: rng() < sigmoid((x[0] + x[1] - 10) * 0.85) ? 1 : 0,
-    };
-  });
-  return {
-    regression,
-    train: classification.slice(0, 54),
-    validation: classification.slice(54, 72),
-    test: classification.slice(72),
-  };
-}
 export function fitScaler(rows: Row[]) {
   const mean = rows[0].x.map(
     (_, j) => rows.reduce((s, r) => s + r.x[j], 0) / rows.length,
@@ -92,45 +70,5 @@ export function step(
   return {
     w: m.w.map((w, j) => bound(w - rate * g.w[j])),
     b: bound(m.b - rate * g.b),
-  };
-}
-export type Prediction = Row & { p: number };
-export const rank = (rows: Row[], m: Model): Prediction[] =>
-  rows
-    .map((r) => ({ ...r, p: probability(m, r.x) }))
-    .sort((a, b) => b.p - a.p || a.id.localeCompare(b.id));
-export function evaluate(
-  rows: Prediction[],
-  policy: 'threshold' | 'budget',
-  value: number,
-) {
-  const selected = rows.filter((r, i) =>
-    policy === 'threshold'
-      ? r.p >= value
-      : i < Math.max(0, Math.min(rows.length, Math.floor(value))),
-  );
-  const ids = new Set(selected.map((r) => r.id));
-  let tp = 0,
-    fp = 0,
-    tn = 0,
-    fn = 0;
-  for (const r of rows) {
-    if (ids.has(r.id)) {
-      if (r.y) tp++;
-      else fp++;
-    } else if (r.y) fn++;
-    else tn++;
-  }
-  return {
-    ids,
-    tp,
-    fp,
-    tn,
-    fn,
-    count: selected.length,
-    selectionRate: rows.length ? selected.length / rows.length : null,
-    precision: tp + fp ? tp / (tp + fp) : null,
-    recall: tp + fn ? tp / (tp + fn) : null,
-    accuracy: rows.length ? (tp + tn) / rows.length : null,
   };
 }

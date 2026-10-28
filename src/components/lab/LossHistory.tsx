@@ -16,7 +16,7 @@ export function LossHistory({
   return (
     <figure className="loss-history">
       <figcaption>
-        {logistic ? 'Log loss' : 'MSE'} versus training step
+        {logistic ? 'Log loss' : 'MSE (scaled profit)'} versus training step
       </figcaption>
       <dl className="loss-values" aria-label="Training loss values">
         <div>
@@ -55,8 +55,8 @@ export function LossHistory({
         </text>
       </svg>
       <p>
-        Zero-based scale expands only if loss exceeds the previous high; a
-        falling curve alone does not establish convergence.
+        Lower loss means a closer fit to development ranches. Validation checks
+        predictions on ranches outside the training group.
       </p>
     </figure>
   );

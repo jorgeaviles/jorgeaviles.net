@@ -1,118 +1,85 @@
-import { describe, it, expect } from 'vitest';
+import { expect, it } from 'vitest';
 import {
   createLabState,
   labReducer,
-  samples,
-  lessonFromHash,
+  fixtures,
   MAX_UPDATES,
+  lessonFromHash,
 } from './experiment';
-import { loss, step } from './models';
-import { boundary, lossChange } from './presentation';
-describe('lesson controller', () => {
-  it('advances model, counter and trace from the same state', () => {
-    let state = createLabState();
-    for (let i = 0; i < 20; i++) state = labReducer(state, { type: 'step' });
-    let model = createLabState().linear.model;
-    for (let i = 0; i < 20; i++)
-      model = step(samples.linear, model, false, 0.05);
-    expect(state.linear.model).toEqual(model);
-    expect(state.linear.steps).toBe(20);
-    expect(state.linear.history).toHaveLength(21);
-    expect(state.linear.history.at(-1)?.loss).toBe(
-      loss(samples.linear, model, false),
-    );
+import { fitRanches, assess, toRows } from './ranches';
+import { step, scaled, loss } from './models';
+it('starts fitted, paused and without held-out results', () => {
+  const s = createLabState();
+  expect(s.running).toBe(false);
+  expect(s.finished).toBeNull();
+  expect(s.validation).toBeNull();
+  for (const kind of ['linear', 'logistic'] as const) {
+    expect(s[kind].model).toEqual(fitRanches(fixtures.development, kind).model);
+    expect(s[kind].history.at(-1)!.loss).toBeLessThan(s[kind].history[0].loss);
+  }
+});
+it('advances actual weights and loss atomically and resets only the chosen model', () => {
+  let s = labReducer(createLabState(), { type: 'reset-model' });
+  expect(s.linear.steps).toBe(0);
+  const old = s.linear,
+    rows = scaled(toRows(fixtures.development, 'linear'), old.scaler);
+  s = labReducer(s, { type: 'step' });
+  expect(s.linear.model).toEqual(step(rows, old.model, false, 0.08));
+  expect(s.linear.history.at(-1)!.loss).toBe(loss(rows, s.linear.model, false));
+  const linear = s.linear;
+  s = labReducer(s, { type: 'navigate', lesson: 1 });
+  s = labReducer(s, { type: 'reset-model' });
+  expect(s.linear).toBe(linear);
+  expect(s.logistic.steps).toBe(0);
+});
+it('isolates input inspection from learning and pauses on navigation', () => {
+  let s = createLabState();
+  const model = s.linear.model;
+  s = labReducer(s, { type: 'input', feature: 'cattle', value: 400 });
+  expect(s.linear.model).toBe(model);
+  s = labReducer(s, { type: 'toggle-running' });
+  expect(s.running).toBe(true);
+  s = labReducer(s, { type: 'navigate', lesson: 2 });
+  expect(s.running).toBe(false);
+  const inspected = labReducer(s, {
+    type: 'inspect',
+    id: fixtures.development[0].id,
   });
-  it('preserves independent histories and selections on navigation', () => {
-    let s = labReducer(createLabState(), { type: 'step' });
-    s = labReducer(s, { type: 'select', key: 'linear', id: 'TASK-8' });
-    const linear = s.linear;
-    s = labReducer(s, { type: 'navigate', lesson: 1 });
-    s = labReducer(s, { type: 'step' });
-    const logistic = s.logistic;
-    s = labReducer(s, { type: 'population', value: 'validation' });
-    s = labReducer(s, { type: 'select', key: 'validation', id: 'SYN-60' });
-    s = labReducer(s, { type: 'navigate', lesson: 2 });
-    s = labReducer(s, { type: 'budget', value: 10 });
-    s = labReducer(s, { type: 'policy', value: 'threshold' });
-    expect(s.logistic).toBe(logistic);
-    s = labReducer(s, { type: 'navigate', lesson: 0 });
-    expect(s.linear).toBe(linear);
-    expect(s.selected).toMatchObject({
-      linear: 'TASK-8',
-      validation: 'SYN-60',
-    });
-  });
-  it('distinguishes model reset, full reset and held-out test lock', () => {
-    let s = labReducer(createLabState(), { type: 'step' });
-    const linear = s.linear;
-    s = labReducer(s, { type: 'navigate', lesson: 1 });
-    s = labReducer(s, { type: 'step' });
-    s = labReducer(s, { type: 'reset-model' });
-    expect(s.linear).toBe(linear);
-    expect(s.logistic.steps).toBe(0);
-    s = labReducer(s, { type: 'test' });
-    const locked = s;
-    expect(labReducer(s, { type: 'step' })).toBe(locked);
-    expect(
-      labReducer(s, { type: 'parameters', model: { w: [1, 1], b: 1 } }),
-    ).toBe(locked);
-    expect(labReducer(s, { type: 'budget', value: 18 })).toBe(locked);
-    s = labReducer(s, { type: 'reset-all' });
-    expect(s.finished).toBeNull();
-    expect(s.linear.steps).toBe(0);
-  });
-  it('stops continuous training at the existing update cap', () => {
-    let s = labReducer(createLabState(), { type: 'navigate', lesson: 1 });
-    s = labReducer(s, { type: 'toggle-running' });
-    for (let i = 0; i < MAX_UPDATES; i++) s = labReducer(s, { type: 'step' });
-    expect(s.logistic.steps).toBe(MAX_UPDATES);
-    expect(s.running).toBe(false);
-    const capped = s.logistic;
-    s = labReducer(s, { type: 'step' });
-    expect(s.logistic).toBe(capped);
-  });
-  it('manual exploration starts a trace and actual training replaces its status', () => {
-    let s = labReducer(createLabState(), {
-      type: 'parameters',
-      model: { w: [100], b: -100 },
-    });
-    expect(s.linear.mode).toBe('manual');
-    expect(s.linear.history[0].loss).toBe(
-      loss(samples.linear, s.linear.model, false),
-    );
-    s = labReducer(s, { type: 'step' });
-    expect(s.linear.mode).toBe('trained');
-    expect(s.linear.steps).toBe(1);
-    expect(lessonFromHash('#evaluation')).toBe(2);
-    expect(lessonFromHash('#unknown')).toBe(0);
+  expect(inspected.cattle).toBe(fixtures.development[0].cattle);
+  expect(labReducer(s, { type: 'inspect', id: fixtures.test[0].id })).toBe(s);
+  expect(labReducer(s, { type: 'input', feature: 'feed', value: NaN })).toBe(s);
+  expect(labReducer(s, { type: 'fold', value: 5 })).toBe(s);
+});
+it('requires validation before testing, fits the final model on 72 ranches, locks and fully resets', () => {
+  let s = labReducer(createLabState(), { type: 'navigate', lesson: 1 });
+  s = labReducer(s, { type: 'reset-model' });
+  s = labReducer(s, { type: 'navigate', lesson: 2 });
+  expect(labReducer(s, { type: 'test' })).toBe(s);
+  s = labReducer(s, { type: 'validate' });
+  expect(s.finished).toBeNull();
+  s = labReducer(s, { type: 'test' });
+  const fit = fitRanches(fixtures.development, 'logistic');
+  expect(s.finished).toEqual({ ...fit, ...assess(fit, fixtures.test) });
+  for (const type of [
+    'test',
+    'validate',
+    'step',
+    'reset-model',
+    'toggle-running',
+  ] as const)
+    expect(labReducer(s, { type })).toBe(s);
+  s = labReducer(s, { type: 'navigate', lesson: 1 });
+  expect(labReducer(s, { type: 'reset-model' })).toBe(s);
+  expect(labReducer(s, { type: 'reset-all' })).toEqual({
+    ...createLabState(),
+    lesson: 1,
   });
 });
-describe('presentation geometry', () => {
-  const scale = { mean: [0, 0], scale: [1, 1] };
-  it('distinguishes constant, outside, vertical and diagonal boundaries', () => {
-    expect(boundary({ w: [0, 0], b: 0 }, scale)).toEqual({
-      kind: 'constant',
-      probability: 0.5,
-    });
-    expect(boundary({ w: [1, 0], b: 1 }, scale)).toEqual({ kind: 'outside' });
-    expect(boundary({ w: [1, 0], b: -5 }, scale)).toEqual({
-      kind: 'visible',
-      points: [
-        [5, 0],
-        [5, 10],
-      ],
-    });
-    expect(boundary({ w: [1, 1], b: -10 }, scale)).toEqual({
-      kind: 'visible',
-      points: [
-        [0, 10],
-        [10, 0],
-      ],
-    });
-  });
-  it('reports increases, decreases and zero denominators honestly', () => {
-    expect(lossChange(10, 12)).toEqual({ direction: 'increased', percent: 20 });
-    expect(lossChange(10, 8)).toEqual({ direction: 'decreased', percent: 20 });
-    expect(lossChange(0, 0)).toEqual({ direction: 'unchanged', percent: null });
-  });
+it('caps automatic updates and preserves deep-link anchors', () => {
+  let s = createLabState();
+  s = { ...s, linear: { ...s.linear, steps: MAX_UPDATES }, running: true };
+  expect(labReducer(s, { type: 'step' }).running).toBe(false);
+  expect(lessonFromHash('#evaluation')).toBe(2);
+  expect(lessonFromHash('#logistic-regression')).toBe(1);
+  expect(lessonFromHash('#unknown')).toBe(0);
 });

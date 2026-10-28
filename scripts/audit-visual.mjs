@@ -95,7 +95,7 @@ for (const [engine, launcher] of [
           ),
           feedback: document.querySelector('.training-feedback')?.textContent,
           parameters: [
-            ...document.querySelectorAll('.learned-parameters dd'),
+            ...document.querySelectorAll('.ranch-parameters dd'),
           ].map((e) => e.textContent),
           loss: document
             .querySelector('.loss-history svg')
@@ -105,10 +105,12 @@ for (const [engine, launcher] of [
               '[data-testid="probability-field"] rect',
             ),
           ].map((e) => e.getAttribute('data-probability')),
-          metrics: [...document.querySelectorAll('.essential-metrics dd')].map(
-            (e) => e.textContent,
-          ),
-          table: [...document.querySelectorAll('.ml-table tbody tr')].map(
+          metrics: [
+            ...document.querySelectorAll(
+              '[data-testid="validation-mean"], [data-testid="fold-result"], [data-testid="final-result"]',
+            ),
+          ].map((e) => e.textContent),
+          table: [...document.querySelectorAll('.ranch-confusion dd')].map(
             (e) => e.textContent,
           ),
         }),
@@ -138,57 +140,65 @@ for (const [engine, launcher] of [
       () => !document.querySelector('astro-island')?.hasAttribute('ssr'),
     );
     for (const [index, lesson] of [
-      'Linear regression',
-      'Logistic regression',
+      'Predict profit',
+      'Profitability',
     ].entries()) {
+      await page.getByRole('link', { name: lesson, exact: true }).click();
+      await capture('/lab/', `${index}-fitted`);
       await page
-        .getByRole('link', { name: `${index + 1} ${lesson}`, exact: true })
+        .getByRole('slider', { name: /Cattle sold annually/ })
+        .fill('400');
+      if (index === 1)
+        await page
+          .getByRole('slider', { name: /Feed cost per animal/ })
+          .fill('1300');
+      await capture('/lab/', `${index}-adjusted`);
+      await page.getByText('Explore model training', { exact: true }).click();
+      await capture('/lab/', `${index}-training-expanded`);
+      await page
+        .getByRole('button', { name: 'Reset training', exact: true })
         .click();
+      await capture('/lab/', `${index}-training-reset`);
       await page.evaluate(() => {
         const button = [...document.querySelectorAll('button')].find(
           (b) => b.textContent === 'Train one step',
         );
-        for (let n = 0; n < 11; n++) button.click();
+        for (let i = 0; i < 11; i++) button.click();
       });
       await page.waitForFunction(() =>
         document
           .querySelector('.training-feedback')
           ?.textContent.includes('Step 11 ·'),
       );
-      for (const title of [
-        'Inspect the mathematics',
-        'Explore parameters manually',
-      ])
-        await page.getByText(title, { exact: true }).click();
-      await capture('/lab/', `training-${index}`);
+      await page
+        .getByText(
+          index === 0
+            ? 'How the line is learned'
+            : 'How probabilities are learned',
+          { exact: true },
+        )
+        .click();
+      await capture('/lab/', `${index}-trained-details`);
     }
-    await page.getByRole('link', { name: '3 Evaluation', exact: true }).click();
     await page
-      .getByRole('slider', { name: 'Review budget', exact: true })
-      .fill('10');
+      .getByRole('link', { name: 'Test predictions', exact: true })
+      .click();
+    await capture('/lab/', 'validation-before');
     await page
-      .getByLabel('Inspect example', { exact: true })
-      .selectOption('SYN-60');
+      .getByRole('button', { name: 'Run five-fold validation', exact: true })
+      .click();
+    await capture('/lab/', 'validation-results');
+    await page.getByRole('button', { name: /Fold 4/ }).click();
     for (const title of [
-      'Inspect the mathematics',
-      'Understand the outcomes',
-      'Inspect records',
+      'Explore evaluation details',
+      'Other ways to validate models',
     ])
       await page.getByText(title, { exact: true }).click();
-    await capture('/lab/', 'budget');
-    await page.getByLabel('Probability threshold', { exact: true }).check();
+    await capture('/lab/', 'validation-fold-details');
     await page
-      .getByRole('slider', { name: 'Probability cutoff', exact: true })
-      .fill('0.7');
-    await capture('/lab/', 'threshold');
-    await page.getByText('Final test assessment', { exact: true }).click();
-    await page
-      .getByRole('button', {
-        name: 'Lock experiment and evaluate test',
-        exact: true,
-      })
+      .getByRole('button', { name: 'Test on unseen ranches', exact: true })
       .click();
-    await capture('/lab/', 'locked');
+    await capture('/lab/', 'final-test');
     await page.close();
   }
   await browser.close();

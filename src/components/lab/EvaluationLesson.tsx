@@ -1,312 +1,168 @@
-import { rank, evaluate } from '../../lib/ml/models';
-import {
-  samples,
-  fixtures,
-  classificationScale,
-} from '../../lib/ml/experiment';
-import {
-  displayRows,
-  pct,
-  fmt,
-  reviewOutcome,
-} from '../../lib/ml/presentation';
+import { pct } from '../../lib/ml/presentation';
+import type { Metrics } from '../../lib/ml/ranches';
 import type { LabController } from './useLabExperiment';
-import { RecordInspector } from './RecordInspector';
-export function EvaluationLesson(controller: LabController) {
-  const { state, dispatch, navigate } = controller,
-    predictions = rank(samples.validation, state.logistic.model),
-    metrics = evaluate(
-      predictions,
-      state.policy,
-      state.policy === 'budget' ? state.budget : state.threshold,
-    ),
-    rows = displayRows(
-      fixtures.validation,
-      state.logistic.model,
-      classificationScale,
-    ),
-    selected = rows.find((r) => r.id === state.selected.validation) ?? rows[0];
+function MetricDetails({ metrics }: { metrics: Metrics }) {
   return (
-    <>
-      <div className="ml-workspace">
-        <div className="ml-primary evaluation-primary">
-          {state.logistic.mode !== 'trained' ? (
-            <p className="ranking-note">
-              {state.logistic.mode === 'initial'
-                ? 'Untrained model: every score is 50%. Record-ID tie breaking is not a learned ranking.'
-                : 'Manual parameters: these scores are not a learned ranking.'}{' '}
-              <a
-                href="#logistic-regression"
-                onClick={(e) => {
-                  e.preventDefault();
-                  navigate(1);
-                }}
-              >
-                Train the classifier
-              </a>
-              .
-            </p>
-          ) : (
-            <p className="ranking-note">
-              Ranking from {state.logistic.steps} classifier updates · 18
-              validation records.
-            </p>
-          )}
-          <p className="ranking-guide">
-            Choose a record to inspect its calculation. The policy controls
-            Review or Leave.
-          </p>
-          <fieldset disabled={!!state.finished}>
-            <legend>Decision policy</legend>
-            <label>
-              <input
-                type="radio"
-                name="policy"
-                checked={state.policy === 'budget'}
-                onChange={() => dispatch({ type: 'policy', value: 'budget' })}
-              />{' '}
-              Top-K review budget
-            </label>
-            <label>
-              <input
-                type="radio"
-                name="policy"
-                checked={state.policy === 'threshold'}
-                onChange={() =>
-                  dispatch({ type: 'policy', value: 'threshold' })
-                }
-              />{' '}
-              Probability threshold
-            </label>
-            <label className="policy-slider">
-              {state.policy === 'budget'
-                ? 'Review budget'
-                : 'Probability cutoff'}{' '}
-              <output>
-                {state.policy === 'budget'
-                  ? `${state.budget} of 18`
-                  : pct(state.threshold)}
-              </output>
-              <input
-                aria-label={
-                  state.policy === 'budget'
-                    ? 'Review budget'
-                    : 'Probability cutoff'
-                }
-                type="range"
-                min="0"
-                max={state.policy === 'budget' ? 18 : 1}
-                step={state.policy === 'budget' ? 1 : 0.01}
-                value={
-                  state.policy === 'budget' ? state.budget : state.threshold
-                }
-                onChange={(e) =>
-                  dispatch({
-                    type: state.policy === 'budget' ? 'budget' : 'threshold',
-                    value: +e.target.value,
-                  })
-                }
-              />
-            </label>
-          </fieldset>
-          <dl className="essential-metrics" aria-label="Review outcomes">
-            {[
-              ['Selected', `${metrics.count} / 18`],
-              ['Precision', pct(metrics.precision)],
-              ['Recall', pct(metrics.recall)],
-              ['Missed positives', metrics.fn],
-            ].map(([k, v]) => (
-              <div key={k}>
-                <dt>{k}</dt>
-                <dd>{v}</dd>
-              </div>
-            ))}
-          </dl>
-          <div
-            className="ranked-strip"
-            role="group"
-            aria-label="Ranked validation records"
-          >
-            {predictions.map((r, i) => (
-              <button
-                key={r.id}
-                aria-description={`Rank ${i + 1}, ${r.id}, estimated probability ${pct(r.p)}, actual ${reviewOutcome(r.y)}, ${metrics.ids.has(r.id) ? 'selected for review' : 'not selected for review'}, ${selected.id === r.id ? 'inspecting this record' : 'activate to inspect'}`}
-                aria-pressed={selected.id === r.id}
-                className={metrics.ids.has(r.id) ? 'chosen' : ''}
-                onClick={() =>
-                  dispatch({ type: 'select', key: 'validation', id: r.id })
-                }
-              >
-                <span className="record-heading">
-                  <span className="record-rank">
-                    #{String(i + 1).padStart(2, '0')}
-                  </span>
-                  <strong className="record-id">{r.id}</strong>
-                </span>
-                <span className="record-score">
-                  <strong>{pct(r.p)}</strong>
-                  <span>probability</span>
-                </span>
-                <span className="record-outcome">
-                  <span aria-hidden="true">{r.y ? '●' : '△'}</span>
-                  <span>{r.y ? 'Review needed' : 'No review needed'}</span>
-                </span>
-                <span className="record-policy">
-                  <span aria-hidden="true">
-                    {metrics.ids.has(r.id) ? '✓ ' : '– '}
-                  </span>
-                  {metrics.ids.has(r.id) ? 'Review' : 'Leave'}
-                </span>
-                <span className="inspection-flag" aria-hidden="true">
-                  {selected.id === r.id ? 'Inspecting' : '\u00a0'}
-                </span>
-              </button>
-            ))}
-          </div>
-          <p className="plot-key">
-            ● additional review needed · △ no additional review needed
-            (synthetic outcomes). Green Review flag = selected for review. Dark
-            marker + Inspecting = inspected record. Scores descend; ties use
-            record ID.
-          </p>
-          <details>
-            <summary>Understand the outcomes</summary>
-            <dl className="confusion-metrics">
-              {[
-                ['True positives', metrics.tp],
-                ['False positives', metrics.fp],
-                ['True negatives', metrics.tn],
-                ['Missed positives (FN)', metrics.fn],
-                ['Accuracy', pct(metrics.accuracy)],
-              ].map(([k, v]) => (
-                <div key={k}>
-                  <dt>{k}</dt>
-                  <dd>{v}</dd>
-                </div>
-              ))}
-            </dl>
-            <p>
-              Precision = TP / (TP + FP); recall = TP / (TP + FN). Precision is
-              undefined when nothing is selected. More reviews may improve
-              recall; precision can rise or fall.
-            </p>
-            <p>
-              Threshold selects scores at or above the cutoff. Top-K selects
-              exactly K records, including ties by ID. Neither changes model
-              weights.
-            </p>
-          </details>
-        </div>
-        <aside className="ml-controls">
-          <RecordInspector
-            rows={rows}
-            selected={selected}
-            kind="logistic"
-            experiment={state.logistic}
-            selectionKey="validation"
-            dispatch={dispatch}
-          />
-        </aside>
+    <dl className="ranch-confusion">
+      <div>
+        <dt>Profitable, predicted profitable (true positives)</dt>
+        <dd>{metrics.tp}</dd>
       </div>
-      <details>
-        <summary>Inspect records</summary>
-        <div
-          className="ml-table"
-          tabIndex={0}
-          role="region"
-          aria-label="Validation records, scroll horizontally"
-          onKeyDown={(e) => {
-            if (
-              e.target === e.currentTarget &&
-              (e.key === 'ArrowRight' || e.key === 'ArrowLeft')
-            ) {
-              e.preventDefault();
-              e.currentTarget.scrollLeft += e.key === 'ArrowRight' ? 60 : -60;
-            }
-          }}
-        >
-          <p className="table-context">
-            Inspecting {selected.id}. “Selected for review” follows the decision
-            policy.
+      <div>
+        <dt>Not profitable, predicted not profitable (true negatives)</dt>
+        <dd>{metrics.tn}</dd>
+      </div>
+      <div>
+        <dt>Not profitable, predicted profitable (false positives)</dt>
+        <dd>{metrics.fp}</dd>
+      </div>
+      <div>
+        <dt>Profitable, predicted not profitable (false negatives)</dt>
+        <dd>{metrics.fn}</dd>
+      </div>
+      <div>
+        <dt>
+          Precision · share of predicted profitable ranches that are profitable
+        </dt>
+        <dd>{pct(metrics.precision)}</dd>
+      </div>
+      <div>
+        <dt>Recall · share of profitable ranches correctly identified</dt>
+        <dd>{pct(metrics.recall)}</dd>
+      </div>
+    </dl>
+  );
+}
+export function EvaluationLesson({ state, dispatch }: LabController) {
+  const result = state.validation,
+    selected = result?.folds[state.fold],
+    final = state.finished;
+  return (
+    <div className="ranch-evaluation">
+      <p>
+        Fit on four groups of development ranches and predict the fifth. Repeat
+        until every ranch has been tested outside its training group.
+      </p>
+      <button
+        className="ranch-primary"
+        disabled={!!final}
+        onClick={() => dispatch({ type: 'validate' })}
+      >
+        Run five-fold validation
+      </button>
+      <div className="folds" role="group" aria-label="Inspect validation folds">
+        {[0, 1, 2, 3, 4].map((i) => (
+          <button
+            key={i}
+            aria-pressed={state.fold === i}
+            onClick={() => dispatch({ type: 'fold', value: i })}
+          >
+            <span>Fold {i + 1}</span>
+            <b>{state.fold === i ? 'Validate' : 'Train'}</b>
+          </button>
+        ))}
+      </div>
+      <div
+        className="ranch-validation-result"
+        role="status"
+        aria-live="polite"
+        aria-atomic="true"
+      >
+        {selected && result ? (
+          <>
+            <p>
+              Average validation accuracy{' '}
+              <strong data-testid="validation-mean">
+                {pct(result.meanAccuracy)}
+              </strong>
+            </p>
+            <p data-testid="fold-result">
+              Fold {state.fold + 1}: {selected.metrics.correct} of{' '}
+              {selected.metrics.count} correct ·{' '}
+              {pct(selected.metrics.accuracy)}
+            </p>
+            <p>
+              Each fold tests different ranches, so scores vary with their
+              patterns and small sample sizes.
+            </p>
+          </>
+        ) : (
+          <p>
+            72 development ranches form five groups. Select a group to see which
+            is held out, then run validation to compare all five scores.
           </p>
-          <table>
-            <caption>
-              All validation predictions from the current logistic model
-            </caption>
-            <thead>
-              <tr>
-                {[
-                  'Rank',
-                  'Record',
-                  'Task complexity',
-                  'Information uncertainty',
-                  'Score',
-                  'Actual',
-                  'Selected for review',
-                ].map((v) => (
-                  <th key={v} scope="col">
-                    {v}
-                  </th>
-                ))}
-              </tr>
-            </thead>
-            <tbody>
-              {predictions.map((r, i) => {
-                const raw = rows.find((v) => v.id === r.id)!;
-                return (
-                  <tr
-                    key={r.id}
-                    aria-current={selected.id === r.id ? 'true' : undefined}
-                  >
-                    <td>{i + 1}</td>
-                    <td>{r.id}</td>
-                    <td>{fmt(raw.x[0])}</td>
-                    <td>{fmt(raw.x[1])}</td>
-                    <td>{pct(r.p)}</td>
-                    <td>{reviewOutcome(r.y)}</td>
-                    <td>{metrics.ids.has(r.id) ? 'Yes' : 'No'}</td>
-                  </tr>
-                );
-              })}
-            </tbody>
-          </table>
-        </div>
-      </details>
-      <details>
-        <summary>Final test assessment</summary>
+        )}
+      </div>
+      <section className="ranch-final" aria-labelledby="final-test-heading">
+        <h3 id="final-test-heading">A final check on unseen ranches</h3>
         <p>
-          54 training records fit weights and scaling. Validation supports
-          policy exploration. The 18 held-out test records are excluded from
-          both. Revealing test results locks training and policies until a
-          complete reset. Repeated test inspection still constitutes tuning;
-          this synthetic example cannot establish unbiased operational
-          performance.
+          A fresh classifier learns from all 72 development ranches, then
+          predicts 18 untouched ranches. Reveal this once, after validation.
         </p>
         <button
-          disabled={!!state.finished}
+          disabled={!result || !!final}
           onClick={() => dispatch({ type: 'test' })}
         >
-          Lock experiment and evaluate test
+          Test on unseen ranches
         </button>
-        {state.finished && (
-          <div className="final-test-results" role="status">
-            <h3>Held-out test results</h3>
-            <dl className="test-metrics">
-              {[
-                ['Precision', pct(state.finished.precision)],
-                ['Recall', pct(state.finished.recall)],
-                ['Accuracy', pct(state.finished.accuracy)],
-              ].map(([label, value]) => (
-                <div key={label}>
-                  <dt>{label}</dt>
-                  <dd>{value}</dd>
-                </div>
-              ))}
-            </dl>
-            <p>Experiment locked.</p>
+        {final && (
+          <div className="ranch-final-result" role="status" aria-live="polite">
+            <p data-testid="final-result">
+              <strong>
+                {final.metrics.correct} of {final.metrics.count} correct
+              </strong>{' '}
+              · {pct(final.metrics.accuracy)} final-test accuracy.
+            </p>
+            <p>
+              This small synthetic test illustrates generalization. Keep it out
+              of repeated tuning; reset the whole experiment to begin again.
+            </p>
           </div>
         )}
+      </section>
+      <details className="ranch-details">
+        <summary>Explore evaluation details</summary>
+        <p>
+          Accuracy is correct predictions divided by all predictions. Validation
+          uses five fresh logistic models with the same training schedule. Each
+          model's feature means and scales are learned from its four training
+          groups only. The average is the arithmetic mean of the five fold
+          accuracies.
+        </p>
+        {selected ? (
+          <>
+            <h3>Selected validation fold</h3>
+            <MetricDetails metrics={selected.metrics} />
+          </>
+        ) : (
+          <p>
+            Run validation to inspect the actual confusion counts, precision and
+            recall.
+          </p>
+        )}
+        {final && (
+          <>
+            <h3>Final test</h3>
+            <MetricDetails metrics={final.metrics} />
+          </>
+        )}
       </details>
-    </>
+      <details className="ranch-details">
+        <summary>Other ways to validate models</summary>
+        <p>
+          <b>Stratified folds</b> spread profitable and unprofitable ranches
+          across the groups. This example uses that approach.
+        </p>
+        <p>
+          <b>Grouped folds</b> keep related records, such as one attorney's
+          bills, together to examine generalization across entities.
+        </p>
+        <p>
+          <b>Time-based validation</b> trains on earlier observations and tests
+          later ones when the question concerns future outcomes. The split
+          should match the prediction question.
+        </p>
+      </details>
+    </div>
   );
 }

@@ -11,7 +11,7 @@ const fetcher =
     if (path === '/deployment.json') return Response.json({ commit });
     if (path === '/lab/')
       return new Response(
-        '<main><h1>Learn how models learn</h1><astro-island component-url="/_astro/lab.js"><link href="/_astro/site.css"></main>',
+        '<main><h1>Predicting profitability</h1><astro-island component-url="/_astro/lab.js"><link href="/_astro/site.css"></main>',
         { headers: { 'content-type': 'text/html' } },
       );
     if (path.endsWith('.js'))
