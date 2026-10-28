@@ -4,7 +4,7 @@ import { EvaluationLesson } from './lab/EvaluationLesson';
 import { lessonHashes, type Lesson } from '../lib/ml/experiment';
 export default function LearningLab() {
   const controller = useLabExperiment(),
-    { state, dispatch, navigate, ready } = controller;
+    { state, navigate, ready } = controller;
   return (
     <section className="learning-lab" aria-label="Machine learning workspace">
       <nav className="lesson-nav" aria-label="Lab lessons">
@@ -27,9 +27,9 @@ export default function LearningLab() {
       <h2>
         {
           [
-            'How much annual profit could a ranch earn?',
-            'Will a ranch be profitable?',
-            'How reliable are the predictions?',
+            'How much profit could a ranch earn?',
+            'Will this ranch make a profit?',
+            'Does the model work on new ranches?',
           ][state.lesson]
         }
       </h2>
@@ -41,14 +41,6 @@ export default function LearningLab() {
           <TrainingLesson key={state.lesson} {...controller} />
         )}
       </fieldset>
-      {state.finished && (
-        <p className="experiment-lock">
-          Final assessment locked.{' '}
-          <button onClick={() => dispatch({ type: 'reset-all' })}>
-            Reset whole experiment
-          </button>
-        </p>
-      )}
       <p className="section-footnote">
         All ranch data is synthetic. This educational example is inspired by a{' '}
         <a href="/research/">profitability-prediction research question</a> and

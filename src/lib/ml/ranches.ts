@@ -162,6 +162,7 @@ export function crossValidate(development: readonly Ranch[]) {
   });
   return {
     folds: results,
+    pooled: classificationMetrics(results.flatMap((fold) => fold.predictions)),
     meanAccuracy: results.reduce((sum, r) => sum + r.metrics.accuracy, 0) / 5,
   };
 }

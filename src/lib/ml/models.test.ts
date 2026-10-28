@@ -180,6 +180,14 @@ it('trains five independent models with fold-local scalers and actual held-out p
   expect(cv.meanAccuracy).toBe(
     cv.folds.reduce((s, f) => s + f.metrics.accuracy, 0) / 5,
   );
+  const predictions = cv.folds.flatMap((f) => f.predictions);
+  expect(new Set(predictions.map((p) => p.id)).size).toBe(72);
+  expect(cv.pooled).toEqual(classificationMetrics(predictions));
+  expect(cv.pooled.correct).toBe(
+    cv.folds.reduce((sum, f) => sum + f.metrics.correct, 0),
+  );
+  expect(cv.pooled.accuracy).toBe(cv.pooled.correct / 72);
+  expect(cv.pooled.accuracy).not.toBe(cv.meanAccuracy);
   const changed = data.development.map((r) =>
     cv.folds[0].validationIds.includes(r.id)
       ? { ...r, cattle: 999999, feed: 999999 }

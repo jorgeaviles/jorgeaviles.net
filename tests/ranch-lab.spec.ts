@@ -38,6 +38,9 @@ test('profit and probability sliders update real fitted predictions and chart ma
   page,
 }) => {
   await open(page);
+  await expect(page.locator('.learning-lab details')).toHaveCount(1);
+  await expect(page.locator('.lesson-instruction')).toBeVisible();
+  await expect(page.locator('.lesson-takeaway')).toBeVisible();
   const reference = createLabState();
   await expect(page.getByTestId('profit-prediction')).toHaveText(
     dollars(Math.abs(predictProfit(reference.linear, 250))),
@@ -53,6 +56,8 @@ test('profit and probability sliders update real fitted predictions and chart ma
   );
   await expect(page.getByTestId('zero-profit')).toHaveCount(1);
   await page.getByRole('link', { name: 'Profitability', exact: true }).click();
+  await expect(page.locator('.learning-lab details')).toHaveCount(1);
+  await expect(page.locator('.lesson-takeaway')).toBeVisible();
   await page.getByRole('slider', { name: /Feed cost per animal/ }).fill('1300');
   await expect(page.getByTestId('profitability-prediction')).toHaveText(
     pct(predictProfitability(reference.logistic, 400, 1300)),
@@ -70,7 +75,7 @@ test('profit and probability sliders update real fitted predictions and chart ma
     '1300',
   );
   await page
-    .getByText('How probabilities are learned', { exact: true })
+    .getByText('Watch the classifier learn from data', { exact: true })
     .click();
   const ranch = fixtures.development[0];
   await page.getByLabel('Inspect a development ranch').selectOption(ranch.id);
@@ -86,7 +91,9 @@ test('optional training uses real gradients, pauses on navigation and closing, a
   page,
 }) => {
   await open(page);
-  await page.getByText('Explore model training', { exact: true }).click();
+  await page
+    .getByText(/Watch the (line|classifier) learn from data/, { exact: true })
+    .click();
   await page
     .getByRole('button', { name: 'Reset training', exact: true })
     .click();
@@ -108,16 +115,24 @@ test('optional training uses real gradients, pauses on navigation and closing, a
       ),
     )
     .toBeGreaterThan(1);
-  await page.getByText('Explore model training', { exact: true }).click();
-  await page.getByText('Explore model training', { exact: true }).click();
+  await page
+    .getByText(/Watch the (line|classifier) learn from data/, { exact: true })
+    .click();
+  await page
+    .getByText(/Watch the (line|classifier) learn from data/, { exact: true })
+    .click();
   await expect(
     page.getByRole('button', { name: 'Train automatically', exact: true }),
   ).toHaveAttribute('aria-pressed', 'false');
   await page.getByRole('link', { name: 'Profitability', exact: true }).click();
-  await page.getByText('Explore model training', { exact: true }).click();
+  await page
+    .getByText(/Watch the (line|classifier) learn from data/, { exact: true })
+    .click();
   await expect(page.locator('.training-feedback')).toContainText('Step 600');
   await page.getByRole('link', { name: 'Predict profit', exact: true }).click();
-  await page.getByText('Explore model training', { exact: true }).click();
+  await page
+    .getByText(/Watch the (line|classifier) learn from data/, { exact: true })
+    .click();
   await expect(page.locator('.training-feedback')).not.toContainText(
     'Step 200',
   );
@@ -125,36 +140,48 @@ test('optional training uses real gradients, pauses on navigation and closing, a
     value,
   );
 });
-test('five-fold results and final test are computed from independent fits and lock until a complete reset', async ({
+test('five completed checks show every score, pooled accuracy, and a separate test without locking exploration', async ({
   page,
 }) => {
   await open(page, '#evaluation');
-  await expect(
-    page.getByRole('button', { name: 'Test on unseen ranches', exact: true }),
-  ).toBeDisabled();
-  await expect(page.getByTestId('final-result')).toHaveCount(0);
+  await expect(page.locator('.learning-lab details')).toHaveCount(1);
+  await expect(page.getByRole('button', { name: /Test on 18/ })).toHaveCount(0);
+  await expect(page.locator('.folds button')).toHaveCount(0);
+  await expect(page.locator('.fold-illustration')).toBeVisible();
   await page
-    .getByRole('button', { name: 'Run five-fold validation', exact: true })
+    .getByRole('button', { name: 'Run five validation checks', exact: true })
     .click();
+  await expect(page.getByRole('button', { name: /Round 1/ })).toBeFocused();
   const cv = crossValidate(fixtures.development);
-  await expect(page.getByTestId('validation-mean')).toHaveText(
-    pct(cv.meanAccuracy),
+  await expect(page.getByTestId('validation-pooled')).toContainText(
+    `${cv.pooled.correct} of 72`,
   );
+  await expect(page.getByTestId('validation-pooled')).toContainText(
+    `${pct(cv.pooled.accuracy)} accuracy`,
+  );
+  await expect(page.getByTestId('fold-score')).toHaveText(
+    cv.folds.map((f) => pct(f.metrics.accuracy)),
+  );
+  const headline = await page.getByTestId('validation-pooled').innerText();
   for (let i = 0; i < 5; i++) {
     await page
-      .getByRole('button', { name: new RegExp(`Fold ${i + 1}`) })
+      .getByRole('button', { name: new RegExp(`Round ${i + 1}`) })
       .click();
     const m = cv.folds[i].metrics;
-    await expect(page.getByTestId('fold-result')).toHaveText(
-      `Fold ${i + 1}: ${m.correct} of ${m.count} correct · ${pct(m.accuracy)}`,
+    await expect(page.getByTestId('fold-result')).toContainText(
+      `Round ${i + 1}: ${m.correct} of ${m.count} correct · ${pct(m.accuracy)}`,
+    );
+    await expect(page.getByTestId('validation-pooled')).toHaveText(headline);
+    await expect(page.getByTestId('fold-score')).toHaveText(
+      cv.folds.map((f) => pct(f.metrics.accuracy)),
     );
   }
   await page.getByText('Explore evaluation details', { exact: true }).click();
-  await expect(page.locator('.ranch-confusion')).toContainText(
-    String(cv.folds[4].metrics.tp),
+  await expect(page.getByTestId('validation-mean')).toHaveText(
+    pct(cv.meanAccuracy),
   );
   await page
-    .getByRole('button', { name: 'Test on unseen ranches', exact: true })
+    .getByRole('button', { name: 'Test on 18 untouched ranches', exact: true })
     .click();
   const final = assess(
     fitRanches(fixtures.development, 'logistic'),
@@ -166,28 +193,43 @@ test('five-fold results and final test are computed from independent fits and lo
   await expect(page.getByTestId('final-result')).toContainText(
     pct(final.accuracy),
   );
-  await expect(
-    page.getByRole('button', { name: 'Test on unseen ranches', exact: true }),
-  ).toBeDisabled();
-  await expect(
-    page.getByRole('button', { name: 'Run five-fold validation', exact: true }),
-  ).toBeDisabled();
-  await page.getByRole('link', { name: 'Profitability', exact: true }).click();
-  await page.getByText('Explore model training', { exact: true }).click();
-  await expect(
-    page.getByRole('button', { name: 'Reset training', exact: true }),
-  ).toBeDisabled();
-  await page
-    .getByRole('button', { name: 'Reset whole experiment', exact: true })
-    .click();
-  await expect(
-    page.getByRole('button', { name: 'Reset training', exact: true }),
-  ).toBeEnabled();
+  await expect(page.getByRole('button', { name: /Test on 18/ })).toBeDisabled();
+  const savedFinal = await page.getByTestId('final-result').innerText();
+  for (const label of ['Predict profit', 'Profitability']) {
+    await page.getByRole('link', { name: label, exact: true }).click();
+    await page
+      .getByText(/Watch the (line|classifier) learn from data/, { exact: true })
+      .click();
+    await page
+      .getByRole('button', { name: 'Reset training', exact: true })
+      .click();
+    await page
+      .getByRole('button', { name: 'Train one step', exact: true })
+      .click();
+    await expect(page.locator('.training-feedback')).toContainText('Step 1');
+  }
   await page
     .getByRole('link', { name: 'Test predictions', exact: true })
     .click();
+  await expect(page.getByTestId('final-result')).toHaveText(savedFinal);
+  await expect(page.getByTestId('validation-pooled')).toHaveText(headline);
+  await page
+    .getByRole('button', { name: 'Reset validation exercise', exact: true })
+    .click();
   await expect(page.getByTestId('final-result')).toHaveCount(0);
-  await expect(page.getByTestId('validation-mean')).toHaveCount(0);
+  await expect(page.getByTestId('validation-pooled')).toHaveCount(0);
+  await expect(
+    page.getByRole('button', {
+      name: 'Run five validation checks',
+      exact: true,
+    }),
+  ).toBeFocused();
+  await expect(page.getByRole('button', { name: /Test on 18/ })).toHaveCount(0);
+  await page.getByRole('link', { name: 'Profitability', exact: true }).click();
+  await page
+    .getByText('Watch the classifier learn from data', { exact: true })
+    .click();
+  await expect(page.locator('.training-feedback')).toContainText('Step 1');
   await accessible(page);
 });
 test('keyboard controls, deep links and browser history expose all three lessons', async ({
@@ -195,7 +237,7 @@ test('keyboard controls, deep links and browser history expose all three lessons
 }) => {
   await open(page, '#logistic-regression');
   await expect(page.getByRole('heading', { level: 2 })).toHaveText(
-    'Will a ranch be profitable?',
+    'Will this ranch make a profit?',
   );
   const slider = page.getByRole('slider', { name: /Cattle sold annually/ });
   await slider.focus();
@@ -213,13 +255,19 @@ test('keyboard controls, deep links and browser history expose all three lessons
   await expect(page).toHaveURL(/#evaluation$/);
   await page.goBack();
   await expect(page.getByRole('heading', { level: 2 })).toHaveText(
-    'Will a ranch be profitable?',
+    'Will this ranch make a profit?',
   );
   await page.goForward();
   await expect(
-    page.getByRole('button', { name: 'Run five-fold validation', exact: true }),
+    page.getByRole('button', {
+      name: 'Run five validation checks',
+      exact: true,
+    }),
   ).toBeVisible();
-  const fold = page.getByRole('button', { name: /Fold 3/ });
+  await page
+    .getByRole('button', { name: 'Run five validation checks', exact: true })
+    .click();
+  const fold = page.getByRole('button', { name: /Round 3/ });
   await fold.focus();
   await fold.press('Enter');
   await expect(fold).toHaveAttribute('aria-pressed', 'true');
@@ -247,14 +295,10 @@ test('all lessons and expanded details reflow at seven widths and enlarged text'
           await page.evaluate(() => scrollTo(0, 0));
           expect((await slider.boundingBox())!.y).toBeLessThan(700);
         }
-        await page.getByText('Explore model training', { exact: true }).click();
         await page
-          .getByText(
-            i === 0
-              ? 'How the line is learned'
-              : 'How probabilities are learned',
-            { exact: true },
-          )
+          .getByText(/Watch the (line|classifier) learn from data/, {
+            exact: true,
+          })
           .click();
         const labels = await page
           .locator('.ranch-plot svg text')
@@ -270,17 +314,18 @@ test('all lessons and expanded details reflow at seven widths and enlarged text'
           );
         expect(labels.every((size) => size >= 12)).toBe(true);
       } else {
+        await open(page, '#evaluation');
+        await page.reload();
+        await expect(page.locator('.ranch-interactive')).toBeEnabled();
         await page
           .getByRole('button', {
-            name: 'Run five-fold validation',
+            name: 'Run five validation checks',
             exact: true,
           })
           .click();
-        for (const title of [
-          'Explore evaluation details',
-          'Other ways to validate models',
-        ])
-          await page.getByText(title, { exact: true }).click();
+        await page
+          .getByText('Explore evaluation details', { exact: true })
+          .click();
         for (const button of await page.locator('.folds button').all()) {
           const box = (await button.boundingBox())!;
           expect(box.width).toBeGreaterThanOrEqual(44);
@@ -329,7 +374,9 @@ test('readable numeric training state and privacy framing remain quiet and coher
 }, info) => {
   await page.emulateMedia({ reducedMotion: 'reduce' });
   await open(page);
-  await page.getByText('Explore model training', { exact: true }).click();
+  await page
+    .getByText(/Watch the (line|classifier) learn from data/, { exact: true })
+    .click();
   await expect(
     page.getByRole('button', { name: 'Train automatically', exact: true }),
   ).toHaveAttribute('aria-pressed', 'false');

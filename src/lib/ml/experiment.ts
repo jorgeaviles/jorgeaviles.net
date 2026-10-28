@@ -80,6 +80,7 @@ export type LabAction =
         | 'toggle-running'
         | 'reset-model'
         | 'reset-all'
+        | 'reset-evaluation'
         | 'validate'
         | 'test'
         | 'pause';
@@ -92,6 +93,14 @@ export function labReducer(state: LabState, action: LabAction): LabState {
     return { ...state, lesson: action.lesson, running: false };
   if (action.type === 'reset-all')
     return { ...createLabState(), lesson: state.lesson };
+  if (action.type === 'reset-evaluation')
+    return {
+      ...state,
+      validation: null,
+      finished: null,
+      fold: 0,
+      running: false,
+    };
   if (action.type === 'input') {
     if (!Number.isFinite(action.value)) return state;
     const [min, max] = action.feature === 'cattle' ? [50, 500] : [400, 1400];
@@ -119,7 +128,8 @@ export function labReducer(state: LabState, action: LabAction): LabState {
       ? { ...state, fold: action.value }
       : state;
   if (action.type === 'pause') return { ...state, running: false };
-  if (state.finished) return state;
+  if (state.finished && (action.type === 'validate' || action.type === 'test'))
+    return state;
   const kind: Kind = state.lesson === 0 ? 'linear' : 'logistic';
   if (action.type === 'validate')
     return {

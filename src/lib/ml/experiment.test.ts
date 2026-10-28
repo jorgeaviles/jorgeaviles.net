@@ -50,13 +50,17 @@ it('isolates input inspection from learning and pauses on navigation', () => {
   expect(labReducer(s, { type: 'input', feature: 'feed', value: NaN })).toBe(s);
   expect(labReducer(s, { type: 'fold', value: 5 })).toBe(s);
 });
-it('requires validation before testing, fits the final model on 72 ranches, locks and fully resets', () => {
+it('requires validation before testing, fits the final model on 72 ranches, locks evaluation but preserves independent exploration', () => {
   let s = labReducer(createLabState(), { type: 'navigate', lesson: 1 });
   s = labReducer(s, { type: 'reset-model' });
   s = labReducer(s, { type: 'navigate', lesson: 2 });
   expect(labReducer(s, { type: 'test' })).toBe(s);
   s = labReducer(s, { type: 'validate' });
   expect(s.finished).toBeNull();
+  const saved = s.validation;
+  s = labReducer(s, { type: 'fold', value: 3 });
+  expect(s.validation).toBe(saved);
+  expect(s.fold).toBe(3);
   s = labReducer(s, { type: 'test' });
   const fit = fitRanches(fixtures.development, 'logistic');
   expect(s.finished).toEqual({ ...fit, ...assess(fit, fixtures.test) });
@@ -68,8 +72,28 @@ it('requires validation before testing, fits the final model on 72 ranches, lock
     'toggle-running',
   ] as const)
     expect(labReducer(s, { type })).toBe(s);
-  s = labReducer(s, { type: 'navigate', lesson: 1 });
-  expect(labReducer(s, { type: 'reset-model' })).toBe(s);
+  const final = s.finished,
+    validation = s.validation;
+  for (const lesson of [0, 1] as const) {
+    s = labReducer(s, { type: 'navigate', lesson });
+    s = labReducer(s, { type: 'reset-model' });
+    expect(s[lesson === 0 ? 'linear' : 'logistic'].steps).toBe(0);
+    s = labReducer(s, { type: 'toggle-running' });
+    expect(s.running).toBe(true);
+    s = labReducer(s, { type: 'step' });
+    expect(s[lesson === 0 ? 'linear' : 'logistic'].steps).toBe(1);
+    expect(s.finished).toBe(final);
+    expect(s.validation).toBe(validation);
+  }
+  const logistic = s.logistic,
+    linear = s.linear;
+  s = labReducer(s, { type: 'reset-evaluation' });
+  expect(s.finished).toBeNull();
+  expect(s.validation).toBeNull();
+  expect(s.logistic).toBe(logistic);
+  expect(s.linear).toBe(linear);
+  expect(s.running).toBe(false);
+  expect(labReducer(s, { type: 'test' })).toBe(s);
   expect(labReducer(s, { type: 'reset-all' })).toEqual({
     ...createLabState(),
     lesson: 1,

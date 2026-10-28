@@ -1361,9 +1361,10 @@ strong {
   flex-wrap: wrap;
   gap: var(--space-1);
   max-width: 650px;
-  margin-block: var(--space-6);
+  margin-block: var(--space-4) var(--space-3);
 }
-.learning-lab .folds button {
+.learning-lab .folds button,
+.fold-illustration > div {
   flex: 1 1 48px;
   min-width: max-content;
   padding: var(--space-2) 2px;
@@ -1374,6 +1375,12 @@ strong {
 .folds b {
   display: block;
 }
+.fold-illustration > div {
+  text-align: center;
+  border: 1px solid var(--line);
+  border-radius: 3px;
+}
+.fold-illustration > div:last-child,
 .folds [aria-pressed='true'] {
   background: var(--light-green);
   border-color: var(--green);
@@ -1404,12 +1411,20 @@ strong {
   margin: var(--space-1) 0;
   font-weight: 600;
 }
-.experiment-lock {
-  padding-block: var(--space-4);
-  border-top: var(--rule-width) solid var(--line);
+.lesson-instruction,
+.lesson-takeaway,
+.ranch-takeaway,
+.fold-caption,
+.ranch-evaluation section > p {
+  max-width: 75ch;
 }
-.experiment-lock button {
-  margin-left: var(--space-2);
+.ranch-takeaway,
+.fold-caption {
+  color: var(--muted);
+  font-size: var(--text-supporting);
+}
+.lesson-takeaway {
+  margin-block: var(--space-4) var(--space-6);
 }
 @container ranch-plot (max-width: 680px) {
   .ranch-plot svg text {
