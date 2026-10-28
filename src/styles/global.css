@@ -944,551 +944,6 @@ strong {
   }
 }
 
-.learning-lab {
-  margin-block: 1.2rem 4rem;
-}
-.lesson-nav {
-  display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: var(--space-2);
-  margin-bottom: var(--space-6);
-}
-.lesson-nav a {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: var(--space-2);
-  min-height: 48px;
-  padding: var(--space-2) var(--space-3);
-  border: var(--rule-width) solid var(--line);
-  text-decoration: none;
-  font-size: var(--text-supporting);
-  line-height: 1.5;
-  text-align: center;
-  border-radius: 3px;
-}
-.lesson-nav span {
-  flex: 0 0 auto;
-  font-size: var(--text-metadata);
-  font-variant-numeric: tabular-nums;
-}
-.lesson-nav [aria-current] {
-  background: var(--green);
-  color: white;
-}
-.learning-lab button,
-.learning-lab select,
-.learning-lab input[type='number'] {
-  border: 1px solid var(--muted);
-  padding: var(--space-2) var(--space-3);
-  min-height: 48px;
-  background: var(--paper);
-  color: var(--ink);
-  border-radius: 3px;
-  font: inherit;
-  line-height: 1.5;
-}
-.learning-lab button {
-  cursor: pointer;
-}
-.learning-lab button:disabled {
-  opacity: 0.5;
-  cursor: default;
-}
-.learning-lab h2 {
-  margin-bottom: 0.4rem;
-}
-.lesson-description {
-  margin-top: 0;
-}
-.ml-workspace {
-  display: grid;
-  grid-template-columns: minmax(0, 2fr) minmax(280px, 1fr);
-  gap: var(--space-8);
-  align-items: start;
-  margin-block: var(--space-6);
-}
-.ml-primary,
-.ml-controls {
-  min-width: 0;
-}
-.ml-controls {
-  border-left: var(--rule-width) solid var(--line);
-  padding-left: var(--space-6);
-}
-.ml-controls label {
-  font-size: var(--text-supporting);
-}
-.ml-controls select,
-.ml-controls input[type='number'] {
-  font-size: var(--text-body);
-}
-.ml-controls .record-inspector {
-  margin-top: var(--space-6);
-}
-.ml-primary > .model-figure:first-child {
-  margin-top: 0;
-}
-.training-session {
-  display: grid;
-  grid-template-columns: minmax(260px, 1fr) minmax(0, 2fr);
-  gap: var(--space-6);
-  align-items: start;
-  border-block: var(--rule-width) solid var(--line);
-  padding-block: var(--space-6);
-  margin-block: var(--space-6);
-}
-.training-label {
-  font-size: var(--text-supporting);
-  font-weight: 600;
-  margin-bottom: var(--space-2);
-}
-.learning-lab label {
-  display: block;
-}
-.learning-lab select,
-.learning-lab input[type='number'] {
-  max-width: 100%;
-  display: block;
-  margin-block: 0.35rem 0.7rem;
-  width: 100%;
-}
-.ml-actions {
-  display: flex;
-  gap: var(--space-2);
-  flex-wrap: wrap;
-  margin: 0;
-}
-.ml-actions button:first-child {
-  background: var(--green);
-  color: white;
-}
-.training-feedback {
-  margin: 0 0 var(--space-2);
-  font-size: var(--text-supporting);
-  line-height: 1.5;
-  font-variant-numeric: tabular-nums;
-}
-.learned-parameters {
-  display: flex;
-  flex-wrap: wrap;
-  gap: var(--space-2) var(--space-6);
-  margin: var(--space-2) 0;
-  font-size: var(--text-supporting);
-  font-variant-numeric: tabular-nums;
-}
-.learned-parameters dt {
-  color: var(--muted);
-}
-.learned-parameters dd {
-  margin: 0.15rem 0 0;
-  font-weight: 600;
-}
-.parameter-note {
-  margin: 0;
-  font-size: var(--text-metadata);
-  color: var(--muted);
-}
-.probability-legend {
-  display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  align-items: center;
-  gap: var(--space-2);
-  font-size: var(--text-supporting);
-  line-height: 1.5;
-}
-.probability-swatch {
-  grid-column: 1 / -1;
-  grid-row: 2;
-  width: 100%;
-  height: 12px;
-  border: var(--rule-width) solid var(--line);
-  background: linear-gradient(to right, rgb(247, 246, 242), rgb(151, 184, 161));
-}
-.probability-legend small {
-  grid-column: 1 / -1;
-  font-size: inherit;
-  color: var(--muted);
-}
-.probability-legend span:nth-of-type(3) {
-  text-align: right;
-}
-.task-calculation {
-  margin: 0.7rem 0;
-  font-size: 0.85rem;
-  font-variant-numeric: tabular-nums;
-}
-.task-calculation div {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: baseline;
-  gap: 0.2rem 0.5rem;
-  margin-block: 0.5rem;
-}
-.task-calculation dt {
-  flex: 1;
-  min-width: 120px;
-}
-.task-calculation dd {
-  margin: 0;
-  font-weight: 600;
-}
-.learning-lab .population-control {
-  display: flex;
-  align-items: center;
-  gap: 0.7rem;
-  font-size: 0.85rem;
-}
-.population-control select {
-  width: auto;
-  margin: 0;
-}
-.model-figure {
-  container: model-plot / inline-size;
-}
-.model-figure,
-.loss-history {
-  margin: 1rem 0;
-}
-.model-figure figcaption,
-.loss-history figcaption {
-  font-size: var(--text-supporting);
-  font-weight: 600;
-  margin-bottom: var(--space-2);
-}
-.ml-plot {
-  width: 100%;
-  max-height: 440px;
-  background: var(--light-green);
-  overflow: hidden;
-}
-.ml-plot text {
-  font: 14px var(--font-sans);
-  fill: var(--ink);
-}
-.ml-plot .zero-prediction-label {
-  font-weight: 600;
-}
-.plot-point {
-  cursor: pointer;
-}
-.plot-key,
-.boundary-state,
-.inspector-note,
-.observed-value,
-.ranking-note {
-  font-size: var(--text-supporting);
-  line-height: 1.55;
-  margin: var(--space-3) 0;
-}
-.boundary-state {
-  border-left: 2px solid var(--green);
-  padding-left: 0.6rem;
-}
-.loss-history svg {
-  width: 100%;
-  max-height: 165px;
-}
-.loss-history text {
-  font: 14px var(--font-sans);
-  fill: var(--ink);
-}
-.loss-history p,
-.loss-history small {
-  display: block;
-  font-size: var(--text-supporting);
-  margin: var(--space-2) 0;
-}
-.calculation-flow {
-  list-style: none;
-  display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: 0.4rem;
-  padding: 0;
-  margin: 0.7rem 0;
-}
-.calculation-flow li {
-  border-top: var(--rule-width) solid var(--line);
-  padding-top: 0.4rem;
-  overflow-wrap: anywhere;
-  font-size: 0.85rem;
-}
-.calculation-flow span,
-.calculation-flow strong {
-  display: block;
-}
-.calculation-flow span {
-  font-size: 0.75rem;
-}
-.learning-lab details {
-  border-top: var(--rule-width) solid var(--line);
-  padding-block: var(--space-2);
-}
-.learning-lab summary {
-  cursor: pointer;
-  font-weight: 600;
-  min-height: 44px;
-  padding-block: var(--space-2);
-  line-height: 1.5;
-}
-.learning-lab details p {
-  font-size: 0.85rem;
-  margin-block: 0.7rem;
-}
-.learning-lab fieldset {
-  border: var(--rule-width) solid var(--line);
-  padding: 0.65rem 0.8rem;
-  margin: 0;
-}
-.learning-lab fieldset label {
-  font-size: 0.9rem;
-  margin-block: 0.35rem;
-}
-.learning-lab fieldset label:not(.policy-slider) {
-  display: flex;
-  align-items: center;
-  gap: var(--space-2);
-  min-height: 44px;
-}
-.learning-lab input[type='radio'] {
-  accent-color: var(--green);
-  width: 18px;
-  height: 18px;
-  vertical-align: middle;
-}
-.learning-lab input[type='range'] {
-  width: 100%;
-  accent-color: var(--green);
-  min-height: 32px;
-  display: block;
-}
-.policy-slider output {
-  float: right;
-  font-variant-numeric: tabular-nums;
-}
-.essential-metrics {
-  display: grid;
-  grid-template-columns: repeat(4, minmax(0, 1fr));
-  gap: var(--space-3);
-  margin: var(--space-3) 0 var(--space-4);
-  padding: var(--space-3) 0;
-  border-bottom: var(--rule-width) solid var(--line);
-}
-.essential-metrics dt {
-  min-height: 1.5em;
-  font-size: var(--text-supporting);
-  line-height: 1.5;
-}
-.essential-metrics dd {
-  font-size: 1.1rem;
-  font-weight: 600;
-  color: var(--green);
-  margin: 0.15rem 0 0;
-}
-.evaluation-primary {
-  container: evaluation / inline-size;
-}
-.ranked-strip {
-  display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: var(--space-3);
-  margin-top: var(--space-4);
-}
-.learning-lab .ranked-strip button {
-  display: grid;
-  align-content: start;
-  gap: var(--space-2);
-  padding: var(--space-3);
-  border: 0;
-  border-bottom: var(--rule-width) solid var(--line);
-  border-left: 3px solid transparent;
-  border-radius: 0;
-  text-align: left;
-  font-size: var(--text-supporting);
-  line-height: 1.5;
-  font-variant-numeric: tabular-nums;
-  min-width: 0;
-}
-.record-heading {
-  display: flex;
-  align-items: baseline;
-  justify-content: space-between;
-  gap: var(--space-1);
-}
-.record-rank {
-  font-size: var(--text-metadata);
-  color: var(--muted);
-}
-.record-id {
-  font-size: var(--text-supporting);
-  font-weight: 600;
-}
-.record-score {
-  display: flex;
-  flex-direction: column;
-}
-.record-score strong {
-  font-size: 18px;
-  font-weight: 600;
-}
-.record-score > span,
-.record-outcome {
-  font-size: var(--text-metadata);
-  color: var(--muted);
-}
-.record-outcome {
-  display: flex;
-  align-items: baseline;
-  gap: var(--space-1);
-  min-height: 3em;
-}
-.record-policy {
-  justify-self: start;
-  padding: 2px var(--space-2);
-  font-size: var(--text-metadata);
-  color: var(--muted);
-}
-.chosen .record-policy {
-  background: var(--green);
-  color: var(--paper);
-}
-.inspection-flag {
-  min-height: 1.5em;
-  font-size: var(--text-metadata);
-  font-weight: 600;
-}
-.ranked-strip button[aria-pressed='true'] {
-  border-left-color: var(--ink);
-}
-.ranked-strip button[aria-pressed='true'] .record-id {
-  text-decoration: underline;
-  text-underline-offset: 4px;
-}
-@container evaluation (min-width: 37.5em) {
-  .ranked-strip {
-    grid-template-columns: repeat(3, minmax(0, 1fr));
-  }
-  .learning-lab .ranked-strip button {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-  }
-  .record-heading {
-    grid-column: 1 / -1;
-  }
-  .record-score {
-    grid-column: 1;
-    grid-row: 2;
-  }
-  .record-outcome {
-    grid-column: 2;
-    grid-row: 2;
-  }
-  .record-policy {
-    grid-column: 1;
-    grid-row: 3;
-  }
-  .inspection-flag {
-    grid-column: 2;
-    grid-row: 3;
-    align-self: center;
-    text-align: right;
-  }
-}
-@container evaluation (min-width: 51.25em) {
-  .ranked-strip {
-    grid-template-columns: repeat(4, minmax(0, 1fr));
-  }
-}
-@container evaluation (max-width: 30em) {
-  .essential-metrics {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-  }
-}
-.confusion-metrics {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 1rem;
-}
-.confusion-metrics dt {
-  font-size: 0.8rem;
-}
-.confusion-metrics dd {
-  margin: 0;
-}
-.ml-table {
-  overflow: auto;
-}
-.ml-table table {
-  width: 100%;
-  text-align: left;
-  border-collapse: collapse;
-  white-space: nowrap;
-}
-.ml-table td,
-.ml-table th {
-  padding: 0.5rem;
-  border-bottom: var(--rule-width) solid var(--line);
-}
-.lab-page-intro {
-  padding-block: 2rem 1rem;
-}
-.lab-page-intro h1 {
-  font-size: clamp(2rem, 5vw, 3.4rem);
-  margin: 0.4rem 0 0.6rem;
-}
-.lab-page-intro p {
-  max-width: 60ch;
-  margin-block: 0.4rem;
-}
-@media (max-width: 800px) {
-  .ml-plot {
-    max-height: 390px;
-  }
-}
-@media (max-width: 480px) {
-  .lab-page-intro {
-    padding-block: 1.2rem 0.5rem;
-  }
-  .lab-page-intro h1 {
-    font-size: 2rem;
-    line-height: 1.12;
-  }
-  .lab-page-intro p {
-    font-size: 0.9rem;
-  }
-  .learning-lab {
-    margin-top: 0.5rem;
-  }
-  .lesson-nav {
-    grid-template-columns: 1fr;
-    margin-bottom: var(--space-4);
-    gap: var(--space-1);
-  }
-  .lesson-nav a {
-    justify-content: flex-start;
-    font-size: var(--text-body);
-    text-align: left;
-  }
-  .lesson-nav span {
-    display: inline;
-  }
-  .learning-lab h2 {
-    font-size: 1.5rem;
-  }
-  .lesson-description {
-    font-size: 0.9rem;
-  }
-  .ml-workspace {
-    margin-top: 0.7rem;
-  }
-  .ml-actions button {
-    font-size: var(--text-supporting);
-    padding: var(--space-2) var(--space-3);
-  }
-  .essential-metrics dd {
-    font-size: 1rem;
-  }
-}
-
 /* Professional facts and evidence remain readable before the longer narrative. */
 .project-overview {
   border-block: var(--rule-width) solid var(--line);
@@ -1696,125 +1151,313 @@ strong {
   }
 }
 
-/* Lab workspace space requirements differ from editorial prose sidebars. */
-@media (max-width: 1000px) {
-  .ml-workspace {
-    grid-template-columns: 1fr;
-    gap: var(--space-6);
-  }
-  .ml-controls {
-    border-left: 0;
-    border-top: var(--rule-width) solid var(--line);
-    padding: var(--space-6) 0 0;
-  }
+/* The ranch lessons share site roles; all educational geometry stays local. */
+.lab-page-intro {
+  padding-block: 1.2rem 0.4rem;
 }
-@media (min-width: 700px) and (max-width: 1000px) {
-  .training-workspace .ml-controls {
-    display: grid;
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-    gap: var(--space-6);
-    align-items: start;
-  }
-  .training-workspace .ml-controls > .model-settings {
-    grid-column: 1;
-  }
-  .training-workspace .ml-controls > .record-inspector {
-    grid-column: 2;
-    margin-top: 0;
-  }
+.lab-page-intro h1 {
+  font-size: clamp(2rem, 4vw, 3rem);
+  margin-block: 0.3rem;
 }
-@media (max-width: 800px) {
-  .training-session {
-    grid-template-columns: 1fr;
-    gap: var(--space-4);
-    padding-block: var(--space-4);
-    margin-block: var(--space-4);
-  }
+.lab-page-intro p {
+  max-width: 64ch;
+  margin-block: 0.4rem;
 }
-
-.parameter-fields {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(min(100%, 220px), 1fr));
-  gap: var(--space-4) var(--space-6);
+.learning-lab {
+  margin-block: var(--space-4) var(--space-16);
 }
-.parameter-fields label {
+.lesson-nav {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-1);
+  margin-bottom: var(--space-4);
+}
+.lesson-nav a {
+  flex: 1 1 80px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-width: min-content;
+  min-height: 48px;
+  padding: 6px;
+  border: var(--rule-width) solid var(--line);
+  border-radius: 3px;
   font-size: var(--text-supporting);
-}
-.learning-lab .parameter-fields input {
-  font-size: var(--text-body);
-}
-
-.axis-label {
-  color: var(--muted);
-  font-size: var(--text-supporting);
-  line-height: 1.5;
-  margin-block: var(--space-2);
-}
-.axis-x {
+  line-height: 1.4;
   text-align: center;
+  text-decoration: none;
 }
-@container model-plot (max-width: 680px) {
-  .ml-plot text {
-    font-size: 16px;
-  }
+.lesson-nav [aria-current] {
+  background: var(--green);
+  color: white;
 }
-@container model-plot (max-width: 520px) {
-  .ml-plot text {
-    font-size: 22px;
-  }
+.learning-lab h2 {
+  font-size: clamp(1.5rem, 3vw, 2rem);
+  margin-bottom: var(--space-4);
 }
-@container model-plot (max-width: 360px) {
-  .ml-plot text {
-    font-size: 26px;
-  }
+.learning-lab h3 {
+  font-size: 1.3rem;
+  margin-block: var(--space-4) var(--space-3);
 }
-.loss-values,
-.test-metrics {
+.learning-lab button,
+.learning-lab select {
+  min-height: 44px;
+  border: 1px solid var(--muted);
+  border-radius: 3px;
+  background: var(--paper);
+  color: var(--ink);
+  padding: var(--space-2) var(--space-3);
+  font: inherit;
+  line-height: 1.5;
+  max-width: 100%;
+}
+.learning-lab button {
+  cursor: pointer;
+}
+.learning-lab button:disabled {
+  opacity: 0.55;
+  cursor: default;
+}
+.learning-lab .ranch-primary {
+  background: var(--green);
+  color: white;
+}
+.ranch-workspace {
   display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: var(--space-3);
+  gap: var(--space-6);
+  margin-block: var(--space-4) var(--space-6);
+  align-items: start;
+}
+.ranch-controls {
+  min-width: 0;
+}
+.ranch-controls label {
+  display: flex;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+  font-weight: 500;
+}
+.ranch-controls output {
+  font-variant-numeric: tabular-nums;
+}
+.learning-lab input[type='range'] {
+  display: block;
+  width: 100%;
+  min-height: 44px;
+  margin: 0 0 var(--space-3);
+  accent-color: var(--green);
+}
+.ranch-result {
   margin-block: var(--space-3);
   font-variant-numeric: tabular-nums;
 }
-.loss-values dt,
-.test-metrics dt {
-  font-size: var(--text-metadata);
+.ranch-result strong {
+  display: block;
+  font: 2rem var(--font-serif);
+  color: var(--green);
+}
+.ranch-result p {
+  margin-block: var(--space-2);
+}
+.ranch-result p:last-child {
+  font-size: var(--text-supporting);
   color: var(--muted);
 }
-.loss-values dd,
-.test-metrics dd {
-  margin: var(--space-1) 0 0;
-  font-size: var(--text-body);
-  font-weight: 600;
+.ranch-plot {
+  margin: 0;
+  min-width: 0;
+  container: ranch-plot / inline-size;
 }
-.inspection-heading,
-.final-test-results h3 {
-  font-family: var(--font-sans);
-  font-size: var(--text-body);
-  font-weight: 600;
-  line-height: 1.5;
-  letter-spacing: normal;
-  margin-bottom: var(--space-3);
-}
-.ml-table tbody tr[aria-current='true'] {
-  box-shadow: inset 3px 0 var(--ink);
-  background: var(--light-green);
-}
-.ml-table .table-context {
-  white-space: normal;
+.ranch-plot figcaption,
+.loss-history figcaption {
+  font-weight: 500;
   font-size: var(--text-supporting);
 }
-.final-test-results {
-  border-top: var(--rule-width) solid var(--line);
-  margin-top: var(--space-4);
-  padding-top: var(--space-4);
+.ranch-plot svg {
+  display: block;
+  width: 100%;
+  height: auto;
+  overflow: visible;
 }
-.test-metrics {
-  grid-template-columns: repeat(3, minmax(0, 1fr));
+.ranch-plot svg text {
+  fill: var(--muted);
+  font-family: var(--font-sans);
+  font-size: 16px;
+}
+.ranch-axis,
+.ranch-key {
+  color: var(--muted);
+  font-size: var(--text-supporting);
+  line-height: 1.6;
+  margin-block: var(--space-2);
+}
+.ranch-axis {
+  text-align: center;
+}
+.ranch-axis:first-of-type {
+  text-align: left;
+}
+.ranch-details {
+  border-top: var(--rule-width) solid var(--line);
+  padding-block: var(--space-4);
+}
+.ranch-details summary {
+  cursor: pointer;
+  font-weight: 500;
+  min-height: 36px;
+  line-height: 1.6;
+}
+.ranch-details p {
+  max-width: 75ch;
+  font-size: var(--text-supporting);
+}
+.ranch-details select {
+  display: block;
+  margin-top: var(--space-2);
+}
+.ml-actions {
+  display: flex;
+  gap: var(--space-2);
+  flex-wrap: wrap;
+}
+.training-feedback {
+  font-variant-numeric: tabular-nums;
+}
+.loss-history {
+  margin: var(--space-4) 0;
+  max-width: 360px;
+}
+.loss-history svg {
+  display: block;
+  width: 100%;
+}
+.loss-history text {
+  fill: var(--muted);
+  font-size: 14px;
+  font-family: var(--font-sans);
+}
+.loss-history p {
+  color: var(--muted);
+}
+.loss-values,
+.ranch-parameters {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-4);
+}
+.loss-values dt,
+.ranch-parameters dt {
+  color: var(--muted);
+  font-size: var(--text-supporting);
+}
+.loss-values dd,
+.ranch-parameters dd {
+  margin: var(--space-1) 0;
+  font-variant-numeric: tabular-nums;
+}
+.folds {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-1);
+  max-width: 650px;
+  margin-block: var(--space-6);
+}
+.learning-lab .folds button {
+  flex: 1 1 48px;
+  min-width: max-content;
+  padding: var(--space-2) 2px;
+  min-height: 76px;
+  font-size: var(--text-metadata);
+}
+.folds span,
+.folds b {
+  display: block;
+}
+.folds [aria-pressed='true'] {
+  background: var(--light-green);
+  border-color: var(--green);
+}
+.ranch-validation-result {
+  max-width: 75ch;
+}
+.ranch-validation-result strong {
+  display: block;
+  font: 2rem var(--font-serif);
+  color: var(--green);
+}
+.ranch-final {
+  border-top: var(--rule-width) solid var(--line);
+  margin-top: var(--space-6);
+  padding-block: var(--space-4);
+}
+.ranch-final p {
+  max-width: 75ch;
+}
+.ranch-confusion {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: var(--space-4);
+  font-size: var(--text-supporting);
+}
+.ranch-confusion dd {
+  margin: var(--space-1) 0;
+  font-weight: 600;
+}
+.experiment-lock {
+  padding-block: var(--space-4);
+  border-top: var(--rule-width) solid var(--line);
+}
+.experiment-lock button {
+  margin-left: var(--space-2);
+}
+@container ranch-plot (max-width: 680px) {
+  .ranch-plot svg text {
+    font-size: 19px;
+  }
+}
+@container ranch-plot (max-width: 520px) {
+  .ranch-plot svg text {
+    font-size: 24px;
+  }
+}
+@container ranch-plot (max-width: 360px) {
+  .ranch-plot svg text {
+    font-size: 28px;
+  }
+}
+@media (min-width: 1001px) {
+  .ranch-workspace {
+    grid-template-columns: minmax(0, 2fr) minmax(0, 1fr);
+    gap: var(--space-8);
+  }
+  .ranch-controls {
+    grid-column: 2;
+    grid-row: 1;
+  }
+  .ranch-plot {
+    grid-column: 1;
+    grid-row: 1;
+  }
+}
+@media (max-width: 480px) {
+  .lab-page-intro p {
+    font-size: var(--text-supporting);
+  }
+  .learning-lab {
+    margin-top: var(--space-2);
+  }
+  .ranch-workspace {
+    gap: var(--space-4);
+  }
+  .ranch-confusion {
+    grid-template-columns: 1fr;
+  }
 }
 
-.ranking-guide {
-  font-size: var(--text-supporting);
-  line-height: 1.5;
-  margin-block: var(--space-2) var(--space-4);
+.ranch-interactive {
+  border: 0;
+  padding: 0;
+  margin: 0;
+  min-width: 0;
 }

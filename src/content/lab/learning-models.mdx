@@ -1,13 +1,17 @@
 ---
-title: Learning from data, step by step
-description: Train small regression models and inspect how predictions become decisions.
+title: Predicting profitability
+description: Predict profit, estimate profitability, and test predictions with fictional cattle ranches.
 category: Educational demonstration
 order: 1
 featured: true
 methods:
-  - Synthetic data
-  - Precision and recall
+  - Synthetic ranch data
+  - Five-fold cross-validation
   - TypeScript and React
 ---
 
-Explore linear regression, logistic regression, and model evaluation with independently synthetic data. Models train locally in the browser using gradient descent. Validation rankings derive from the logistic model's predictions; threshold and review-budget policies do not retrain it. These small educational samples do not measure real-world operational performance.
+Explore how models predict profitability and learn from fictional cattle ranches.
+
+Without JavaScript, the lesson is still readable: linear regression predicts annual dollar profit from cattle sold; logistic regression estimates the chance of positive profit from cattle sales and feed cost. Five-fold validation fits five fresh models inside 72 development ranches, each time predicting the excluded group. A final classifier fits all 72 and is assessed once on 18 untouched ranches.
+
+Enable JavaScript to move the sliders, explore real gradient updates, and run validation locally.

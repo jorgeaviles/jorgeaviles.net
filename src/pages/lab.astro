@@ -1,33 +1,22 @@
 ---
+import { render } from 'astro:content';
 import BaseLayout from '../layouts/BaseLayout.astro';
 import LearningLab from '../components/LearningLab';
 import { getPublishedEntries } from '../lib/content';
 const entries = await getPublishedEntries('lab');
+const entry = entries[0];
+const rendered = entry ? await render(entry) : null;
+const Content = rendered?.Content;
 ---
 
-<BaseLayout
-  title="Lab"
-  description="Train small linear and logistic regression models locally, then explore validation decisions using synthetic data."
->
+<BaseLayout title="Lab" description={entry?.data.description}>
   <header class="lab-page-intro">
     <p class="eyebrow">The lab</p>
-    <h1>Learn how models learn</h1>
-    <p>
-      Train a line, build a classifier, and explore decisions with synthetic
-      data. This learning demonstration makes model fitting and evaluation
-      visible; it is separate from my professional case studies and academic
-      research assistance.
-    </p>
+    <h1>{entry?.data.title}</h1>
+    <p>{entry?.data.description}</p>
   </header>
-  {entries.length > 0 && <LearningLab client:visible />}
+  {entry && <LearningLab client:load />}
   <noscript>
-    <p>
-      JavaScript is disabled. Linear regression fits a line by reducing mean
-      squared error. Logistic regression transforms a weighted feature score
-      with sigmoid and learns using log loss. Evaluation compares
-      model-generated predictions with labels on held-out records. Enable
-      JavaScript to train these synthetic models locally; no real records or
-      operational performance are represented.
-    </p>
+    <div class="prose">{Content && <Content />}</div>
   </noscript>
 </BaseLayout>

@@ -22,7 +22,7 @@ export async function smokeProduction(base, expectedCommit, fetcher = fetch) {
   if (
     page.status !== 200 ||
     !page.headers.get('content-type')?.includes('text/html') ||
-    !html.includes('Learn how models learn') ||
+    !html.includes('Predicting profitability') ||
     !html.includes('<astro-island') ||
     !html.includes('<main')
   )

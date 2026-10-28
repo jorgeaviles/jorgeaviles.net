@@ -1,237 +1,221 @@
-import { useMemo } from 'react';
-import { loss, score, transform } from '../../lib/ml/models';
 import {
   fixtures,
-  samples,
-  classificationScale,
-  regressionScale,
   MAX_UPDATES,
-  type Kind,
+  developmentRanch,
 } from '../../lib/ml/experiment';
-import {
-  displayRows,
-  boundary,
-  fmt,
-  probabilityField,
-} from '../../lib/ml/presentation';
+import { predictProfit, predictProfitability } from '../../lib/ml/ranches';
+import { dollars, fmt, pct } from '../../lib/ml/presentation';
 import type { LabController } from './useLabExperiment';
 import { ModelPlot } from './ModelPlot';
 import { LossHistory } from './LossHistory';
-import { RecordInspector } from './RecordInspector';
-export function TrainingLesson(controller: LabController) {
-  const { state, dispatch } = controller,
-    kind: Kind = state.lesson === 0 ? 'linear' : 'logistic',
-    logistic = kind === 'logistic',
-    experiment = state[kind],
-    m = experiment.model,
-    key = logistic ? state.population : 'linear',
-    raw = logistic
-      ? state.population === 'training'
-        ? fixtures.train
-        : fixtures.validation
-      : fixtures.regression,
-    rows = displayRows(
-      raw,
-      m,
-      logistic ? classificationScale : regressionScale,
-    ),
-    selected = rows.find((r) => r.id === state.selected[key]) ?? rows[0],
-    current = experiment.history.at(-1)!,
-    previous = experiment.history.at(-2) ?? current,
-    delta = current.loss - previous.loss,
-    disabled = !!state.finished || experiment.steps >= MAX_UPDATES;
-  const field = useMemo(
-    () => (logistic ? probabilityField(m, classificationScale) : []),
-    [logistic, m],
-  );
+export function TrainingLesson({ state, dispatch }: LabController) {
+  const logistic = state.lesson === 1,
+    kind = logistic ? 'logistic' : 'linear',
+    experiment = state[kind];
+  const profit = predictProfit(state.linear, state.cattle),
+    chance = predictProfitability(state.logistic, state.cattle, state.feed);
+  const inspected = state.inspected
+    ? developmentRanch(state.inspected)
+    : undefined;
+  const disabled = !!state.finished || experiment.steps >= MAX_UPDATES;
   return (
-    <div className="training-lesson">
-      <div
-        className="training-session"
-        role="group"
-        aria-label="Model training"
-      >
-        <div className="training-command">
-          <p className="training-label">Model training</p>
-          <div className="ml-actions">
-            <button
-              disabled={disabled || state.running}
-              onClick={() => dispatch({ type: 'step' })}
-            >
-              Train one step
-            </button>
-            <button
-              disabled={disabled}
-              aria-pressed={state.running}
-              onClick={() => dispatch({ type: 'toggle-running' })}
-            >
-              {state.running ? 'Pause' : 'Train'}
-            </button>
-            <button
-              disabled={!!state.finished}
-              onClick={() => dispatch({ type: 'reset-model' })}
-            >
-              Reset
-            </button>
-          </div>
-        </div>
-        <div className="training-state">
-          <p className="training-label">Current model</p>
-          <p
-            className="training-feedback"
-            role="status"
-            aria-live={state.running ? 'off' : 'polite'}
-          >
-            Step {experiment.steps} · {logistic ? 'Log loss' : 'MSE'}{' '}
-            {fmt(current.loss)} ·{' '}
-            {experiment.steps
-              ? `${delta < 0 ? '↓' : delta > 0 ? '↑' : 'Unchanged'} ${fmt(Math.abs(delta))} since previous step`
-              : experiment.mode === 'manual'
-                ? 'Manual parameters · new baseline'
-                : 'Model not trained'}
-          </p>
-          {experiment.steps >= MAX_UPDATES && (
-            <p>Paused at 1,000 updates. Reset to start again.</p>
-          )}
-          <dl
-            className="learned-parameters"
-            aria-label="Current model parameters"
-          >
-            {(logistic
-              ? [
-                  ['Complexity weight', m.w[0]],
-                  ['Uncertainty weight', m.w[1]],
-                  ['Bias', m.b],
-                ]
-              : [
-                  ['Slope (min/point)', m.w[0] / regressionScale.scale[0]],
-                  [
-                    'Intercept (min)',
-                    m.b -
-                      (m.w[0] * regressionScale.mean[0]) /
-                        regressionScale.scale[0],
-                  ],
-                ]
-            ).map(([label, value]) => (
-              <div key={label}>
-                <dt>{label}</dt>
-                <dd>{fmt(Number(value))}</dd>
-              </div>
-            ))}
-          </dl>
+    <div className="ranch-training">
+      <div className="ranch-workspace">
+        <div className="ranch-controls">
+          <label htmlFor="ranch-cattle">
+            Cattle sold annually{' '}
+            <output aria-hidden="true">{state.cattle}</output>
+          </label>
+          <input
+            id="ranch-cattle"
+            type="range"
+            min="50"
+            max="500"
+            step="1"
+            value={state.cattle}
+            aria-valuetext={`${state.cattle} cattle`}
+            onChange={(e) =>
+              dispatch({
+                type: 'input',
+                feature: 'cattle',
+                value: +e.target.value,
+              })
+            }
+          />
           {logistic && (
-            <p className="parameter-note">
-              Weights act on training-standardized scores.
-            </p>
-          )}
-        </div>
-      </div>
-      <div className="ml-workspace training-workspace">
-        <div className="ml-primary">
-          {logistic && (
-            <label className="population-control">
-              Show{' '}
-              <select
-                aria-label="Show"
-                value={state.population}
+            <>
+              <label htmlFor="ranch-feed">
+                Feed cost per animal{' '}
+                <output aria-hidden="true">{dollars(state.feed)}</output>
+              </label>
+              <input
+                id="ranch-feed"
+                type="range"
+                min="400"
+                max="1400"
+                step="1"
+                value={state.feed}
+                aria-valuetext={dollars(state.feed)}
                 onChange={(e) =>
                   dispatch({
-                    type: 'population',
-                    value: e.target.value as 'training' | 'validation',
+                    type: 'input',
+                    feature: 'feed',
+                    value: +e.target.value,
                   })
                 }
-              >
-                <option value="training">Training · 54 examples</option>
-                <option value="validation">Validation · 18 examples</option>
-              </select>
-            </label>
-          )}
-          <ModelPlot
-            kind={kind}
-            points={rows}
-            selected={selected.id}
-            onSelect={(id) => dispatch({ type: 'select', key, id })}
-            initial={experiment.mode === 'initial'}
-            ends={
-              logistic
-                ? [0, 0]
-                : [
-                    score(m, transform([0], regressionScale)),
-                    score(m, transform([10], regressionScale)),
-                  ]
-            }
-            boundary={
-              logistic ? boundary(m, classificationScale) : { kind: 'outside' }
-            }
-            population={state.population}
-            field={field}
-          />
-        </div>
-        <aside
-          className="ml-controls"
-          aria-label="Model controls and inspected example"
-        >
-          <div className="model-settings">
-            <label>
-              Learning rate
-              <select
-                disabled={!!state.finished || state.running}
-                value={experiment.rate}
-                onChange={(e) =>
-                  dispatch({ type: 'rate', value: +e.target.value })
-                }
-              >
-                <option value="0.01">Careful · 0.01</option>
-                <option value="0.05">Steady · 0.05</option>
-                <option value="0.1">Faster · 0.1</option>
-              </select>
-            </label>
-            <LossHistory experiment={experiment} logistic={logistic} />
-          </div>
-          <RecordInspector
-            rows={rows}
-            selected={selected}
-            kind={kind}
-            experiment={experiment}
-            selectionKey={key}
-            dispatch={dispatch}
-          />
-        </aside>
-      </div>
-      <details className="parameter-explorer">
-        <summary>Explore parameters manually</summary>
-        <p>
-          Manual edits pause training and begin a new trace at step zero. They
-          are not learned updates.
-        </p>
-        {logistic && (
-          <p>Validation log loss: {fmt(loss(samples.validation, m, true))}</p>
-        )}
-        <div className="parameter-fields">
-          {[...m.w, m.b].map((value, i) => (
-            <label key={i}>
-              {i === m.w.length
-                ? 'Bias'
-                : logistic
-                  ? ['Complexity weight', 'Uncertainty weight'][i]
-                  : `Weight ${i + 1}`}
-              <input
-                type="number"
-                min="-100"
-                max="100"
-                step="0.1"
-                value={value}
-                disabled={!!state.finished}
-                onChange={(e) => {
-                  const model = { w: [...m.w], b: m.b };
-                  if (i === m.w.length) model.b = +e.target.value;
-                  else model.w[i] = +e.target.value;
-                  dispatch({ type: 'parameters', model });
-                }}
               />
-            </label>
-          ))}
+            </>
+          )}
+          <div
+            className="ranch-result"
+            role="status"
+            aria-live={state.running ? 'off' : 'polite'}
+            aria-atomic="true"
+          >
+            {logistic ? (
+              <>
+                <p>Estimated chance of profitability</p>
+                <strong data-testid="profitability-prediction">
+                  {pct(chance)}
+                </strong>
+                <p>
+                  Predicted class:{' '}
+                  <b>{chance >= 0.5 ? 'Profitable' : 'Not profitable'}</b>
+                </p>
+              </>
+            ) : (
+              <>
+                <p>Predicted annual {profit < 0 ? 'loss' : 'profit'}</p>
+                <strong data-testid="profit-prediction">
+                  {dollars(Math.abs(profit))}
+                </strong>
+                <p>
+                  Based on cattle sold, the fitted model predicts{' '}
+                  {profit < 0 ? 'a loss' : 'a profit'} of{' '}
+                  {dollars(Math.abs(profit))}.
+                </p>
+              </>
+            )}
+          </div>
         </div>
+        <ModelPlot
+          kind={kind}
+          fit={experiment}
+          cattle={state.cattle}
+          feed={state.feed}
+          inspected={inspected}
+        />
+      </div>
+      <details
+        className="ranch-details"
+        onToggle={(e) => {
+          if (!e.currentTarget.open) dispatch({ type: 'pause' });
+        }}
+      >
+        <summary>Explore model training</summary>
+        <p>
+          The model starts fitted to 72 development ranches. Reset training to
+          start from zero, then watch actual gradient updates change its
+          predictions.
+        </p>
+        <div className="ml-actions">
+          <button
+            disabled={disabled || state.running}
+            onClick={() => dispatch({ type: 'step' })}
+          >
+            Train one step
+          </button>
+          <button
+            disabled={disabled}
+            aria-pressed={state.running}
+            onClick={() => dispatch({ type: 'toggle-running' })}
+          >
+            {state.running ? 'Pause training' : 'Train automatically'}
+          </button>
+          <button
+            disabled={!!state.finished}
+            onClick={() => dispatch({ type: 'reset-model' })}
+          >
+            Reset training
+          </button>
+        </div>
+        <p
+          className="training-feedback"
+          role="status"
+          aria-live={state.running ? 'off' : 'polite'}
+        >
+          Step {experiment.steps} ·{' '}
+          {logistic ? 'Log loss' : 'MSE (scaled profit)'}{' '}
+          {fmt(experiment.history.at(-1)!.loss)}
+          {experiment.steps >= MAX_UPDATES ? ' · Training limit reached' : ''}
+        </p>
+        <LossHistory experiment={experiment} logistic={logistic} />
+      </details>
+      <details className="ranch-details">
+        <summary>
+          {logistic
+            ? 'How probabilities are learned'
+            : 'How the line is learned'}
+        </summary>
+        {logistic ? (
+          <p>
+            Unlike linear regression, this model estimates a probability between
+            0% and 100%. A weighted combination of standardized cattle sales and
+            feed costs passes through a sigmoid function. Gradient descent
+            reduces binary cross-entropy (log loss). A probability of at least
+            50% predicts profitable.
+          </p>
+        ) : (
+          <p>
+            A residual is observed profit minus predicted profit. Gradient
+            descent adjusts the slope and intercept to reduce mean squared
+            error, the average squared residual. This line uses cattle sold
+            alone; feed costs and other variation explain why similar-sized
+            ranches have different profits. Training uses profit in $100,000
+            units and displays predictions in dollars.
+          </p>
+        )}
+        <dl
+          className="ranch-parameters"
+          aria-label="Standardized model parameters"
+        >
+          {[...experiment.model.w, experiment.model.b].map((v, i) => (
+            <div key={i}>
+              <dt>
+                {i === experiment.model.w.length
+                  ? 'Intercept'
+                  : i === 0
+                    ? 'Cattle weight'
+                    : 'Feed-cost weight'}
+              </dt>
+              <dd>{fmt(v)}</dd>
+            </div>
+          ))}
+        </dl>
+        <label htmlFor="ranch-inspect">Inspect a development ranch</label>
+        <select
+          id="ranch-inspect"
+          value={state.inspected ?? ''}
+          onChange={(e) => dispatch({ type: 'inspect', id: e.target.value })}
+        >
+          <option value="" disabled>
+            Choose a ranch
+          </option>
+          {fixtures.development.map((r) => (
+            <option value={r.id} key={r.id}>
+              {r.id}
+            </option>
+          ))}
+        </select>
+        {inspected && (
+          <p className="ranch-observation">
+            {inspected.id}: {inspected.cattle} cattle, feed{' '}
+            {dollars(inspected.feed)} per animal; observed annual{' '}
+            {inspected.profit < 0 ? 'loss' : 'profit'}{' '}
+            {dollars(Math.abs(inspected.profit))}. Outcome:{' '}
+            {inspected.profitable ? 'Profitable' : 'Not profitable'}.
+          </p>
+        )}
       </details>
     </div>
   );

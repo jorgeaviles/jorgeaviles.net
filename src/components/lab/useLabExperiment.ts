@@ -9,6 +9,7 @@ import {
 export function useLabExperiment() {
   const [state, dispatch] = useReducer(labReducer, undefined, createLabState);
   const [reduced, setReduced] = useState(false);
+  const [ready, setReady] = useState(false);
   useEffect(() => {
     const sync = () =>
       dispatch({
@@ -16,6 +17,7 @@ export function useLabExperiment() {
         lesson: lessonFromHash(window.location.hash),
       });
     sync();
+    setReady(true);
     window.addEventListener('hashchange', sync);
     window.addEventListener('popstate', sync);
     const query = window.matchMedia('(prefers-reduced-motion: reduce)');
@@ -41,6 +43,6 @@ export function useLabExperiment() {
     if (window.location.hash !== `#${lessonHashes[lesson]}`)
       window.history.pushState(null, '', `#${lessonHashes[lesson]}`);
   }
-  return { state, dispatch, navigate };
+  return { state, dispatch, navigate, ready };
 }
 export type LabController = ReturnType<typeof useLabExperiment>;

@@ -1,62 +1,62 @@
 import {
-  datasets,
-  fitScaler,
-  scaled,
   initial,
   loss,
+  scaled,
   step,
-  evaluate,
-  rank,
+  fitScaler,
   type Model,
-  type Row,
+  type Scaler,
 } from './models';
-export const fixtures = datasets();
-export const classificationScale = fitScaler(fixtures.train);
-export const regressionScale = fitScaler(fixtures.regression);
-export const samples = {
-  linear: scaled(fixtures.regression, regressionScale),
-  training: scaled(fixtures.train, classificationScale),
-  validation: scaled(fixtures.validation, classificationScale),
-  test: scaled(fixtures.test, classificationScale),
-};
+import {
+  partitionRanches,
+  toRows,
+  fitRanches,
+  crossValidate,
+  assess,
+  LEARNING_RATE,
+  TRAINING_STEPS,
+  type Kind,
+  type Validation,
+  type Ranch,
+} from './ranches';
+export { type Kind } from './ranches';
+export const fixtures = partitionRanches();
 export type Lesson = 0 | 1 | 2;
-export type Kind = 'linear' | 'logistic';
-export type Population = 'training' | 'validation';
-export type SelectionKey = 'linear' | Population;
-export type TracePoint = { step: number; loss: number };
 export type Experiment = {
   model: Model;
-  rate: number;
+  scaler: Scaler;
   steps: number;
-  history: TracePoint[];
-  mode: 'initial' | 'trained' | 'manual';
+  history: { step: number; loss: number }[];
 };
-export const MAX_UPDATES = 1000;
-const rowsFor = (kind: Kind): Row[] =>
-  kind === 'linear' ? samples.linear : samples.training;
-export function createExperiment(kind: Kind): Experiment {
-  const model = initial(kind === 'linear' ? 1 : 2);
-  return {
-    model,
-    rate: 0.05,
-    steps: 0,
-    history: [
-      { step: 0, loss: loss(rowsFor(kind), model, kind === 'logistic') },
-    ],
-    mode: 'initial',
-  };
+export const MAX_UPDATES = 1500;
+export function createExperiment(kind: Kind, fitted = true): Experiment {
+  const raw = toRows(fixtures.development, kind),
+    scaler = fitScaler(raw);
+  const rows = scaled(raw, scaler);
+  let model = initial(kind === 'linear' ? 1 : 2);
+  const history = [{ step: 0, loss: loss(rows, model, kind === 'logistic') }];
+  const steps = fitted ? TRAINING_STEPS[kind] : 0;
+  for (let i = 1; i <= steps; i++) {
+    model = step(rows, model, kind === 'logistic', LEARNING_RATE);
+    history.push({ step: i, loss: loss(rows, model, kind === 'logistic') });
+  }
+  return { model, scaler, steps, history };
 }
+export type FinalResult = ReturnType<typeof assess> & {
+  model: Model;
+  scaler: Scaler;
+};
 export type LabState = {
   lesson: Lesson;
   linear: Experiment;
   logistic: Experiment;
   running: boolean;
-  population: Population;
-  selected: Record<SelectionKey, string>;
-  policy: 'budget' | 'threshold';
-  budget: number;
-  threshold: number;
-  finished: ReturnType<typeof evaluate> | null;
+  cattle: number;
+  feed: number;
+  inspected: string | null;
+  validation: Validation | null;
+  fold: number;
+  finished: FinalResult | null;
 };
 export function createLabState(): LabState {
   return {
@@ -64,134 +64,111 @@ export function createLabState(): LabState {
     linear: createExperiment('linear'),
     logistic: createExperiment('logistic'),
     running: false,
-    population: 'training',
-    selected: {
-      linear: fixtures.regression[0].id,
-      training: fixtures.train[0].id,
-      validation: fixtures.validation[0].id,
-    },
-    policy: 'budget',
-    budget: 6,
-    threshold: 0.5,
+    cattle: 250,
+    feed: 800,
+    inspected: null,
+    validation: null,
+    fold: 0,
     finished: null,
   };
 }
 export type LabAction =
   | { type: 'navigate'; lesson: Lesson }
-  | { type: 'step' }
-  | { type: 'toggle-running' }
-  | { type: 'rate'; value: number }
-  | { type: 'parameters'; model: Model }
-  | { type: 'reset-model' }
-  | { type: 'reset-all' }
-  | { type: 'population'; value: Population }
-  | { type: 'select'; key: SelectionKey; id: string }
-  | { type: 'policy'; value: 'budget' | 'threshold' }
-  | { type: 'budget'; value: number }
-  | { type: 'threshold'; value: number }
-  | { type: 'test' };
-/** Model, counter and historical loss advance atomically from the same previous state. */
+  | {
+      type:
+        | 'step'
+        | 'toggle-running'
+        | 'reset-model'
+        | 'reset-all'
+        | 'validate'
+        | 'test'
+        | 'pause';
+    }
+  | { type: 'input'; feature: 'cattle' | 'feed'; value: number }
+  | { type: 'inspect'; id: string }
+  | { type: 'fold'; value: number };
 export function labReducer(state: LabState, action: LabAction): LabState {
-  const kind: Kind = state.lesson === 0 ? 'linear' : 'logistic';
   if (action.type === 'navigate')
     return { ...state, lesson: action.lesson, running: false };
-  if (action.type === 'population')
-    return { ...state, population: action.value };
-  if (action.type === 'select')
+  if (action.type === 'reset-all')
+    return { ...createLabState(), lesson: state.lesson };
+  if (action.type === 'input') {
+    if (!Number.isFinite(action.value)) return state;
+    const [min, max] = action.feature === 'cattle' ? [50, 500] : [400, 1400];
     return {
       ...state,
-      selected: { ...state.selected, [action.key]: action.id },
+      [action.feature]: Math.max(min, Math.min(max, Math.round(action.value))),
+      inspected: null,
     };
-  if (action.type === 'reset-all')
-    return {
-      ...createLabState(),
-      lesson: state.lesson,
-    };
-  if (state.finished) return state;
-  switch (action.type) {
-    case 'step': {
-      if (state.lesson === 2) return state;
-      const current = state[kind];
-      if (current.steps >= MAX_UPDATES) return { ...state, running: false };
-      const model = step(
-        rowsFor(kind),
-        current.model,
-        kind === 'logistic',
-        current.rate,
-      );
-      const next = {
-        ...current,
-        model,
-        mode: 'trained' as const,
-        steps: current.steps + 1,
-        history: [
-          ...current.history,
-          {
-            step: current.steps + 1,
-            loss: loss(rowsFor(kind), model, kind === 'logistic'),
-          },
-        ],
-      };
-      return {
-        ...state,
-        [kind]: next,
-        running: state.running && next.steps < MAX_UPDATES,
-      };
-    }
-    case 'toggle-running':
-      return state.lesson === 2 || state[kind].steps >= MAX_UPDATES
-        ? state
-        : { ...state, running: !state.running };
-    case 'rate':
-      return { ...state, [kind]: { ...state[kind], rate: action.value } };
-    case 'parameters': {
-      const model = {
-        w: action.model.w.map((v) => Math.max(-100, Math.min(100, v))),
-        b: Math.max(-100, Math.min(100, action.model.b)),
-      };
-      if (![...model.w, model.b].every(Number.isFinite)) return state;
-      return {
-        ...state,
-        running: false,
-        [kind]: {
-          ...state[kind],
-          model,
-          steps: 0,
-          mode: 'manual',
-          history: [
-            { step: 0, loss: loss(rowsFor(kind), model, kind === 'logistic') },
-          ],
-        },
-      };
-    }
-    case 'reset-model':
-      return { ...state, [kind]: createExperiment(kind), running: false };
-    case 'policy':
-      return { ...state, policy: action.value };
-    case 'budget':
-      return {
-        ...state,
-        budget: Math.max(
-          0,
-          Math.min(samples.validation.length, Math.floor(action.value)),
-        ),
-      };
-    case 'threshold':
-      return {
-        ...state,
-        threshold: Math.max(0, Math.min(1, action.value)),
-      };
-    case 'test':
-      return {
-        ...state,
-        running: false,
-        finished: evaluate(
-          rank(samples.test, state.logistic.model),
-          state.policy,
-          state.policy === 'budget' ? state.budget : state.threshold,
-        ),
-      };
   }
+  if (action.type === 'inspect') {
+    const ranch = fixtures.development.find((r) => r.id === action.id);
+    return ranch
+      ? {
+          ...state,
+          cattle: ranch.cattle,
+          feed: ranch.feed,
+          inspected: ranch.id,
+        }
+      : state;
+  }
+  if (action.type === 'fold')
+    return Number.isInteger(action.value) &&
+      action.value >= 0 &&
+      action.value < 5
+      ? { ...state, fold: action.value }
+      : state;
+  if (action.type === 'pause') return { ...state, running: false };
+  if (state.finished) return state;
+  const kind: Kind = state.lesson === 0 ? 'linear' : 'logistic';
+  if (action.type === 'validate')
+    return {
+      ...state,
+      running: false,
+      validation: crossValidate(fixtures.development),
+    };
+  if (action.type === 'test') {
+    if (!state.validation) return state;
+    const fit = fitRanches(fixtures.development, 'logistic');
+    return {
+      ...state,
+      running: false,
+      finished: { ...fit, ...assess(fit, fixtures.test) },
+    };
+  }
+  if (state.lesson === 2) return state;
+  const experiment = state[kind];
+  if (action.type === 'reset-model')
+    return { ...state, [kind]: createExperiment(kind, false), running: false };
+  if (action.type === 'toggle-running')
+    return experiment.steps < MAX_UPDATES
+      ? { ...state, running: !state.running }
+      : state;
+  if (action.type === 'step') {
+    if (experiment.steps >= MAX_UPDATES) return { ...state, running: false };
+    const rows = scaled(toRows(fixtures.development, kind), experiment.scaler);
+    const model = step(
+      rows,
+      experiment.model,
+      kind === 'logistic',
+      LEARNING_RATE,
+    );
+    const steps = experiment.steps + 1;
+    return {
+      ...state,
+      running: state.running && steps < MAX_UPDATES,
+      [kind]: {
+        ...experiment,
+        model,
+        steps,
+        history: [
+          ...experiment.history,
+          { step: steps, loss: loss(rows, model, kind === 'logistic') },
+        ],
+      },
+    };
+  }
+  return state;
 }
 export const lessonHashes = [
   'linear-regression',
@@ -204,3 +181,5 @@ export function lessonFromHash(hash: string): Lesson {
   );
   return (index < 0 ? 0 : index) as Lesson;
 }
+export const developmentRanch = (id: string): Ranch | undefined =>
+  fixtures.development.find((r) => r.id === id);
