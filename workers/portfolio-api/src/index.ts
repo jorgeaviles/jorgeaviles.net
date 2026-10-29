@@ -20,6 +20,8 @@ export interface Env {
   REQUEST_LIMITER: Limiter;
   INFERENCE_LIMITER: Limiter;
   ASSISTANT_ENABLED: string;
+  MCP_ENABLED?: string;
+  MCP_LIMITER: Limiter;
 }
 const origin = 'https://jorgeaviles.net';
 const fallback =
@@ -140,6 +142,15 @@ function selectedIds(output: unknown): string[] {
 }
 export default {
   async fetch(request: Request, env: Env): Promise<Response> {
+    if (new URL(request.url).pathname === '/mcp') {
+      if (env.MCP_ENABLED !== 'true')
+        return new Response('Not found', {
+          status: 404,
+          headers: { 'Cache-Control': 'no-store' },
+        });
+      const { serveMcp } = await import('./mcp');
+      return serveMcp(request, env);
+    }
     const cors = request.headers.get('Origin') === origin;
     if (!cors)
       return reply(

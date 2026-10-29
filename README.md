@@ -41,11 +41,18 @@ Content entries require a title, description, category, and numeric order. Optio
 
 ## Architecture and delivery
 
-Astro generates HTML; React hydrates only the lab island when visible. MDX content has a Zod schema. Tailwind uses its supported Vite plugin. System fonts and a small original monogram keep assets light. There are no databases, accounts, telemetry, or server-side forms.
+Astro generates HTML; React hydrates the isolated Learning Lab and portfolio assistant interfaces. MDX content has a Zod schema. Tailwind uses its supported Vite plugin. System fonts and a small original monogram keep assets light. The website remains static; the assistant calls a separate Cloudflare Worker. There are no application databases or visitor accounts.
 
 Cloudflare Workers Static Assets serves `dist/` with a real 404 page, without SSR or a Worker handler. GitHub Actions is the single production deployment authority: Quality must pass for the exact commit before Production can use its verified build artifact. Changes to protected `main` go through pull requests. `npm run deploy` requests a fresh gated release of remote `main`; it does not deploy local files.
 
 See [architecture](docs/architecture.md), [deployment](docs/deployment.md), [verification](docs/verification.md), and the [content backlog](docs/content-backlog.md). Verification records distinguish local checks, hosted CI, Worker releases, and custom-domain behavior. Domain changes must preserve existing email DNS; a DNS comparison does not establish email delivery.
+
+The API's read-only MCP endpoint is implemented for review and defaults off. See
+[public MCP tools and verification](docs/portfolio-mcp-plan.md) and
+[protected API release and rollback](docs/portfolio-api-release.md). Its manual
+release workflow is separate from the static Site workflow; merging code does not
+activate MCP. `npm run api:build` creates an ignored release artifact, and
+`npm run test:mcp` tests the real local Worker with the official HTTP client.
 
 ## Attribution and licensing
 
