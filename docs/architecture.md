@@ -8,7 +8,7 @@ This is a static professional website. Astro renders ordinary pages and MDX cont
 - Schema-validated content collections keep work, research, and lab prose separate from layouts. Public listings and generated routes exclude drafts.
 - Shared Astro layouts provide metadata, navigation, readable typography, and accessible page structure.
 - Tailwind uses its Vite integration. System fonts and local assets avoid external font and image dependencies.
-- React hydrates only the lab demonstration on page load. The rest of the site and the initial lab explanation and regression plot remain useful without JavaScript.
+- React hydrates the Lab demonstration and the dedicated Ask page. Other pages stay static; public source links, the initial Lab explanation, and regression plot remain useful without JavaScript. The assistant sends a question only after a deliberate submission, and its API URL is unset by default.
 - The lab uses deterministic synthetic data and pure TypeScript numerical modules. It presents an educational example with actual browser-local training rather than measured operational performance.
 
 The public-source boundary applies to every committed file, including unpublished drafts and documentation. Public professional descriptions must remain modest and source-backed. Research assistance must not be presented as authorship. Licensing of writing, identity, and source code remains undecided; no blanket license is asserted.

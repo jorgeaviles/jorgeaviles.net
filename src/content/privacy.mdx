@@ -8,3 +8,22 @@ The Lab’s data and calculations stay in your browser; its slider settings and
 model results are not submitted as analytics events. There are no advertising
 scripts, visitor accounts, or third-party embeds. Contact links open email or an
 external professional profile.
+
+<h3 id="portfolio-assistant-privacy">Portfolio assistant</h3>
+
+When activated, the portfolio assistant sends the question you choose to submit,
+along with relevant passages from approved public website content, to a separate
+Cloudflare Worker and Workers AI. Each question stands alone: this site does not
+save conversation history, use browser storage for questions, or send questions
+as Web Analytics events. Please do not submit personal, confidential, or agency
+information.
+
+The Worker uses the connecting IP address transiently for request throttling. It
+does not send that address to the AI model or create a visitor profile. Application
+prompt/response logging is disabled. Cloudflare processes requests and operational
+metadata under its own policies; see [Workers AI data usage](https://developers.cloudflare.com/workers-ai/platform/data-usage/).
+This is separate from the browser-only Lab and ordinary static page visits.
+
+The AI selects published passages rather than writing new factual claims. Answers
+link to their sources and may be incomplete or irrelevant. If the sources do not
+support an answer, or the free service is unavailable, use the public pages directly.
