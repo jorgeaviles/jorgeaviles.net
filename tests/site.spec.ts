@@ -470,7 +470,7 @@ test('recent technical work leads both listings and related navigation', async (
   ).toEqual(ordered.slice(1));
 });
 
-test('page metadata, canonical URLs, and identity remain coherent without third-party requests', async ({
+test('local metadata, identity and privacy disclosure remain coherent without third-party requests', async ({
   page,
   request,
 }) => {
@@ -562,6 +562,20 @@ test('page metadata, canonical URLs, and identity remain coherent without third-
   await expect(page.locator('meta[name="description"]')).toHaveAttribute(
     'content',
     /^Get in touch with Jorge Avilés /,
+  );
+  await page.goto('/colophon/');
+  await expect(
+    page.getByRole('heading', { name: 'Privacy & measurement' }),
+  ).toBeVisible();
+  await expect(page.locator('main')).toContainText(
+    'When enabled on the public site',
+  );
+  await expect(page.locator('main')).toContainText('Cloudflare Web Analytics');
+  await expect(page.locator('main')).toContainText(
+    'slider settings and model results are not submitted as analytics events',
+  );
+  await expect(page.locator('main')).not.toContainText(
+    'There are no analytics',
   );
   await page.goto('/research/');
   await expect(page.locator('main')).toContainText('J. Avilés');

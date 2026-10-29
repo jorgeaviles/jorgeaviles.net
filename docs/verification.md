@@ -134,3 +134,49 @@ consistent with a temporary public rollout delay, not proof of its precise cause
 No deployment rerun or infrastructure/account change was performed for this check.
 The historical workflow remains failed; a later successful check does not rewrite
 its result.
+
+## Free-tier security and analytics preparation (2026-10-28)
+
+The owner directly authorized enabling DNSSEC, raising minimum TLS to 1.2,
+preparing the Web Analytics disclosure PR, and activating analytics only after
+that disclosure is published.
+
+- The Free zone's managed WAF is already always active. Bot Fight Mode and Under
+  Attack Mode remain off. No custom security or rate-limit rule was added merely
+  to consume an allowance; no paid plan, API endpoint, binding or storage service
+  was introduced. The dashboard confirms this Worker serves only static assets
+  at no request charge; script metrics are unavailable for this assets-only case.
+- DNSSEC is enabled and the dashboard reports the domain protected. Setup
+  initially showed pending, and the local resolver retained unsigned cached
+  answers. Subsequent Cloudflare DNS-over-HTTPS checks returned one parent DS
+  record and two DNSKEY records with authenticated-data (`AD`) validation. Site
+  address, MX, DMARC TXT and DKIM CNAME answers each validated with `AD=true`
+  and an RRSIG. The chain is verified through that validating resolver; this
+  does not claim every recursive resolver's cache refreshed simultaneously.
+  [Cloudflare DNSSEC guidance](https://developers.cloudflare.com/dns/dnssec/)
+  describes DS-removal/TTL order for safe rollback.
+- The saved minimum TLS setting is 1.2; TLS 1.3 remains enabled. Explicit Node TLS
+  handshakes negotiated 1.2 and 1.3 with valid certificates and HTTP 200. Forced
+  curl TLS 1.0/1.1 requests received protocol-version alerts. The system curl
+  cannot test TLS 1.3, so that verification uses Node instead. See
+  [Cloudflare's minimum TLS documentation](https://developers.cloudflare.com/ssl/edge-certificates/additional-options/minimum-tls/).
+- Post-change home, Lab, Colophon, deployment marker and verification hostname
+  returned 200. HTTP and `www` returned canonical 301s preserving path/query;
+  an unknown URL returned the custom 404. Existing security headers, HTML
+  revalidation, hashed-asset immutable caching and verification-host `noindex`
+  remained intact. Three referenced Lab assets returned nonempty HTTP 200s.
+  The deployed commit remained `bee0bb670761f94acc7be4d078229e023b1815be`;
+  this account-only change did not dispatch a deployment.
+- An ignored private BIND export was saved before the changes. MX, apex TXT
+  (including SPF/domain verification), DKIM and DMARC record sets matched after
+  the changes. No mail record or email-routing configuration was edited.
+- Web Analytics remains unconfigured and no beacon is injected in the checked
+  home/Lab/Colophon HTML. The disclosure PR does not turn it on. Its public text
+  says “when enabled” so it remains accurate before activation. The existing
+  Disable RUM rule is retained until the disclosure is released; setup and exact
+  hostname/EU exclusions must be verified before lifting that block. The
+  [activation procedure](deployment.md#web-analytics-activation) preserves strict
+  local no-third-party-request tests and separates live edge checks.
+
+Raw DNS, provider settings and HTTP/TLS evidence remain ignored under `.private/`
+and `.local/`. No private records or exports are included in the repository.

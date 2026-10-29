@@ -80,3 +80,53 @@ Every failed attempt logs its error; commit mismatches include the expected and
 observed commit, HTTP status and cache status. A persistent mismatch still fails
 the workflow. This allows a short rollout interval without weakening provenance
 or changing deployment permissions, artifact verification or the current-main gate.
+
+## Web Analytics activation
+
+The owner authorized preparing Cloudflare Web Analytics on 2026-10-28, with
+activation only after the revised Colophon is published. This is a separate,
+free account setting; merging the disclosure PR does not install or enable a
+beacon. The build remains static, with no tracking dependency or Worker handler.
+
+1. Merge and release the disclosure PR through the existing Quality/Production
+   workflow. Check the exact deployed commit and the public `/colophon/` text.
+   Do not activate while production still says there are no analytics.
+2. Inspect the current hostname-scoped Disable RUM Configuration Rule. Keep it
+   active during setup: [Configuration Rules override Web Analytics rules](https://developers.cloudflare.com/rules/configuration-rules/settings/#disable-real-user-monitoring-rum).
+3. Add the public apex in Web Analytics, then choose **Enable, excluding visitor
+   data in the EU**. Under advanced rules, restrict measurement to the exact
+   `jorgeaviles.net` hostname and its public paths. Do not accept the default
+   zone-wide/subdomain scope. Keep `www` as a redirect, not a measured site.
+4. Verify the saved host rules and EU-exclusion setting before removing the
+   apex from the Disable RUM rule. Retain exclusions for unrelated hostnames;
+   do not weaken WAF, Bot/Browser Integrity controls, DNS/email, or cache rules.
+   Do not add a manual snippet as well as automatic injection.
+5. In a normal non-EU browser, check exactly one script from
+   `https://static.cloudflareinsights.com/beacon.min.js` and successful reports
+   to the site's `/cdn-cgi/rum` endpoint. Confirm there are no other third-party
+   requests, duplicate beacons, application errors or changes to the Lab's
+   calculations. Inspect only endpoint/response metadata; do not publish visitor
+   payloads or private dashboard exports. The beacon can report again when the
+   page is hidden; multiple report requests alone do not mean duplicate scripts.
+6. Check all public routes, redirects, 404, immutable assets and deployment
+   provenance again. Confirm local preview and the `workers.dev` verification
+   host remain beacon-free. Verify the EU exclusion in saved settings; without
+   a real EU test vantage point, do not claim geographical delivery was tested.
+7. Check the Web Analytics dashboard after fresh visits; reports can be delayed,
+   sampled or blocked by visitor browser extensions. Do not treat missing
+   measurements as evidence of no visitors or claim all visits are counted.
+
+If exact hostname scoping or EU exclusion is unavailable, keep Disable RUM active
+and report that limitation. Do not replace it silently with worldwide tracking,
+manual geolocation, or another analytics provider. No feedback database, custom
+events, session replay, paid product, or AI feature is part of this setup.
+
+Rollback is to restore Disable RUM for the apex and disable its Web Analytics
+registration, then verify no beacon is injected. Historical measurements already
+collected are not erased by disabling future collection. Source builds and local
+browser tests must continue to make zero third-party requests; actual edge
+injection and reporting require the separate live checks above.
+
+References: [automatic setup and EU exclusion](https://developers.cloudflare.com/web-analytics/get-started/),
+[hostname/path rules](https://developers.cloudflare.com/web-analytics/configuration-options/rules/),
+[beacon delivery and collection](https://developers.cloudflare.com/web-analytics/data-metrics/data-origin-and-collection/).
