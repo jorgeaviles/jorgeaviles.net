@@ -97,6 +97,23 @@ try {
     ),
   );
 
+  const curatedPath = path.join(
+    temporaryProject,
+    'src/content/portfolio-assistant.json',
+  );
+  const curated = JSON.parse(await readFile(curatedPath, 'utf8'));
+  for (const fixture of fixtures.filter((item) => item.collection !== 'lab')) {
+    curated.push({
+      id: fixture.id,
+      kind: fixture.collection === 'work' ? 'project' : 'research',
+      path:
+        fixture.collection === 'work' ? `/work/${fixture.id}/` : '/research/',
+      title: fixture.title,
+      passages: [{ id: fixture.id, text: fixture.body, keywords: 'fixture' }],
+    });
+  }
+  await writeFile(curatedPath, JSON.stringify(curated));
+
   const astroPackage = JSON.parse(
     await readFile(path.join(root, 'node_modules/astro/package.json'), 'utf8'),
   );
@@ -129,7 +146,7 @@ try {
 
   const dist = path.join(temporaryProject, 'dist');
   const publicFiles = (await filesIn(dist)).filter((file) =>
-    /\.(html|xml)$/.test(file),
+    /\.(html|xml|json)$/.test(file),
   );
   if (!publicFiles.length)
     throw new Error('The copied build produced no pages.');
