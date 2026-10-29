@@ -36,3 +36,11 @@ The successful job uploads its verified `dist/` as an immutable artifact. A sepa
 Contact is a `mailto:` link. No resume control appears until an approved public file exists. PR preview deployments, a CMS, feedback storage, custom event telemetry, and external AI features are deferred. These limits keep maintenance and external permissions small while leaving room to add reviewed content.
 
 The hosting configuration follows Cloudflare's [static generation and custom 404 guidance](https://developers.cloudflare.com/workers/static-assets/routing/static-site-generation/) and [Worker Custom Domain](https://developers.cloudflare.com/workers/configuration/routing/custom-domains/) architecture. Local preview, hosted checks, and live edge verification remain distinct evidence.
+
+## Portfolio assistant foundation (inactive)
+
+The separate `workers/portfolio-api/` Worker is the reviewed boundary for a future
+public-content assistant. It is disabled and unrouted by default; it does not change
+the static asset Worker or its release workflow. See [the assistant design](portfolio-assistant.md),
+[separate setup instructions](portfolio-assistant-operations.md), and
+[future stateless MCP plan](portfolio-mcp-plan.md).
