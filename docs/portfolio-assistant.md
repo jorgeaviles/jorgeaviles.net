@@ -96,3 +96,30 @@ operational use, invented accuracy figures, synthetic vs professional data,
 unsupported topics, private CPCS records, and prompt injection. Check every selected
 passage and URL. Record actual model responses without sensitive prompts. Do not
 activate if it regularly selects unrelated passages; empty fallbacks are preferable.
+
+## Visitor interface and activation gate
+
+`/ask/` is an isolated React island with an unobtrusive footer link. The default
+build has no API endpoint and displays a disabled form with usable source links.
+Only `PUBLIC_PORTFOLIO_API_URL=https://portfolio-api.jorgeaviles.net/ask` is accepted;
+arbitrary origins and relative paths fail the build. This public value is not a
+secret. Set it only in a separately reviewed static release after the privacy copy
+is live and the API has passed its activation checks. No workflow activation is
+included here. The API kill switch remains independent.
+
+The interface makes no request on load or when choosing a suggestion. Submit sends
+only the current question. In-flight submissions are locked; failure/rate-limit
+responses impose a one-minute manual cooldown that Clear cannot reset. Successful
+responses impose a short cooldown. The HTTP wait ends after 20 seconds, without a
+retry. Reloading a tab can reset this local cooldown; server-side throttling remains
+necessary. The client caps actual response bytes, validates cited source URLs, and
+renders plain text without HTML or Markdown injection.
+
+`npm run test:assistant` builds into ignored `.local/assistant-test-dist`, on a
+separate loopback port, with the activation URL supplied only for that fixture.
+Its tests intercept every API request; no Cloudflare inference is performed.
+Chromium desktop/mobile and WebKit mobile cover keyboard submission, live feedback,
+source links, unsupported answers, timeout/rate/quota failures, duplicate submission
+protection, storage absence, automated accessibility, and mobile overflow.
+`npm run test:browser` includes both the default inactive-site suite and this fixture.
+Neither fixture output nor test credentials enter the verified production artifact.

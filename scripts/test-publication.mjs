@@ -182,6 +182,7 @@ try {
     'research/index.html',
     'lab/index.html',
     'contact/index.html',
+    'ask/index.html',
     'colophon/index.html',
     '404.html',
     'sitemap-index.xml',

@@ -458,6 +458,7 @@ strong {
 }
 .footer-links {
   display: flex;
+  flex-wrap: wrap;
   align-items: center;
   gap: 23px;
   font-size: 13px;

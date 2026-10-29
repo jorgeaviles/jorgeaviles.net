@@ -26,6 +26,7 @@ const routes = [
   },
   { path: '/lab/', heading: 'Predicting profitability' },
   { path: '/contact/', heading: 'Good work starts with a conversation.' },
+  { path: '/ask/', heading: 'A question about the work?' },
   { path: '/colophon/', heading: 'A small site, built with care.' },
 ] as const;
 
@@ -1279,4 +1280,23 @@ test('the former research route has a static fallback and one canonical destinat
   const sitemap = await (await request.get('/sitemap-0.xml')).text();
   expect(sitemap).toContain('https://jorgeaviles.net/research/');
   expect(sitemap).not.toContain('/work/applied-predictive-research/');
+});
+
+test('assistant is inactive by default and sends no requests', async ({
+  page,
+}) => {
+  const apiRequests: string[] = [];
+  page.on('request', (request) => {
+    if (request.url().includes('portfolio-api.jorgeaviles.net'))
+      apiRequests.push(request.url());
+  });
+  await page.goto('/ask/');
+  await expect(
+    page.getByText('The assistant is not yet activated.', { exact: false }),
+  ).toBeVisible();
+  await expect(page.getByLabel('Your question')).toBeDisabled();
+  await expect(
+    page.getByRole('button', { name: 'Ask a question', exact: true }),
+  ).toBeDisabled();
+  expect(apiRequests).toEqual([]);
 });
