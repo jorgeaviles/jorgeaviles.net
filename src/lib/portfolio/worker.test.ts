@@ -14,6 +14,7 @@ import { readFileSync } from 'node:fs';
 function environment() {
   return {
     ASSISTANT_ENABLED: 'true',
+    MCP_LIMITER: { limit: vi.fn(async () => ({ success: true })) },
     REQUEST_LIMITER: { limit: vi.fn(async () => ({ success: true })) },
     INFERENCE_LIMITER: { limit: vi.fn(async () => ({ success: true })) },
     AI: {

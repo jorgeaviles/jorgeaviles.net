@@ -23,17 +23,23 @@
     "deploy": "node scripts/deploy.mjs",
     "assistant:index": "astro build && node scripts/sync-portfolio-index.mjs",
     "test:assistant": "playwright test --config playwright.assistant.config.ts",
-    "test:worker": "node scripts/test-portfolio-runtime.mjs"
+    "test:worker": "node scripts/test-portfolio-runtime.mjs && npm run api:build && MCP_ARTIFACT_CONFIG=.local/portfolio-api-release/wrangler.json npm run test:mcp",
+    "test:mcp": "node scripts/test-portfolio-mcp.mjs",
+    "api:build": "node scripts/portfolio-api/build.mjs"
   },
   "dependencies": {
     "@astrojs/mdx": "8.1.1",
     "@astrojs/react": "7.1.1",
     "@astrojs/sitemap": "3.7.4",
+    "@modelcontextprotocol/client": "2.3.1",
+    "@modelcontextprotocol/server": "2.3.1",
     "@tailwindcss/vite": "4.3.3",
+    "agents": "0.31.0",
     "astro": "7.4.2",
     "react": "19.3.1",
     "react-dom": "19.3.1",
-    "tailwindcss": "4.3.3"
+    "tailwindcss": "4.3.3",
+    "zod": "4.6.7"
   },
   "devDependencies": {
     "@astrojs/check": "0.9.12",
@@ -45,6 +51,7 @@
     "@types/react-dom": "19.3.0",
     "eslint": "10.13.0",
     "eslint-plugin-astro": "3.2.1",
+    "jsonc-parser": "3.3.1",
     "lighthouse": "13.5.0",
     "prettier": "3.9.10",
     "prettier-plugin-astro": "1.1.2",
