@@ -1,5 +1,6 @@
 import assert from 'node:assert/strict';
 import { createHash } from 'node:crypto';
+import { isDeepStrictEqual } from 'node:util';
 export const workerName = 'jorge-aviles-portfolio-api';
 export const digest = (bytes) =>
   createHash('sha256').update(bytes).digest('hex');
@@ -11,9 +12,8 @@ export function flags(bindings) {
   assert.ok(Array.isArray(bindings), 'Version bindings must be an array');
   const value = (name) =>
     bindings.find((b) => b.name === name && b.type === 'plain_text')?.text;
-  assert.equal(
-    value('ASSISTANT_ENABLED'),
-    'true',
+  assert.ok(
+    value('ASSISTANT_ENABLED') === 'true',
     'Release must preserve the enabled assistant',
   );
   const mcp = value('MCP_ENABLED');
@@ -107,10 +107,24 @@ export function approvedBindings(bindings) {
         simple: { limit: 60, period: 60 },
       },
     );
+  // The versions API adds this catalog marker to the ordinary AI binding.
+  // Accept only that exact metadata; retain every other field for strict comparison.
+  const normalized = bindings.map((binding) => {
+    if (
+      binding.name === 'AI' &&
+      binding.type === 'ai' &&
+      binding.project === '<catalog>'
+    ) {
+      const { project, ...configuration } = binding;
+      void project;
+      return configuration;
+    }
+    return binding;
+  });
   const byName = (a, b) => a.name.localeCompare(b.name, 'en');
-  assert.deepEqual(
-    [...bindings].sort(byName),
-    expected.sort(byName),
+  // Do not print binding values in public CI logs when rejecting unexpected state.
+  assert.ok(
+    isDeepStrictEqual(normalized.sort(byName), expected.sort(byName)),
     'Bindings changed; review approved API configuration',
   );
   return mcp;

@@ -99,6 +99,73 @@ describe('public stateless MCP boundary', () => {
 });
 
 describe('protected API release policy', () => {
+  it('accepts the versions API catalog marker without accepting other binding changes', () => {
+    const bindings = [
+      { name: 'AI', project: '<catalog>', type: 'ai' },
+      { name: 'ASSISTANT_ENABLED', text: 'true', type: 'plain_text' },
+      {
+        name: 'INFERENCE_LIMITER',
+        namespace_id: '10002',
+        simple: { limit: 20, period: 60 },
+        type: 'ratelimit',
+      },
+      {
+        name: 'REQUEST_LIMITER',
+        namespace_id: '10001',
+        simple: { limit: 5, period: 60 },
+        type: 'ratelimit',
+      },
+    ];
+    expect(approvedBindings(bindings)).toBe('false');
+    for (const enabled of ['false', 'true'])
+      expect(
+        approvedBindings([
+          ...bindings,
+          { name: 'MCP_ENABLED', text: enabled, type: 'plain_text' },
+          {
+            name: 'MCP_LIMITER',
+            namespace_id: '10003',
+            simple: { limit: 60, period: 60 },
+            type: 'ratelimit',
+          },
+        ]),
+      ).toBe(enabled);
+    for (const ai of [
+      { name: 'AI', type: 'ai', project: 'other-project' },
+      {
+        name: 'AI',
+        type: 'ai',
+        project: '<catalog>',
+        unexpected: 'do-not-log-this-value',
+      },
+      { name: 'AI', type: 'service', project: '<catalog>' },
+    ]) {
+      expect(() => approvedBindings([ai, ...bindings.slice(1)])).toThrow(
+        'Bindings changed',
+      );
+      try {
+        approvedBindings([ai, ...bindings.slice(1)]);
+      } catch (error) {
+        expect(String(error)).not.toContain('do-not-log-this-value');
+      }
+    }
+    expect(() =>
+      approvedBindings(
+        bindings.map((b) =>
+          b.name === 'REQUEST_LIMITER'
+            ? { ...b, simple: { limit: 500, period: 60 } }
+            : b,
+        ),
+      ),
+    ).toThrow();
+    expect(() =>
+      approvedBindings([
+        ...bindings,
+        { name: 'PRIVATE_STORE', type: 'kv_namespace' },
+      ]),
+    ).toThrow();
+  });
+
   it('rejects stale or altered release artifacts before upload', async () => {
     const files: Record<string, string> = {
       'index.js': 'reviewed module',
