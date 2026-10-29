@@ -76,3 +76,26 @@ Keep the listener on loopback, leave production CORS unchanged, and submit only
 public/synthetic acceptance questions with the public Origin header. Stop the
 local sessions and remove the temporary Wrangler login after account work. Do
 not publish local debug wrappers, logs, credentials, or DNS exports.
+
+## Initial operational activation
+
+The assistant privacy disclosure was verified live at the PR #35 release before
+API activation. The separate API was created without a route and with inference
+disabled, then connected only to `portfolio-api.jorgeaviles.net`. workers.dev and
+version preview URLs remain disabled. The account remains on Workers Free; no
+paid CPU setting or AI Gateway billing path is configured.
+
+Eleven private real-model acceptance cases passed. Live edge checks verified a
+source-backed answer, explicit-origin CORS, invalid inputs, method/route isolation,
+and request throttling. Edge rate counters allowed a small instantaneous burst
+over the nominal limit before returning 429; they are approximate, as documented
+in the design. Six protected email/DNS records matched before and after setup.
+Cloudflare's BIND export omits managed Worker AAAA records, so the new hostname was
+verified separately through the Custom Domain mapping and HTTPS responses.
+
+The website connection is delivered as a separately reviewed PR. Until that release
+is merged and deployed, the published `/ask/` interface remains disabled even though
+the API is available. Keep production release verification separate from account-side
+API checks. Private records identify the API source commit, deployed version,
+request samples, DNS comparison, and temporary credential cleanup; none belongs in
+the public repository.
