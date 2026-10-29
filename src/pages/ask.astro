@@ -2,8 +2,10 @@
 import BaseLayout from '../layouts/BaseLayout.astro';
 import PageIntro from '../components/PageIntro.astro';
 import PortfolioAssistant from '../components/PortfolioAssistant';
-import { configuredEndpoint } from '../lib/portfolio/client';
-const endpoint = configuredEndpoint(import.meta.env.PUBLIC_PORTFOLIO_API_URL);
+import { configuredEndpoint, PUBLIC_API } from '../lib/portfolio/client';
+const endpoint = configuredEndpoint(
+  import.meta.env.PUBLIC_PORTFOLIO_API_URL ?? PUBLIC_API,
+);
 ---
 
 <BaseLayout

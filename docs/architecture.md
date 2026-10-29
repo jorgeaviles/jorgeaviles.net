@@ -1,6 +1,6 @@
 # Architecture
 
-This is a static professional website. Astro renders ordinary pages and MDX content at build time; Cloudflare Workers Static Assets serves `dist/`. There is no application server, Cloudflare SSR adapter, Worker fetch handler, database, or authentication. Optional Cloudflare Web Analytics is an edge-managed browser beacon, not a backend or an analytics dependency in the build. Activation follows the disclosure-first procedure in [deployment.md](deployment.md#web-analytics-activation).
+This is a static professional website. Astro renders ordinary pages and MDX content at build time; Cloudflare Workers Static Assets serves `dist/`. The asset Worker has no application server, Cloudflare SSR adapter, fetch handler, database, or authentication. A separately deployed portfolio API handles optional AI-assisted public-content retrieval; it does not change Astro rendering or asset routing. Optional Cloudflare Web Analytics is an edge-managed browser beacon, not a backend or an analytics dependency in the build. Activation follows the disclosure-first procedure in [deployment.md](deployment.md#web-analytics-activation).
 
 ## Editing and presentation
 
@@ -27,20 +27,25 @@ preview and build output remain beacon-free. Do not add a second manual snippet,
 custom events, session replay, or Lab-input reporting. Local no-third-party-request
 tests remain strict; they do not prove the live edge analytics configuration.
 
-GitHub Actions is the sole production deployment authority. Its Quality job runs type/content checks, lint, formatting, unit tests, a production build, and browser/accessibility tests. Chromium and WebKit cover desktop and narrow mobile viewports. This does not establish installed Safari coverage or full WCAG conformance.
+GitHub Actions is the sole static-site production deployment authority. Its Quality job runs type/content checks, lint, formatting, unit tests, a production build, and browser/accessibility tests. Chromium and WebKit cover desktop and narrow mobile viewports. This does not establish installed Safari coverage or full WCAG conformance.
 
 The successful job uploads its verified `dist/` as an immutable artifact. A separate dependent Production job restores that artifact instead of rebuilding. A commit marker in `deployment.json`, the Actions run, and Wrangler's deployment message identify the source commit. After an upload, a read-only smoke check verifies commit provenance, Lab HTML/assets and the custom HTTP 404. Browser reports and representative screenshots are saved separately for review. Production concurrency and a fresh main-branch check prevent stale queued runs from replacing a later release. The production gate is enabled, and its GitHub environment is restricted to `main`. Branch protection requires a pull request and the successful Quality check. `npm run deploy` requests this workflow for remote `main` through GitHub CLI; it never deploys local files. Rollbacks follow the same checks through a revert pull request; see [deployment.md](deployment.md).
 
 ## Deliberate limits
 
-Contact is a `mailto:` link. No resume control appears until an approved public file exists. PR preview deployments, a CMS, feedback storage, custom event telemetry, and external AI features are deferred. These limits keep maintenance and external permissions small while leaving room to add reviewed content.
+Contact is a `mailto:` link. No resume control appears until an approved public file exists. PR preview deployments, a CMS, feedback storage, custom event telemetry, and additional AI providers are deferred. These limits keep maintenance and external permissions small while leaving room to add reviewed content.
 
 The hosting configuration follows Cloudflare's [static generation and custom 404 guidance](https://developers.cloudflare.com/workers/static-assets/routing/static-site-generation/) and [Worker Custom Domain](https://developers.cloudflare.com/workers/configuration/routing/custom-domains/) architecture. Local preview, hosted checks, and live edge verification remain distinct evidence.
 
-## Portfolio assistant foundation (inactive)
+## Separate portfolio assistant API
 
-The separate `workers/portfolio-api/` Worker is the reviewed boundary for a future
-public-content assistant. It is disabled and unrouted by default; it does not change
-the static asset Worker or its release workflow. See [the assistant design](portfolio-assistant.md),
+The separate `workers/portfolio-api/` Worker serves the curated public-content
+assistant at `portfolio-api.jorgeaviles.net`. Its checked-in configuration is
+disabled and unrouted by default; the initial, owner-authorized operational setup
+used a temporary CLI login to deploy and activate only that API. Its hostname,
+kill switch, bindings and deployment version are independent of the static site.
+The reviewed website activation release connects `/ask/` through the existing
+static release workflow. Future API release automation is a separate protected
+workflow task; no automatic API deployment is attached to site releases. See [the assistant design](portfolio-assistant.md),
 [separate setup instructions](portfolio-assistant-operations.md), and
 [future stateless MCP plan](portfolio-mcp-plan.md).

@@ -1,8 +1,6 @@
 import { describe, expect, it, vi } from 'vitest';
-import worker, {
-  MODEL,
-  type Env,
-} from '../../../workers/portfolio-api/src/index';
+import worker, { type Env } from '../../../workers/portfolio-api/src/index';
+import { MODEL } from '../../../workers/portfolio-api/src/model';
 import {
   getCaseStudy,
   getResearch,
@@ -19,7 +17,9 @@ function environment() {
     REQUEST_LIMITER: { limit: vi.fn(async () => ({ success: true })) },
     INFERENCE_LIMITER: { limit: vi.fn(async () => ({ success: true })) },
     AI: {
-      run: vi.fn(async () => ({ response: '{"passageIds":["ml-status"]}' })),
+      run: vi.fn<Env['AI']['run']>(async () => ({
+        response: '{"passageIds":["ml-status"]}',
+      })),
     },
   } satisfies Env;
 }
@@ -91,6 +91,7 @@ describe('approved public-content service', () => {
     expect(config.workers_dev).toBe(false);
     expect(config.observability.enabled).toBe(false);
     expect(config.assets).toBeUndefined();
+    expect(config.limits).toBeUndefined(); // Custom CPU limits require Workers Paid.
     expect(config.routes).toBeUndefined();
     expect(readFileSync('.github/workflows/site.yml', 'utf8')).not.toContain(
       'workers/portfolio-api',
@@ -98,6 +99,33 @@ describe('approved public-content service', () => {
   });
 });
 describe('POST /ask', () => {
+  it('accepts the current structured Workers AI response while ignoring provider prose', async () => {
+    const env = environment();
+    env.AI.run.mockResolvedValue({
+      choices: [{ message: { content: 'Untrusted provider prose' } }],
+      response: { passageIds: ['ml-status'] },
+    });
+    const body = await (await worker.fetch(ask(), env)).json();
+    expect(body.status).toBe('answered');
+    expect(body.answer).toContain('program remains experimental');
+    expect(body.answer).not.toContain('Untrusted provider prose');
+    expect(body.references).toHaveLength(1);
+  });
+  it.each([
+    null,
+    [],
+    { passageIds: ['invented'] },
+    { passageIds: ['ml-status', 'ml-ranking', 'ml-framework'] },
+    { passageIds: [42] },
+    { passageIds: ['x'.repeat(1025)] },
+  ])('rejects malformed structured model output', async (response) => {
+    const env = environment();
+    env.AI.run.mockResolvedValue({ response });
+    expect((await (await worker.fetch(ask(), env)).json()).status).toBe(
+      'unsupported',
+    );
+  });
+
   it('returns approved text and original source links, with one bounded inference', async () => {
     const { env, response, body } = await run();
     expect(response.status).toBe(200);
