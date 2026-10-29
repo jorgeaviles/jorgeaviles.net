@@ -2,7 +2,7 @@
   "$schema": "../../node_modules/wrangler/config-schema.json",
   "name": "jorge-aviles-portfolio-api",
   "main": "src/index.ts",
-  "compatibility_date": "2026-10-28",
+  "compatibility_date": "2026-10-26",
   "workers_dev": false,
   "preview_urls": false,
   "ai": { "binding": "AI" },
@@ -20,5 +20,4 @@
     },
   ],
   "observability": { "enabled": false },
-  "limits": { "cpu_ms": 10 },
 }

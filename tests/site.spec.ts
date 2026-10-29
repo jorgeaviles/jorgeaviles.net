@@ -1282,7 +1282,7 @@ test('the former research route has a static fallback and one canonical destinat
   expect(sitemap).not.toContain('/work/applied-predictive-research/');
 });
 
-test('assistant is inactive by default and sends no requests', async ({
+test('assistant sends no requests before a deliberate submission', async ({
   page,
 }) => {
   const apiRequests: string[] = [];
@@ -1291,10 +1291,10 @@ test('assistant is inactive by default and sends no requests', async ({
       apiRequests.push(request.url());
   });
   await page.goto('/ask/');
+  await expect(page.getByLabel('Your question')).toBeEnabled();
   await expect(
     page.getByText('The assistant is not yet activated.', { exact: false }),
-  ).toBeVisible();
-  await expect(page.getByLabel('Your question')).toBeDisabled();
+  ).toHaveCount(0);
   await expect(
     page.getByRole('button', { name: 'Ask a question', exact: true }),
   ).toBeDisabled();

@@ -2,7 +2,7 @@
 
 ## Scope and architecture
 
-The Astro site remains static. A separate, initially disabled Worker serves
+The Astro site remains static. A separate Worker serves
 `POST /ask`; it is not an SSR adapter or part of the asset deployment. No database,
 conversation history, external fetcher, agent loop, embeddings, or private account
 connector is included. The API never receives Lab inputs.
@@ -99,13 +99,15 @@ activate if it regularly selects unrelated passages; empty fallbacks are prefera
 
 ## Visitor interface and activation gate
 
-`/ask/` is an isolated React island with an unobtrusive footer link. The default
-build has no API endpoint and displays a disabled form with usable source links.
-Only `PUBLIC_PORTFOLIO_API_URL=https://portfolio-api.jorgeaviles.net/ask` is accepted;
-arbitrary origins and relative paths fail the build. This public value is not a
-secret. Set it only in a separately reviewed static release after the privacy copy
-is live and the API has passed its activation checks. No workflow activation is
-included here. The API kill switch remains independent.
+`/ask/` is an isolated React island with an unobtrusive footer link. This activation
+release sets the reviewed `https://portfolio-api.jorgeaviles.net/ask` endpoint as
+the public default. An explicitly empty `PUBLIC_PORTFOLIO_API_URL` disables the
+form for a rollback build; any other configured URL must exactly match the
+reviewed endpoint. This public URL is not a secret. The API's independent
+`ASSISTANT_ENABLED` kill switch remains false in the checked-in deployment config:
+a public activation is a deliberate account-side change after testing, not a
+side effect of deploying code. Publishing this static release still goes through
+the existing protected Actions workflow.
 
 The interface makes no request on load or when choosing a suggestion. Submit sends
 only the current question. In-flight submissions are locked; failure/rate-limit
@@ -121,5 +123,30 @@ Its tests intercept every API request; no Cloudflare inference is performed.
 Chromium desktop/mobile and WebKit mobile cover keyboard submission, live feedback,
 source links, unsupported answers, timeout/rate/quota failures, duplicate submission
 protection, storage absence, automated accessibility, and mobile overflow.
-`npm run test:browser` includes both the default inactive-site suite and this fixture.
+`npm run test:browser` includes both the static-site suite and this fixture.
 Neither fixture output nor test credentials enter the verified production artifact.
+
+## Activation verification and runtime corrections
+
+The real Workers AI binding returned `response` as a structured object. The
+adapter accepts both that form and the older JSON string, applies the same size
+and ID bounds, and ignores provider-written prose. The model constant lives in
+its own module: a primitive named export from a Worker entry point is not a
+valid runtime entry point. Custom CPU limits are omitted because Cloudflare
+rejects even an explicit 10 ms setting on Workers Free; its platform cap applies
+automatically. The API compatibility date is 2026-10-26, supported by
+the repository's pinned workerd binary.
+
+`npm run test:worker` now starts that actual runtime with `--local` and inference
+disabled, checking boot, CORS, the disabled response, methods, and unknown routes.
+It is included in `npm test` and therefore in local verification and hosted Quality.
+It does not need account credentials or call Workers AI. Live model checks instead
+use ordinary local Worker execution with the real remote AI binding; `--local`
+disables remote bindings and cannot prove model behavior.
+
+The private activation acceptance set covers six source-backed answers and five
+unsupported/adversarial requests. Eleven real-response cases passed, including
+research attribution and the boundary between implemented and completed ML
+evaluations. This is a bounded acceptance sample, not a general accuracy estimate.
+Provider quota failures remain fault-injected tests; deliberately exhausting the
+account's shared Free allocation is not a verification requirement.

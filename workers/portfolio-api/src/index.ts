@@ -1,7 +1,7 @@
 import { index, searchPortfolio } from './content';
 import { LIMITS, type AskResponse } from '../../../src/lib/portfolio/types';
 
-export const MODEL = '@cf/meta/llama-3.2-3b-instruct';
+import { MODEL } from './model';
 interface Limiter {
   limit(input: { key: string }): Promise<{ success: boolean }>;
 }
@@ -113,16 +113,22 @@ async function readQuestion(request: Request) {
   return question;
 }
 function selectedIds(output: unknown): string[] {
-  if (
-    !output ||
-    typeof output !== 'object' ||
-    !('response' in output) ||
-    typeof output.response !== 'string' ||
-    output.response.length > 1024
-  )
+  if (!output || typeof output !== 'object' || !('response' in output))
     return [];
   try {
-    const parsed = JSON.parse(output.response);
+    const value = output.response;
+    const serialized =
+      typeof value === 'string' ? value : JSON.stringify(value);
+    if (!serialized || serialized.length > 1024) return [];
+    const parsed: unknown =
+      typeof value === 'string' ? JSON.parse(value) : value;
+    if (
+      !parsed ||
+      typeof parsed !== 'object' ||
+      Array.isArray(parsed) ||
+      !('passageIds' in parsed)
+    )
+      return [];
     return Array.isArray(parsed.passageIds) &&
       parsed.passageIds.length <= LIMITS.passages &&
       parsed.passageIds.every((id: unknown) => typeof id === 'string')

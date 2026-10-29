@@ -1,9 +1,10 @@
 # Portfolio API setup and release checklist
 
-This documents future owner-reviewed setup. The initial PRs create no Cloudflare
-resources, change no DNS, install no credentials, and deploy nothing. The API is
-disabled and has no public route; the existing asset workflow remains the sole
-static production deployment authority.
+This is the owner-reviewed setup and rollback procedure. The foundation PRs did
+not activate the API; the separate activation task verifies the live privacy
+copy, tests real inference, and then configures only the dedicated API Worker.
+The existing asset workflow remains the sole static production deployment authority.
+The checked-in API configuration remains disabled and unrouted by default.
 
 ## Private setup record and credentials
 
@@ -44,7 +45,7 @@ to run local mocked tests or the dry-run bundle check.
    Never attach it to the static asset Worker or configure a zone-wide route.
    Compare protected mail records afterward. Domain work is a separate release action.
 7. With disclosure live and checks satisfactory, enable the API variable and then
-   publish the static site's explicitly configured API URL. Do not set up automatic
+   publish the separately reviewed static activation release with its explicit API URL. Do not set up automatic
    API deploys from arbitrary branches, bypass static provenance gates, or run the
    static `npm run deploy` command expecting it to deploy the separate API.
 8. Verify one submission → at most one inference, cited answers, 400/403/429/503
@@ -64,3 +65,14 @@ saves a bundle and index hash, checks remote main immediately before upload, and
 uses a dedicated credential and environment. Capture the deployed API version and
 run bounded smoke tests. Do not add the API to the existing static artifact job
 or allow a PR event to deploy it.
+
+## Local checks before any API release
+
+Run `npm ci`, install the required Playwright browsers, and run `npm run verify`.
+The verification now includes an actual workerd boot test. For a real-model test,
+use `wrangler dev --config workers/portfolio-api/wrangler.jsonc --ip 127.0.0.1
+--port 8791 --var ASSISTANT_ENABLED:true` with the approved temporary CLI login.
+Keep the listener on loopback, leave production CORS unchanged, and submit only
+public/synthetic acceptance questions with the public Origin header. Stop the
+local sessions and remove the temporary Wrangler login after account work. Do
+not publish local debug wrappers, logs, credentials, or DNS exports.
