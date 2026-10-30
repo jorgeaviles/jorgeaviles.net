@@ -78,6 +78,49 @@ describe('approved public-content service', () => {
   ])('retrieves relevant passages for %s', (query, id) => {
     expect(searchPortfolio(query).map((p) => p.id)).toContain(id);
   });
+  it.each([
+    [
+      'machine learning experimental',
+      [
+        'ml-framework',
+        'ml-status',
+        'portal-ml',
+        'research-credit',
+        'background',
+      ],
+    ],
+    [
+      'audit research',
+      [
+        'background',
+        'ml-label',
+        'ml-status',
+        'portal-purpose',
+        'portal-role',
+        'research-credit',
+      ],
+    ],
+    ['Python', ['data-purpose', 'ml-framework', 'ml-status']],
+    [
+      'research assistance',
+      ['research-credit', 'research-role', 'background', 'research-methods'],
+    ],
+    [
+      'Synapse audit',
+      [
+        'data-purpose',
+        'ml-framework',
+        'ml-label',
+        'ml-status',
+        'portal-purpose',
+        'portal-role',
+      ],
+    ],
+    ['Jorge Avilés', []],
+    ['zzzxqv987654321', []],
+  ])('preserves the established passage ordering for %s', (query, ids) => {
+    expect(searchPortfolio(query).map((passage) => passage.id)).toEqual(ids);
+  });
   it('keeps the static deployment and automatic API activation isolated', () => {
     const staticConfig = readFileSync('wrangler.jsonc', 'utf8');
     expect(staticConfig).not.toMatch(/"main"|"ai"|"routes"/);

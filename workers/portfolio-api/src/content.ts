@@ -35,6 +35,9 @@ export function getCaseStudy(id: string) {
 export function getResearch() {
   return index.documents.filter((doc) => doc.kind === 'research');
 }
+// Reuse only locale configuration, never query or result state. Constructing
+// the collator during isolate startup avoids first-search ICU setup.
+const comparePassageIds = new Intl.Collator('en').compare;
 export function searchPortfolio(
   query: string,
   limit: number = LIMITS.candidates,
@@ -55,6 +58,6 @@ export function searchPortfolio(
       }),
     )
     .filter((item) => item.score >= 0.25)
-    .sort((a, b) => b.score - a.score || a.id.localeCompare(b.id, 'en'))
+    .sort((a, b) => b.score - a.score || comparePassageIds(a.id, b.id))
     .slice(0, Math.max(0, Math.min(LIMITS.candidates, Math.floor(limit) || 0)));
 }
