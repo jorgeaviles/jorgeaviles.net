@@ -1,4 +1,7 @@
 import { index, searchPortfolio } from './content';
+// Evaluate the SDK at isolate startup, outside the first MCP request budget.
+// The route still checks MCP_ENABLED before constructing any request server.
+import { serveMcp } from './mcp';
 import { LIMITS, type AskResponse } from '../../../src/lib/portfolio/types';
 
 import { MODEL } from './model';
@@ -148,7 +151,6 @@ export default {
           status: 404,
           headers: { 'Cache-Control': 'no-store' },
         });
-      const { serveMcp } = await import('./mcp');
       return serveMcp(request, env);
     }
     const cors = request.headers.get('Origin') === origin;
