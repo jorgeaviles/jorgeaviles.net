@@ -27,3 +27,14 @@ This is separate from the browser-only Lab and ordinary static page visits.
 The AI selects published passages rather than writing new factual claims. Answers
 link to their sources and may be incomplete or irrelevant. If the sources do not
 support an answer, or the free service is unavailable, use the public pages directly.
+
+<h3 id="portfolio-mcp-privacy">Public MCP integration</h3>
+
+Compatible AI clients can request curated public portfolio passages from the
+separate read-only MCP endpoint. MCP retrieval does not invoke Workers AI. The
+tools cannot modify content or access private accounts, files, or employer
+databases. The application does not intentionally store conversation histories
+or log request contents. Cloudflare processes network requests and operational
+metadata; the connecting IP address is used transiently for throttling. Your
+connected AI client follows its own data practices. Do not send confidential
+information. See [connection instructions and scope](/mcp/).
