@@ -1,8 +1,16 @@
 # Stateless public portfolio MCP
 
-Implemented for review; **not deployed or publicly enabled by this change**.
-The existing `/ask` assistant remains independently deployed and enabled. Do not
-advertise the MCP connection URL until the hosted activation checks below pass.
+Public MCP was activated through the protected release workflow on 2026-10-30.
+The public connection guide lives at [/mcp/](https://jorgeaviles.net/mcp/).
+Hosted Inspector, Codex, and official SDK checks covered all four tools. The
+assistant remains independent; MCP retrieval does not invoke Workers AI.
+
+The implementation and pre-activation validation procedure below describe the
+original rollout. They are historical prerequisites, not instructions to repeat
+activation. Use the [API release procedure](portfolio-api-release.md) for future
+changes. Small hosted samples had no CPU-limit errors but do not establish
+consistent headroom below the Workers Free CPU allowance; no availability or
+cost guarantee is implied.
 
 ## Design and boundaries
 
@@ -107,7 +115,7 @@ no AI inference occurred for retrieval-only calls and no request bodies were
 logged. Do not load test the public service. Save private operational evidence
 without committing credentials or account exports.
 
-## Client connections after activation
+## Client connections
 
 MCP Inspector (Streamable HTTP; public read-only, no login):
 
@@ -120,7 +128,7 @@ npx @modelcontextprotocol/inspector@2.13.0 --cli \
   --tool-arg id=analytical-data-platforms
 ```
 
-Codex CLI/IDE native HTTP configuration (add only after activation; no OAuth):
+Codex CLI/IDE native HTTP configuration (public read-only; no OAuth):
 
 ```toml
 [mcp_servers.jorge_portfolio]

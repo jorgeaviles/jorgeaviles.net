@@ -1,0 +1,98 @@
+## Public sources, available to your AI client
+
+Model Context Protocol (MCP) lets compatible AI applications request structured information through defined tools. This portfolio’s live, read-only server returns curated passages about my professional projects, technical work, and research experience, with links to the original pages.
+
+The connected AI client decides which tools to call and how to explain the results. MCP retrieval does not generate conversational answers or call an AI model.
+
+<ol className="mcp-flow" aria-label="How portfolio retrieval works">
+  <li>AI client</li>
+  <li>MCP endpoint</li>
+  <li>Read-only tools</li>
+  <li>Curated public content</li>
+  <li>Structured results with source URLs</li>
+</ol>
+
+This static page documents the integration. The separate [website assistant](/ask/) uses Workers AI to select relevant approved passages when you submit a question. Both use the same curated public-content service; the MCP endpoint is a separate address for compatible clients.
+
+## Four tools, a bounded scope
+
+All inputs reject extra properties. Successful results include an `indexVersion` identifying the deterministic content index. The tools return selected public passages, rather than the complete contents of every source page.
+
+### `list_projects`
+
+Lists approved professional project IDs, titles, and canonical source URLs. Start here to find an ID for a comparison or a case study. Input: `{}`.
+
+### `get_case_study`
+
+Returns one project’s curated passages and source URL. Use an ID from `list_projects`, such as `{"id":"analytical-data-platforms"}`. IDs must contain 1–80 lowercase letters, digits, or hyphens. An unknown ID returns a tool error.
+
+### `search_portfolio`
+
+Matches a text query against approved About, project, and research passages. For example: `{"query":"experimental models","limit":2}`. The required query must be 1–500 characters after trimming whitespace and cannot contain control characters. The optional limit is an integer from 1–6; the default is 6. Each match includes a passage ID, title, text, and canonical URL. An empty result means no supporting passage was found. A query is never treated as a URL or file to retrieve.
+
+### `get_research`
+
+Returns curated research experience and source URLs. Input: `{}`. Research assistance and published acknowledgment are kept distinct from paper authorship.
+
+## Questions to explore
+
+After connecting, try asking your AI client:
+
+- “Compare the technical architecture and purpose of Jorge’s analytical data platform and analytical application projects.”
+- “What machine-learning methods and evaluation approaches are documented in Jorge’s portfolio?”
+- “Summarize Jorge’s research experience and provide the original sources.”
+
+These are illustrative questions, not promised answers. Ask the client to cite the returned source URLs and acknowledge gaps. Experimental models are not operational deployments, implemented evaluation code is not proof of completed performance evaluation, and the [Learning Lab](/lab/) uses independently fabricated synthetic examples.
+
+## Connect an AI client
+
+Use this public endpoint with **Streamable HTTP**:
+
+<code className="mcp-endpoint">https://portfolio-api.jorgeaviles.net/mcp</code>
+
+No account sign-in or API key is required by this endpoint. Your client may require its own account or model access. Opening the endpoint as an ordinary browser page returns a method error: it accepts MCP requests over HTTP POST.
+
+### Codex CLI
+
+With Codex installed, add the remote server and confirm the configuration:
+
+```sh
+codex mcp add jorge_portfolio --url https://portfolio-api.jorgeaviles.net/mcp
+codex mcp list
+```
+
+Then start a Codex session and ask it to use the portfolio tools. Review tool permissions in your client. These commands save a client connection; they do not change the portfolio. See the [official Codex connection guide](https://developers.openai.com/learn/docs-mcp).
+
+### MCP Inspector
+
+With Node.js and npm installed, discover the tools using the version tested with this service:
+
+```sh
+npx @modelcontextprotocol/inspector@2.13.0 --cli \
+  https://portfolio-api.jorgeaviles.net/mcp \
+  --transport http --method tools/list
+```
+
+Retrieve a case study:
+
+```sh
+npx @modelcontextprotocol/inspector@2.13.0 --cli \
+  https://portfolio-api.jorgeaviles.net/mcp \
+  --transport http --method tools/call \
+  --tool-name get_case_study \
+  --tool-arg id=analytical-data-platforms
+```
+
+See the [official Inspector CLI guide](https://github.com/modelcontextprotocol/inspector/blob/main/clients/cli/README.md). Codex, Inspector, and the official MCP SDK have been tested against the hosted service. Avoid rapid repeated calls; the endpoint is rate limited.
+
+### Other remote MCP clients
+
+Choose a native Streamable HTTP connection, enter the endpoint above, and select no authentication if prompted. Configuration names and tool-approval controls vary. Browser-based clients must also satisfy the endpoint’s origin policy, which permits only this website’s origin. Support for arbitrary remote endpoints in ChatGPT, Claude, or other products is not established here; check your client’s current documentation and account capabilities.
+
+## Implementation & boundaries
+
+A separate Cloudflare Worker uses TypeScript, the official MCP SDK, validated tool schemas, and a deterministic curated index. The stateless Streamable HTTP handler creates a fresh server for each request. Requests and responses have fixed size limits and independent request throttling. MCP retrieval uses no Workers AI inference, database, persistent session, or general-purpose file access.
+
+Only approved public portfolio information is available. Tools cannot modify content or access private accounts, files, employer databases, or arbitrary external URLs. The application does not intentionally store conversation histories. Cloudflare processes requests and operational metadata as the infrastructure provider; the connecting IP address is used transiently for throttling. Your AI client has its own data practices. Do not send confidential information.
+
+Read the [privacy disclosure](/colophon/#portfolio-mcp-privacy), explore the [professional case studies](/work/), or review the [implementation source](https://github.com/jorgeaviles/jorgeaviles.net/tree/main/workers/portfolio-api). The [Cloudflare stateless MCP handler documentation](https://developers.cloudflare.com/agents/model-context-protocol/apis/handler-api/) describes the underlying approach.

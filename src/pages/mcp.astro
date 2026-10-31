@@ -1,0 +1,69 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import PageIntro from '../components/PageIntro.astro';
+import Mcp from '../content/mcp.mdx';
+---
+
+<BaseLayout
+  title="Portfolio MCP integration"
+  description="Connect an AI client to four read-only portfolio tools: curated projects, case studies, search, and research with original source links."
+>
+  <PageIntro
+    label="Portfolio integration"
+    title="Connect to the work."
+    description="A public MCP service for exploring this portfolio through a compatible AI application."
+  />
+  <div class="editorial-grid">
+    <article class="prose mcp-documentation">
+      <Mcp />
+    </article>
+    <aside class="aside-note">
+      <p class="eyebrow">At a glance</p>
+      <p>Streamable HTTP · Read-only · Public sources</p>
+      <a href="#connect-an-ai-client">Connection instructions</a>
+      <a href="/ask/">Use the website assistant</a>
+      <a href="/work/">Read the case studies</a>
+    </aside>
+  </div>
+</BaseLayout>
+
+<style>
+  .mcp-documentation {
+    min-width: 0;
+  }
+  .mcp-documentation :global(code) {
+    font-size: 0.85em;
+    overflow-wrap: anywhere;
+  }
+  .mcp-documentation :global(pre) {
+    white-space: pre-wrap;
+    overflow-wrap: anywhere;
+    padding: 16px;
+    line-height: 1.7;
+    margin-block: 20px;
+  }
+  .mcp-documentation :global(.mcp-endpoint) {
+    display: block;
+    color: var(--ink);
+    margin-block: 20px;
+    user-select: all;
+  }
+  .mcp-documentation :global(.mcp-flow) {
+    list-style: none;
+    padding: 0;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px 14px;
+    color: var(--green);
+    font-size: var(--text-supporting);
+    line-height: 1.6;
+    margin-block: 28px;
+  }
+  .mcp-documentation :global(.mcp-flow li + li) {
+    margin: 0;
+  }
+  .mcp-documentation :global(.mcp-flow li:not(:last-child)::after) {
+    content: ' →';
+    margin-left: 14px;
+  }
+</style>

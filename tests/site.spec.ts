@@ -26,6 +26,7 @@ const routes = [
   },
   { path: '/lab/', heading: 'Predicting profitability' },
   { path: '/contact/', heading: 'Good work starts with a conversation.' },
+  { path: '/mcp/', heading: 'Connect to the work.' },
   { path: '/ask/', heading: 'A question about the work?' },
   { path: '/colophon/', heading: 'A small site, built with care.' },
 ] as const;
@@ -1299,4 +1300,85 @@ test('assistant sends no requests before a deliberate submission', async ({
     page.getByRole('button', { name: 'Ask a question', exact: true }),
   ).toBeDisabled();
   expect(apiRequests).toEqual([]);
+});
+
+test('MCP documentation connects visitors to bounded public tools without network calls', async ({
+  page,
+  request,
+  browserName,
+}, testInfo) => {
+  const apiRequests: string[] = [];
+  page.on('request', (request) => {
+    if (request.url().includes('portfolio-api.jorgeaviles.net'))
+      apiRequests.push(request.url());
+  });
+  await page.goto('/mcp/');
+  await expect(page).toHaveTitle('Portfolio MCP integration — Jorge Avilés');
+  await expect(page.locator('link[rel="canonical"]')).toHaveAttribute(
+    'href',
+    'https://jorgeaviles.net/mcp/',
+  );
+  await expect(page.locator('.mcp-endpoint')).toHaveText(
+    'https://portfolio-api.jorgeaviles.net/mcp',
+  );
+  for (const name of [
+    'list_projects',
+    'get_case_study',
+    'search_portfolio',
+    'get_research',
+  ]) {
+    await expect(
+      page.getByRole('heading', { name, exact: true }),
+    ).toBeVisible();
+  }
+  await expect(page.locator('pre').first()).toContainText(
+    'codex mcp add jorge_portfolio --url https://portfolio-api.jorgeaviles.net/mcp',
+  );
+  await expect(page.locator('pre').nth(1)).toContainText(
+    '--transport http --method tools/list',
+  );
+  await expect(page.locator('pre').nth(2)).toContainText(
+    '--tool-arg id=analytical-data-platforms',
+  );
+  // Every static documentation link and fragment resolves to a published target.
+  const links = await page
+    .locator('main a')
+    .evaluateAll((anchors) =>
+      anchors.map((a) => (a as HTMLAnchorElement).getAttribute('href')!),
+    );
+  for (const href of links.filter(
+    (href) => href.startsWith('/') || href.startsWith('#'),
+  )) {
+    const url = new URL(href, 'http://127.0.0.1:4321/mcp/');
+    const response = await request.get(url.pathname);
+    expect(response.ok()).toBe(true);
+    if (url.hash)
+      expect(await response.text()).toContain(`id="${url.hash.slice(1)}"`);
+  }
+  await page.keyboard.press(
+    browserName === 'webkit' && process.platform === 'darwin'
+      ? 'Alt+Tab'
+      : 'Tab',
+  );
+  await expect(
+    page.getByRole('link', { name: 'Skip to content' }),
+  ).toBeFocused();
+  await page.keyboard.press('Enter');
+  await expect(page.getByRole('main')).toBeFocused();
+  await expectNoHorizontalOverflow(page);
+  await expectAccessible(page);
+  expect(apiRequests).toEqual([]);
+  await page.screenshot({
+    path: testInfo.outputPath('mcp.png'),
+    fullPage: true,
+  });
+  await page.goto('/');
+  await page
+    .getByRole('contentinfo')
+    .getByRole('link', { name: 'MCP', exact: true })
+    .click();
+  await expect(page).toHaveURL(/\/mcp\/$/);
+  await page.goto('/ask/');
+  await page.getByRole('link', { name: 'public MCP integration' }).click();
+  await expect(page).toHaveURL(/\/mcp\/$/);
 });
