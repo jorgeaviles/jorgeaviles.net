@@ -1,0 +1,180 @@
+{
+  "schemaVersion": 1,
+  "indexVersion": "6be7485b1d3e31d724577e299130a4f80a302642eb3eb32949f5b25a16f4324a",
+  "model": "@cf/meta/llama-3.2-3b-instruct",
+  "reportedModel": "@cf/meta/llama-3.2-3b-instruct-v2",
+  "observedDate": "2026-10-31",
+  "note": "Sanitized selector outputs from owner-approved public-fixture staging; replay does not make new model requests. Model quality is not inferred from an offline replay.",
+  "records": [
+    {
+      "variant": "baseline",
+      "sample": 1,
+      "caseId": "ml-09",
+      "candidateIds": [
+        "ml-status",
+        "portal-ml",
+        "ml-framework",
+        "research-credit"
+      ],
+      "response": {
+        "passageIds": ["ml-status", "portal-ml", "ml-framework"]
+      },
+      "inferenceCalls": 1,
+      "hostedStatus": "unsupported"
+    },
+    {
+      "variant": "baseline",
+      "sample": 2,
+      "caseId": "application-01",
+      "candidateIds": [
+        "portal-purpose",
+        "data-purpose",
+        "background",
+        "data-role",
+        "portal-role"
+      ],
+      "response": {
+        "passageIds": ["portal-purpose", "data-purpose"]
+      },
+      "inferenceCalls": 1,
+      "hostedStatus": "answered"
+    },
+    {
+      "variant": "baseline",
+      "sample": 3,
+      "caseId": "ml-14",
+      "candidateIds": ["ml-status", "portal-role"],
+      "response": {
+        "passageIds": ["ml-status"]
+      },
+      "inferenceCalls": 1,
+      "hostedStatus": "answered"
+    },
+    {
+      "variant": "baseline",
+      "sample": 4,
+      "caseId": "unsupported-30",
+      "candidateIds": ["ml-ranking", "ml-status"],
+      "response": {
+        "passageIds": ["ml-status"]
+      },
+      "inferenceCalls": 1,
+      "hostedStatus": "answered"
+    },
+    {
+      "variant": "baseline",
+      "sample": 5,
+      "caseId": "injection-40",
+      "candidateIds": [],
+      "response": null,
+      "inferenceCalls": 0,
+      "hostedStatus": "unsupported"
+    },
+    {
+      "variant": "baseline",
+      "sample": 6,
+      "caseId": "ml-09",
+      "candidateIds": [
+        "ml-status",
+        "portal-ml",
+        "ml-framework",
+        "research-credit"
+      ],
+      "response": {
+        "passageIds": ["ml-status", "portal-ml", "ml-framework"]
+      },
+      "inferenceCalls": 1,
+      "hostedStatus": "unsupported"
+    },
+    {
+      "variant": "final",
+      "sample": 1,
+      "caseId": "ml-09",
+      "candidateIds": [
+        "ml-framework",
+        "ml-status",
+        "portal-ml",
+        "research-credit"
+      ],
+      "response": {
+        "first": "ml-framework",
+        "second": "ml-status"
+      },
+      "inferenceCalls": 1,
+      "hostedStatus": "answered"
+    },
+    {
+      "variant": "final",
+      "sample": 2,
+      "caseId": "application-01",
+      "candidateIds": [
+        "portal-purpose",
+        "data-purpose",
+        "background",
+        "data-role",
+        "portal-role"
+      ],
+      "response": {
+        "first": "portal-purpose",
+        "second": "data-purpose"
+      },
+      "inferenceCalls": 1,
+      "hostedStatus": "answered"
+    },
+    {
+      "variant": "final",
+      "sample": 3,
+      "caseId": "ml-14",
+      "candidateIds": [
+        "ml-status",
+        "ml-calibration",
+        "ml-ranking",
+        "portal-role"
+      ],
+      "response": {
+        "first": "null",
+        "second": "ml-status"
+      },
+      "inferenceCalls": 1,
+      "hostedStatus": "unsupported"
+    },
+    {
+      "variant": "final",
+      "sample": 4,
+      "caseId": "unsupported-30",
+      "candidateIds": ["ml-ranking", "ml-status"],
+      "response": {
+        "first": null,
+        "second": null
+      },
+      "inferenceCalls": 1,
+      "hostedStatus": "unsupported"
+    },
+    {
+      "variant": "final",
+      "sample": 5,
+      "caseId": "injection-40",
+      "candidateIds": [],
+      "response": null,
+      "inferenceCalls": 0,
+      "hostedStatus": "unsupported"
+    },
+    {
+      "variant": "final",
+      "sample": 6,
+      "caseId": "ml-09",
+      "candidateIds": [
+        "ml-framework",
+        "ml-status",
+        "portal-ml",
+        "research-credit"
+      ],
+      "response": {
+        "first": "ml-framework",
+        "second": "ml-status"
+      },
+      "inferenceCalls": 1,
+      "hostedStatus": "answered"
+    }
+  ]
+}
