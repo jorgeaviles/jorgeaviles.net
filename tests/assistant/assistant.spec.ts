@@ -210,3 +210,44 @@ test('unsafe or uncited responses are refused and drafts are not browser storage
   await page.reload();
   await expect(page.getByLabel('Your question')).toHaveValue('');
 });
+
+test('conversational sentences have nearby source links and retain keyboard/mobile access', async ({
+  page,
+}, testInfo) => {
+  const sentences = [
+    {
+      text: 'The machine-learning program remains experimental.',
+      sourceIndexes: [0],
+    },
+    {
+      text: 'Execution records are needed to substantiate completed evaluations.',
+      sourceIndexes: [0],
+    },
+  ];
+  await mock(page, {
+    ...answer,
+    answer: sentences.map((s) => s.text).join(' '),
+    sentences,
+  } as typeof answer);
+  await ready(page);
+  await page
+    .getByLabel('Your question')
+    .fill('What is the status of the machine-learning program?');
+  await page
+    .getByRole('button', { name: 'Ask a question', exact: true })
+    .click();
+  await expect(
+    page.getByRole('heading', { name: 'From the public sources' }),
+  ).toBeFocused();
+  await expect(
+    page.getByRole('link', { name: /Source 1 for sentence/ }),
+  ).toHaveCount(2);
+  await expect(
+    page.getByText(/AI summarized these public sources/),
+  ).toBeVisible();
+  await accessible(page);
+  await page.screenshot({
+    path: testInfo.outputPath('conversational-assistant.png'),
+    fullPage: true,
+  });
+});

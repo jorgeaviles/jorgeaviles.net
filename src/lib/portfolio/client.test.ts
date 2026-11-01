@@ -101,3 +101,54 @@ describe('public assistant client boundary', () => {
     },
   );
 });
+
+describe('sentence citation response boundary', () => {
+  const sentences = [
+    { text: 'An approved sentence.', sourceIndexes: [0] },
+    { text: 'A second sentence.', sourceIndexes: [0] },
+  ];
+  it('accepts consistent server-resolved sentence references', async () => {
+    const body = {
+      ...answer,
+      answer: sentences.map((s) => s.text).join(' '),
+      sentences,
+    };
+    vi.stubGlobal(
+      'fetch',
+      vi.fn(async () => Response.json(body)),
+    );
+    expect(await requestAnswer(PUBLIC_API, 'A question', signal())).toEqual(
+      body,
+    );
+  });
+  it.each(
+    (
+      [
+        [{ text: 'An approved sentence.', sourceIndexes: [2] }],
+        [{ text: 'An approved sentence.', sourceIndexes: [] }],
+        [
+          {
+            text: 'An approved sentence.',
+            sourceIndexes: [0],
+            url: 'https://evil.example',
+          },
+        ],
+        [
+          ...sentences,
+          { text: 'Extra unsupported sentence.', sourceIndexes: [0] },
+        ],
+      ] as unknown[]
+    ).map((value) => ({ value })),
+  )(
+    'rejects inconsistent or unbounded sentence payload $value',
+    async ({ value }) => {
+      vi.stubGlobal(
+        'fetch',
+        vi.fn(async () => Response.json({ ...answer, sentences: value })),
+      );
+      await expect(
+        requestAnswer(PUBLIC_API, 'A question', signal()),
+      ).rejects.toThrow();
+    },
+  );
+});
