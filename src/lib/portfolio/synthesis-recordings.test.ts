@@ -30,7 +30,14 @@ describe('recorded hosted synthesis outputs: regression evidence, NOT passing qu
     );
     const body = await response.json();
     expect(body.status).toBe(record.expectedStatus);
-    expect(!!body.sentences).toBe(record.expectedSynthesis);
+    // Preserve captured outcomes; the current policy can additionally restore
+    // missing approved qualifications. This replay is not a new hosted success.
+    const restored =
+      record.variant === 'v2-final' &&
+      ['ml-09', 'ml-14'].includes(record.caseId);
+    expect(!!body.sentences).toBe(restored || record.expectedSynthesis);
+    if (restored)
+      expect(body.answer).toContain('The program remains experimental.');
     expect(env.AI.run).toHaveBeenCalledTimes(1);
     expect(
       body.references.every((r: { url: string }) =>

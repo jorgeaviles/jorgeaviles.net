@@ -2,7 +2,8 @@ import { describe, expect, it, vi } from 'vitest';
 import recordings from '../../../evals/portfolio/selector-recordings.json';
 import dataset from '../../../evals/portfolio/cases.json';
 import baseline from '../../../evals/portfolio/baseline-worker';
-import worker, { type Env } from '../../../workers/portfolio-api/src/index';
+import { type Env } from '../../../workers/portfolio-api/src/index';
+import v1 from '../../../evals/portfolio/v1-worker';
 import { index } from '../../../workers/portfolio-api/src/content';
 import { parseSelection } from '../../../workers/portfolio-api/src/selection';
 
@@ -29,7 +30,8 @@ describe('recorded public-fixture selectors through the actual Worker path (no l
         INFERENCE_LIMITER: { limit: async () => ({ success: true }) },
         AI: { run },
       };
-      const current = record.variant === 'baseline' ? baseline : worker;
+      // Historical selections belong to their original request path/model.
+      const current = record.variant === 'baseline' ? baseline : v1;
       const body = await (
         await current.fetch(
           new Request('https://portfolio-api.example/ask', {

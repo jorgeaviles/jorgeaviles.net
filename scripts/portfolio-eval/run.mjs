@@ -23,6 +23,7 @@ for (const [entry, name] of [
   ['evals/portfolio/evaluate.ts', 'evaluate'],
   ['evals/portfolio/v1-worker.ts', 'v1-worker'],
   ['evals/portfolio/evaluate-synthesis.ts', 'evaluate-synthesis'],
+  ['workers/portfolio-api/src/model.ts', 'model'],
 ])
   await build({
     ...options,
@@ -53,10 +54,12 @@ assert.equal(
   index.version,
   'Index changed: review evaluation annotations before updating the version',
 );
+const { MODEL } = await load('model');
 const results = {
   baselineCommit,
   indexVersion: index.version,
-  model: '@cf/meta/llama-3.2-3b-instruct',
+  baselineModel: '@cf/meta/llama-3.2-3b-instruct',
+  candidateModel: MODEL,
   baseline: await evaluate(
     baseline,
     searchPortfolio,
@@ -96,6 +99,8 @@ const [{ default: v1 }, { evaluateSynthesis }] = await Promise.all([
 ]);
 const conversational = {
   baselineCommit: '315683c1bbd918aba4beaad4adc2d214bf30eaf6',
+  baselineModel: '@cf/meta/llama-3.2-3b-instruct',
+  candidateModel: MODEL,
   baseline: await evaluate(v1, searchAssistant, dataset.cases, index),
   candidate: await evaluateSynthesis(
     candidate,

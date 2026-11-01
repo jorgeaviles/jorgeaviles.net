@@ -1331,15 +1331,16 @@ test('MCP documentation connects visitors to bounded public tools without networ
       page.getByRole('heading', { name, exact: true }),
     ).toBeVisible();
   }
-  await expect(page.locator('pre').first()).toContainText(
-    'codex mcp add jorge_portfolio --url https://portfolio-api.jorgeaviles.net/mcp',
-  );
-  await expect(page.locator('pre').nth(1)).toContainText(
-    '--transport http --method tools/list',
-  );
-  await expect(page.locator('pre').nth(2)).toContainText(
-    '--tool-arg id=analytical-data-platforms',
-  );
+  await expect(
+    page.getByRole('heading', { name: 'Experience and technical judgment' }),
+  ).toBeVisible();
+  await expect(
+    page.getByRole('heading', { name: 'Academic preparation and research' }),
+  ).toBeVisible();
+  await expect(
+    page.getByRole('heading', { name: 'Connect an AI application' }),
+  ).toBeVisible();
+  await expect(page.locator('main')).not.toContainText('Codex');
   // Every static documentation link and fragment resolves to a published target.
   const links = await page
     .locator('main a')
@@ -1365,6 +1366,8 @@ test('MCP documentation connects visitors to bounded public tools without networ
   ).toBeFocused();
   await page.keyboard.press('Enter');
   await expect(page.getByRole('main')).toBeFocused();
+  await page.getByText('Technical connection details', { exact: true }).click();
+  await expect(page.getByText(/Project IDs contain 1–80/)).toBeVisible();
   await expectNoHorizontalOverflow(page);
   await expectAccessible(page);
   expect(apiRequests).toEqual([]);

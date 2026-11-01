@@ -29,21 +29,21 @@ only the approved excerpts, not full documents or arbitrary files.
 
 ## Grounding and model use
 
-The proposed conversational v2 uses one Workers AI call to select at most two
-candidate passages and write 2–4 short sentence records. **It is not approved for
-production:** the bounded hosted trials failed the quality gate. Production
-continues using the PR #41 extractive version until a separate reviewed release.
-See [the v2 evaluation and release decision](portfolio-assistant-v2.md).
+The completion candidate uses one Workers AI call to select at most two retrieved
+passages and generate two short, sentence-cited summaries with
+`@cf/meta/llama-3.3-70b-instruct-fp8-fast`. It uses provider JSON Mode and an
+independent strict parser. The candidate has passed bounded hosted validation;
+production remains on the earlier extractive version until owner-approved release.
+See [the completion evaluation, cost tradeoff and release plan](portfolio-assistant-completion.md).
 
-The candidate accepts only a strict JSON shape, validates selected and sentence
-passage IDs against retrieved evidence, and resolves canonical URLs server-side.
-Malformed prose with a valid evidence selection falls back to the original
-approved text; malformed selection or abstention cannot become a lexical-only
-answer. Known numerical, attribution and experimental-status failure checks are
-conservative rejection rules, not a semantic entailment proof. No verifier-model
-call, automatic retry, conversation history or new production infrastructure is
-added. Summarization can hallucinate despite valid citation IDs; hosted semantic
-review is mandatory before activation.
+The server resolves canonical URLs, rejects unselected/unknown IDs, markup,
+extra fields and known unsupported claims, and can restore reviewed qualification
+clauses from a selected source. Otherwise valid answers have two to four sentence
+records. Unsafe prose with valid evidence falls back to original source text;
+abstention cannot become a lexical-only answer. These conservative checks do not
+prove semantic entailment. No verifier model, inference retry, conversation
+history or new production infrastructure is introduced. Source review remains
+necessary, and the larger model uses more of the shared free allowance.
 
 Search is deterministic lexical retrieval with curated keywords, at most six
 candidates. It is not semantic search and does not establish that every part of a
@@ -52,7 +52,7 @@ refused before inference. These checks complement the fixed source boundary;
 keyword filtering itself is not a security boundary.
 
 The model catalog and Free eligibility must be rechecked before activation. The
-[current model page](https://developers.cloudflare.com/workers-ai/models/llama-3.2-3b-instruct/)
+[current model page](https://developers.cloudflare.com/workers-ai/models/llama-3.3-70b-instruct-fp8-fast/)
 documents the binding API. Workers AI's
 [Free allocation](https://developers.cloudflare.com/workers-ai/platform/pricing/)
 is shared across the account and fails when exhausted; do not upgrade the plan or
