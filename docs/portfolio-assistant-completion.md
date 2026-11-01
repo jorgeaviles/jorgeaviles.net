@@ -67,9 +67,9 @@ No fixture request was retried automatically. The native account counter showed
 from per-response usage because aggregation and other traffic can differ.
 
 The final hosted sample includes 14 supported questions covering every indexed
-topic, plus all 16 unsupported/ambiguous/privacy/injection cases. Twelve redundant
-supported paraphrases from the full 42-case dataset were not run on the hosted
-candidate; they remain covered by deterministic tests. Thirty hosted cases are
+topic, plus all 16 unsupported/ambiguous/privacy/injection cases. Twelve additional supported formulations from the full 42-case dataset were not
+run on the hosted candidate, including more specific preprocessing and
+data-platform questions. They remain covered only by deterministic tests. Thirty hosted cases are
 not a general accuracy guarantee or an independent benchmark.
 
 | Final sample outcome                                                                 |              Result |
