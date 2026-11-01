@@ -243,9 +243,7 @@ test('conversational sentences have nearby source links and retain keyboard/mobi
   await expect(
     page.getByRole('link', { name: /Source 1 for sentence/ }),
   ).toHaveCount(2);
-  await expect(
-    page.getByText(/AI summarized these public sources/),
-  ).toBeVisible();
+  await expect(page.getByText(/AI summary/)).toBeVisible();
   await accessible(page);
   await page.screenshot({
     path: testInfo.outputPath('conversational-assistant.png'),

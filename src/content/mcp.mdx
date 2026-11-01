@@ -8,25 +8,25 @@ You can also review the [project case studies](/work/), [professional background
 
 ### Experience and technical judgment
 
-For a hiring conversation or project review, explore what I built, the decisions behind it, and the boundaries of the work:
+For a hiring conversation or project review, explore what I built, the decisions behind it, and their practical applications:
 
 - “Compare Jorge’s analytical data platform with the audit-tracking application. What did he build, and how do they fit together?”
 - “Which projects demonstrate Python, PySpark, SQL, and application development? Link to the supporting case studies.”
-- “What machine-learning methods are implemented, and what evaluation evidence is still needed?”
+- “How does Jorge approach feature engineering, model comparison, and evaluation?”
 
 ### Academic preparation and research
 
 For an admissions or academic review, connect the published background with specific research and technical work:
 
 - “How does Jorge’s economics and research background connect with his later analytical and software work?”
-- “What was Jorge’s contribution to the cattle-ranch profitability study? Distinguish research assistance from authorship.”
+- “How did Jorge contribute research assistance to the cattle-ranch profitability study?”
 - “Which original pages would help me assess his research experience and approach to evaluating models?”
 
-These are suggested questions, not promised answers. Ask your application to cite the original pages and identify gaps rather than fill them in. The integration returns selected portfolio passages. The linked original pages provide the fuller context, including education and credentials.
+Ask your application to cite the original pages. Follow those links for project details, education, and credentials.
 
 ## What the integration provides
 
-Model Context Protocol (MCP) is a standard that lets an AI application request information through defined tools. This service returns curated public text with original source URLs. Your connected application decides how to explain that information; the MCP service itself does not generate answers or invoke an AI model.
+Model Context Protocol (MCP) is a standard that lets an AI application request information through defined tools. This service returns curated public text with original source URLs. Your connected application uses those passages to answer your questions.
 
 <ol className="mcp-flow" aria-label="How portfolio retrieval works">
   <li>Your AI application</li>
@@ -41,41 +41,41 @@ Find the published professional projects, with IDs, titles, and original page li
 
 ### `get_case_study`
 
-Read the approved passages for one project, including its contribution and limitations. Use a project ID returned by `list_projects`, for example `{"id":"analytical-data-platforms"}`.
+Read the approved passages for one project, including my contribution and technical approach. Use a project ID returned by `list_projects`, for example `{"id":"analytical-data-platforms"}`.
 
 ### `search_portfolio`
 
-Find relevant passages across projects, professional background, and research. For example: `{"query":"experimental models","limit":2}`. An empty result means the curated index did not supply a matching passage; it is not an invitation to invent an answer.
+Find relevant passages across projects, professional background, and research. For example: `{"query":"experimental models","limit":2}`.
 
 ### `get_research`
 
-Retrieve the published research experience and source links. Research assistance and acknowledgment remain distinct from paper authorship. Input: `{}`.
+Explore my faculty research experience, published acknowledgment, and original source links. Input: `{}`.
 
 ## Connect an AI application
 
-If your application supports remote MCP servers, look for a setting to add a server or connection. Enter this endpoint:
+In an application that supports remote MCP servers, add a server or connection with this endpoint:
 
 <code className="mcp-endpoint">https://portfolio-api.jorgeaviles.net/mcp</code>
 
-Choose **Streamable HTTP** and **no authentication**, where those choices are offered. This public endpoint does not require a portfolio account or API key. Your application may have its own subscription, permissions, or connection requirements; support varies by product.
+Choose **Streamable HTTP** and **no authentication**.
 
-After connecting, ask the application to discover the portfolio tools and try one of the questions above. Review its requested permissions and the source links in its answer. If your application does not support this connection, you can still [browse the projects](/work/) or [ask on the website](/ask/).
+After connecting, ask the application to discover the portfolio tools and try one of the questions above. Follow the source links to explore the work in detail.
 
 <details>
   <summary>Technical connection details</summary>
 
-The endpoint accepts MCP requests over HTTP POST. Opening it as an ordinary browser page returns a method error. It uses stateless Streamable HTTP; no persistent application session or conversation history is required.
+The endpoint accepts MCP requests over HTTP POST using stateless Streamable HTTP.
 
 Tool inputs reject extra properties. Project IDs contain 1–80 lowercase letters, digits, or hyphens. Search accepts a plain-text query of 1–500 characters, with an optional integer `limit` from 1–6. Successful results include an `indexVersion` identifying the curated content. Unknown IDs return tool errors, and requests and responses have fixed size limits.
 
-The endpoint is rate limited, so avoid rapid repeated calls. Browser-based clients must satisfy the origin policy, which permits this website’s origin. A server-side connection from a compatible application is different from a browser making a direct cross-origin request. Arbitrary URLs and files cannot be retrieved through these tools.
+Use a server-side MCP connection for external applications. Direct browser requests permit this website’s origin. Request throttling keeps the public service available.
 
 The [public implementation](https://github.com/jorgeaviles/jorgeaviles.net/tree/main/workers/portfolio-api) and [MCP transport specification](https://modelcontextprotocol.io/specification/latest/basic/transports) provide further technical context.
 
 </details>
 
-## Scope and privacy
+## Public content and privacy
 
-Only approved public portfolio information is available. The tools cannot modify content or access private accounts, files, employer databases, or the wider web. The [Learning Lab](/lab/) uses independently fabricated synthetic examples; it is separate from professional systems. Experimental models are not operational deployments, and implemented evaluation code is not proof of completed performance evaluation.
+The read-only tools retrieve curated passages from the project case studies, professional background, and research pages. Each result includes its original source URL.
 
-MCP retrieval uses no Workers AI inference, database, or persistent conversation store. The connecting IP address is used transiently for throttling. The application does not intentionally log request contents; Cloudflare processes network requests and operational metadata. Your connected AI application follows its own data practices. Do not send personal, confidential, or agency information. Read the [privacy disclosure](/colophon/#portfolio-mcp-privacy) for details.
+The service uses the connecting IP address transiently for throttling. Cloudflare processes network requests and operational metadata; your connected AI application follows its own data practices. Read the [privacy disclosure](/colophon/#portfolio-mcp-privacy) for data-handling details.

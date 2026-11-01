@@ -248,7 +248,7 @@ test.describe('without JavaScript', () => {
           page.getByRole('figure', { name: 'Conceptual analytical data flow' }),
         ).toBeVisible();
         await expect(page.locator('.analytical-flow figcaption')).toContainText(
-          'Not a diagram of the internal production environment.',
+          'Conceptual architecture showing technology categories and responsibilities.',
         );
       }
       if (route.path === '/work/analytical-applications/') {
@@ -257,7 +257,9 @@ test.describe('without JavaScript', () => {
         ).toBeVisible();
         await expect(
           page.locator('.case-study-workflow figcaption'),
-        ).toContainText('Not a screenshot of the internal application.');
+        ).toContainText(
+          'Conceptual application workflow showing implemented capabilities.',
+        );
       }
       if (route.path === '/work/machine-learning-audit-prioritization/') {
         await expect(
@@ -269,7 +271,7 @@ test.describe('without JavaScript', () => {
       }
       if (route.path === '/lab/') {
         const fallback = page.locator('noscript .prose');
-        await expect(fallback).toContainText('Without JavaScript');
+        await expect(fallback).toContainText('Linear regression predicts');
         await expect(fallback).toBeVisible();
         await expect(
           page.getByRole('slider', { name: /Cattle sold annually/ }),
@@ -379,10 +381,10 @@ test('approved case study stays consistent across listings and renders a static 
     'approximately 10 staff users',
   );
   await expect(page.locator('article.prose')).toContainText(
-    'not a count of portal users or a verified current active-panel count',
+    'search, document, and progress tools',
   );
   await expect(figure.locator('figcaption')).toHaveText(
-    'Conceptual application workflow showing implemented capabilities. Not a screenshot of the internal application.',
+    'Conceptual application workflow showing implemented capabilities.',
   );
   await expect(page.locator('astro-island')).toHaveCount(0);
   await expectNoHorizontalOverflow(page);
@@ -419,7 +421,7 @@ test('data platform case study shares metadata and explains a static technology 
     'Apply',
   ]);
   await expect(figure.locator('figcaption')).toHaveText(
-    'Conceptual architecture using technology categories and responsibilities. Not a diagram of the internal production environment.',
+    'Conceptual architecture showing technology categories and responsibilities.',
   );
   await expect(figure).toContainText('Python / PySpark → Parquet');
   await expect(figure).toContainText(
@@ -570,11 +572,11 @@ test('local metadata, identity and privacy disclosure remain coherent without th
     page.getByRole('heading', { name: 'Privacy & measurement' }),
   ).toBeVisible();
   await expect(page.locator('main')).toContainText(
-    'When enabled on the public site',
+    'uses a browser beacon on the public site',
   );
   await expect(page.locator('main')).toContainText('Cloudflare Web Analytics');
   await expect(page.locator('main')).toContainText(
-    'slider settings and model results are not submitted as analytics events',
+    'data, calculations, sliders, and model results locally in your browser',
   );
   await expect(page.locator('main')).not.toContainText(
     'There are no analytics',
@@ -684,8 +686,8 @@ test('professional modeling explains the target, evaluation, and proposed integr
     'pandas supports fold-metric summaries',
     'Completed evaluation is unverified',
     'exports contain no execution outputs',
-    'label-name mismatch',
-    'not an estimate of recoverable funds',
+    'align the label name',
+    'multiplies a score by the bill amount to help prioritize review',
   ]) {
     await expect(article).toContainText(boundary);
   }
@@ -770,7 +772,7 @@ test('About distinguishes academic education from compact technical coursework a
   });
   await expect(education).toHaveAttribute('id', 'education');
   await expect(education.locator('.education-intro')).toContainText(
-    'My education in economics has been complemented by continuing technical coursework',
+    'I build on my economics education through technical coursework',
   );
   await expect(education.getByRole('heading', { level: 3 })).toHaveText([
     'Academic Education',

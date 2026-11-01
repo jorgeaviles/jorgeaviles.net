@@ -42,9 +42,8 @@ export default function LearningLab() {
         )}
       </fieldset>
       <p className="section-footnote">
-        All ranch data is synthetic. This educational example is inspired by a{' '}
-        <a href="/research/">profitability-prediction research question</a> and
-        does not reproduce the published study.
+        Explore synthetic ranch data in an educational example inspired by a{' '}
+        <a href="/research/">profitability-prediction research question</a>.
       </p>
     </section>
   );
