@@ -2,6 +2,7 @@ import { describe, expect, it, vi } from 'vitest';
 import {
   parseGeneration,
   GENERATION,
+  generationFormat,
 } from '../../../workers/portfolio-api/src/generation';
 import { index } from '../../../workers/portfolio-api/src/content';
 import worker, { type Env } from '../../../workers/portfolio-api/src/index';
@@ -20,12 +21,40 @@ const make = (ids: string[]) => ({
 const parse = (value: unknown) =>
   parseGeneration({ response: value }, evidence);
 describe('bounded sentence synthesis and evidence fallback', () => {
+  it('constrains provider output to retrieved IDs without treating schema as factual verification', () => {
+    const format = generationFormat(['ml-framework', 'ml-status']);
+    expect(format.type).toBe('json_schema');
+    expect(format.json_schema.anyOf[0].additionalProperties).toBe(false);
+    expect(format.json_schema.anyOf[0].properties.first.enum).toEqual([
+      'ml-framework',
+      'ml-status',
+    ]);
+    expect(
+      format.json_schema.anyOf[0].properties.sentences.items.properties
+        .passageIds.items.enum,
+    ).toEqual(['ml-framework', 'ml-status']);
+    expect(format.json_schema.anyOf[0].properties.sentences.maxItems).toBe(2);
+    expect(format.json_schema.anyOf[0].properties.sentences.minItems).toBe(2);
+  });
   it.each(Object.keys(fixtures))(
     'accepts independently reviewed public-source fixture %s',
     (id) => {
       expect(parse(make([id])).sentences).toHaveLength(2);
     },
   );
+  it('restores an omitted qualification only from selected approved source text', () => {
+    const value = make(['ml-status']);
+    value.sentences[0].text =
+      'Jorge implemented supervised learning for audit prioritization.';
+    const result = parse(value);
+    expect(result.sentences).toHaveLength(3);
+    expect(result.sentences?.at(-1)).toEqual({
+      text: 'The program remains experimental.',
+      passageIds: ['ml-status'],
+    });
+    value.sentences[0].text = 'The program is not experimental.';
+    expect(parse(value).sentences).toBeNull();
+  });
   it('requires each selected passage to be represented, including ML methods AND limitations', () => {
     expect(parse(make(['ml-framework', 'ml-status'])).sentences).toHaveLength(
       4,
@@ -70,6 +99,12 @@ describe('bounded sentence synthesis and evidence fallback', () => {
       expect(parse(v)).toEqual({ ids: ['ml-status'], sentences: null });
     },
   );
+  it('does not accept an author name from an uncited passage in a comparison', () => {
+    const value = make(['research-methods', 'ml-framework']);
+    value.sentences[0].text =
+      "Asthana's research uses kernel ridge regression.";
+    expect(parse(value).sentences).toBeNull();
+  });
   it('rejects invented sentence citations without discarding valid selected evidence', () => {
     const v = make(['ml-status']);
     v.sentences[0].passageIds = ['research-credit'];

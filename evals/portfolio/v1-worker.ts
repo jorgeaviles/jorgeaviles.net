@@ -10,7 +10,8 @@ import {
 import { serveMcp } from '../../workers/portfolio-api/src/mcp';
 import { LIMITS, type AskResponse } from '../../src/lib/portfolio/types';
 
-import { MODEL } from '../../workers/portfolio-api/src/model';
+// Pin the historical model: later candidate changes must not mutate this baseline.
+const MODEL = '@cf/meta/llama-3.2-3b-instruct' as const;
 interface Limiter {
   limit(input: { key: string }): Promise<{ success: boolean }>;
 }

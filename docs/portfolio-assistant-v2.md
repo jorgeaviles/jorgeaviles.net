@@ -1,4 +1,8 @@
-# Conversational assistant v2 — release blocked
+# Conversational assistant v2 — historical blocked trial
+
+This report preserves the failed PR #42 trial. See the newer
+[completion evaluation and protected release review](portfolio-assistant-completion.md)
+for the follow-up implementation. The historical measurements below are unchanged.
 
 **Do not activate this candidate.** The implementation and reproducible tests are
 reviewable, but the existing model did not meet the requested conversational

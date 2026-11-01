@@ -1,4 +1,5 @@
 import AxeBuilder from '@axe-core/playwright';
+import hosted from '../../evals/portfolio/completion-recordings.json' with { type: 'json' };
 import { expect, test, type Page } from '@playwright/test';
 const endpoint = 'https://portfolio-api.jorgeaviles.net/ask';
 const answer = {
@@ -251,3 +252,38 @@ test('conversational sentences have nearby source links and retain keyboard/mobi
     fullPage: true,
   });
 });
+
+for (const caseId of ['ml-14', 'comparison-19']) {
+  test(`recorded hosted answer ${caseId} keeps sentence citations readable`, async ({
+    page,
+  }, testInfo) => {
+    const record = hosted.records.find((r) => r.caseId === caseId)!;
+    const requests = await mock(page, record.currentResponse as typeof answer);
+    await ready(page);
+    await page
+      .getByLabel('Your question')
+      .fill(
+        caseId === 'ml-14'
+          ? 'Are completed model evaluations substantiated by the saved notebooks?'
+          : 'Compare the application and data platform.',
+      );
+    await page
+      .getByRole('button', { name: 'Ask a question', exact: true })
+      .click();
+    await expect(
+      page.getByRole('heading', { name: 'From the public sources' }),
+    ).toBeFocused();
+    await expect(page.locator('.assistant-citation')).toHaveCount(
+      record.currentResponse.sentences!.reduce(
+        (sum, s) => sum + s.sourceIndexes.length,
+        0,
+      ),
+    );
+    expect(requests).toHaveLength(1);
+    await accessible(page);
+    await page.screenshot({
+      path: testInfo.outputPath(`hosted-${caseId}.png`),
+      fullPage: true,
+    });
+  });
+}

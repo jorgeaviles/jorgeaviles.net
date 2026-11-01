@@ -1,6 +1,11 @@
 import { index } from './content';
 import { searchAssistant } from './assistant-retrieval';
-import { GENERATION, generationPrompt, parseGeneration } from './generation';
+import {
+  GENERATION,
+  generationPrompt,
+  generationFormat,
+  parseGeneration,
+} from './generation';
 // Evaluate the SDK at isolate startup, outside the first MCP request budget.
 // The route still checks MCP_ENABLED before constructing any request server.
 import { serveMcp } from './mcp';
@@ -13,12 +18,13 @@ interface Limiter {
 export interface Env {
   AI: {
     run(
-      model: typeof MODEL,
+      model: string,
       input: {
         messages: { role: string; content: string }[];
         max_tokens: number;
         temperature: number;
         stream: false;
+        response_format?: ReturnType<typeof generationFormat>;
       },
     ): Promise<unknown>;
   };
@@ -229,6 +235,7 @@ export default {
                 }),
               },
             ],
+            response_format: generationFormat(candidates.map((p) => p.id)),
             max_tokens: GENERATION.tokens,
             temperature: 0,
             stream: false,

@@ -1,0 +1,1122 @@
+{
+  "schemaVersion": 1,
+  "indexVersion": "6be7485b1d3e31d724577e299130a4f80a302642eb3eb32949f5b25a16f4324a",
+  "model": "@cf/meta/llama-3.3-70b-instruct-fp8-fast",
+  "description": "Public-source hosted recordings; final-validator replay is offline and not additional model inference. Invalid model claims are test evidence, not endorsed facts.",
+  "stats": {
+    "small": {
+      "requests": 6,
+      "inferences": 6,
+      "neurons": 17.618129014968872,
+      "inputTokens": 3465,
+      "outputTokens": 96,
+      "medianClientMs": 651.1778545
+    },
+    "large": {
+      "requests": 6,
+      "inferences": 6,
+      "neurons": 140.532732963562,
+      "inputTokens": 3465,
+      "outputTokens": 235,
+      "medianClientMs": 1500.8200414999997
+    },
+    "final": {
+      "requests": 6,
+      "inferences": 6,
+      "neurons": 188.8860969543457,
+      "inputTokens": 3819,
+      "outputTokens": 425,
+      "medianClientMs": 2432.2932914999997
+    },
+    "ready": {
+      "requests": 30,
+      "inferences": 20,
+      "neurons": 544.7729682922363,
+      "inputTokens": 11604,
+      "outputTokens": 1149,
+      "medianClientMs": 1185.1964995000017
+    }
+  },
+  "records": [
+    {
+      "caseId": "ml-09",
+      "model": "@cf/meta/llama-3.3-70b-instruct-fp8-fast",
+      "modelResponse": {
+        "first": "ml-framework",
+        "second": "ml-status",
+        "sentences": [
+          {
+            "text": "Jorge implemented a machine learning method using Spark ML and Python/PySpark.",
+            "passageIds": ["ml-framework", "ml-status"]
+          },
+          {
+            "text": "The program remains experimental, and execution records are needed to substantiate completed evaluations.",
+            "passageIds": ["ml-status"]
+          }
+        ]
+      },
+      "hostedStatus": "answered",
+      "hostedSynthesis": true,
+      "modelCalls": 1,
+      "usage": {
+        "prompt_tokens": 681,
+        "completion_tokens": 85,
+        "total_tokens": 766,
+        "prompt_tokens_details": {
+          "cached_tokens": 0
+        },
+        "neurons": 35.56913757324219
+      },
+      "clientWallMs": 5151.0485,
+      "currentResponse": {
+        "status": "answered",
+        "answer": "Jorge implemented a machine learning method using Spark ML and Python/PySpark. The program remains experimental, and execution records are needed to substantiate completed evaluations.",
+        "references": [
+          {
+            "title": "Developing machine-learning models for audit prioritization",
+            "url": "https://jorgeaviles.net/work/machine-learning-audit-prioritization/"
+          }
+        ],
+        "indexVersion": "6be7485b1d3e31d724577e299130a4f80a302642eb3eb32949f5b25a16f4324a",
+        "sentences": [
+          {
+            "text": "Jorge implemented a machine learning method using Spark ML and Python/PySpark.",
+            "sourceIndexes": [0]
+          },
+          {
+            "text": "The program remains experimental, and execution records are needed to substantiate completed evaluations.",
+            "sourceIndexes": [0]
+          }
+        ]
+      },
+      "replayCalls": 1
+    },
+    {
+      "caseId": "application-01",
+      "model": "@cf/meta/llama-3.3-70b-instruct-fp8-fast",
+      "modelResponse": {
+        "first": "portal-purpose",
+        "second": null,
+        "sentences": [
+          {
+            "text": "The Blazor analytical application brings record search, audit detail, lifecycle and progress views, documents, change history, and workbook exports into a permission-controlled workspace.",
+            "passageIds": ["portal-purpose"]
+          },
+          {
+            "text": "It connects analytical investigation with operational audit work.",
+            "passageIds": ["portal-purpose"]
+          }
+        ]
+      },
+      "hostedStatus": "answered",
+      "hostedSynthesis": true,
+      "modelCalls": 1,
+      "usage": {
+        "prompt_tokens": 720,
+        "completion_tokens": 89,
+        "total_tokens": 809,
+        "prompt_tokens_details": {
+          "cached_tokens": 0
+        },
+        "neurons": 37.42839813232422
+      },
+      "clientWallMs": 2842.545416,
+      "currentResponse": {
+        "status": "answered",
+        "answer": "The Blazor analytical application brings record search, audit detail, lifecycle and progress views, documents, change history, and workbook exports into a permission-controlled workspace. It connects analytical investigation with operational audit work.",
+        "references": [
+          {
+            "title": "Designing an audit-tracking workspace",
+            "url": "https://jorgeaviles.net/work/analytical-applications/"
+          }
+        ],
+        "indexVersion": "6be7485b1d3e31d724577e299130a4f80a302642eb3eb32949f5b25a16f4324a",
+        "sentences": [
+          {
+            "text": "The Blazor analytical application brings record search, audit detail, lifecycle and progress views, documents, change history, and workbook exports into a permission-controlled workspace.",
+            "sourceIndexes": [0]
+          },
+          {
+            "text": "It connects analytical investigation with operational audit work.",
+            "sourceIndexes": [0]
+          }
+        ]
+      },
+      "replayCalls": 1
+    },
+    {
+      "caseId": "ml-14",
+      "model": "@cf/meta/llama-3.3-70b-instruct-fp8-fast",
+      "modelResponse": {
+        "first": "ml-status",
+        "second": null,
+        "sentences": [
+          {
+            "text": "Jorge implemented a supervised-learning program.",
+            "passageIds": ["ml-status"]
+          },
+          {
+            "text": "Execution records are needed to substantiate completed evaluations.",
+            "passageIds": ["ml-status"]
+          }
+        ]
+      },
+      "hostedStatus": "answered",
+      "hostedSynthesis": true,
+      "modelCalls": 1,
+      "usage": {
+        "prompt_tokens": 705,
+        "completion_tokens": 66,
+        "total_tokens": 771,
+        "prompt_tokens_details": {
+          "cached_tokens": 0
+        },
+        "neurons": 32.3178596496582
+      },
+      "clientWallMs": 2491.102917,
+      "currentResponse": {
+        "status": "answered",
+        "answer": "Jorge implemented a supervised-learning program. Execution records are needed to substantiate completed evaluations. The program remains experimental.",
+        "references": [
+          {
+            "title": "Developing machine-learning models for audit prioritization",
+            "url": "https://jorgeaviles.net/work/machine-learning-audit-prioritization/"
+          }
+        ],
+        "indexVersion": "6be7485b1d3e31d724577e299130a4f80a302642eb3eb32949f5b25a16f4324a",
+        "sentences": [
+          {
+            "text": "Jorge implemented a supervised-learning program.",
+            "sourceIndexes": [0]
+          },
+          {
+            "text": "Execution records are needed to substantiate completed evaluations.",
+            "sourceIndexes": [0]
+          },
+          {
+            "text": "The program remains experimental.",
+            "sourceIndexes": [0]
+          }
+        ]
+      },
+      "replayCalls": 1
+    },
+    {
+      "caseId": "research-24",
+      "model": "@cf/meta/llama-3.3-70b-instruct-fp8-fast",
+      "modelResponse": {
+        "first": "research-credit",
+        "second": "research-role",
+        "sentences": [
+          {
+            "text": "Jorge was an acknowledged research assistant.",
+            "passageIds": ["research-credit", "research-role"]
+          },
+          {
+            "text": "Asthana was the author of the study.",
+            "passageIds": ["research-credit"]
+          }
+        ]
+      },
+      "hostedStatus": "answered",
+      "hostedSynthesis": true,
+      "modelCalls": 1,
+      "usage": {
+        "prompt_tokens": 652,
+        "completion_tokens": 74,
+        "total_tokens": 726,
+        "prompt_tokens_details": {
+          "cached_tokens": 0
+        },
+        "neurons": 32.54291534423828
+      },
+      "clientWallMs": 3024.673583,
+      "currentResponse": {
+        "status": "answered",
+        "answer": "Jorge was an acknowledged research assistant. Asthana was the author of the study.",
+        "references": [
+          {
+            "title": "Cattle-ranch profitability research",
+            "url": "https://jorgeaviles.net/research/"
+          },
+          {
+            "title": "Experience, education & approach",
+            "url": "https://jorgeaviles.net/about/"
+          }
+        ],
+        "indexVersion": "6be7485b1d3e31d724577e299130a4f80a302642eb3eb32949f5b25a16f4324a",
+        "sentences": [
+          {
+            "text": "Jorge was an acknowledged research assistant.",
+            "sourceIndexes": [0, 1]
+          },
+          {
+            "text": "Asthana was the author of the study.",
+            "sourceIndexes": [0]
+          }
+        ]
+      },
+      "replayCalls": 1
+    },
+    {
+      "caseId": "unsupported-30",
+      "model": "@cf/meta/llama-3.3-70b-instruct-fp8-fast",
+      "modelResponse": {
+        "first": null,
+        "second": null,
+        "sentences": []
+      },
+      "hostedStatus": "unsupported",
+      "hostedSynthesis": false,
+      "modelCalls": 1,
+      "usage": {
+        "prompt_tokens": 550,
+        "completion_tokens": 17,
+        "total_tokens": 567,
+        "prompt_tokens_details": {
+          "cached_tokens": 0
+        },
+        "neurons": 18.148908615112305
+      },
+      "clientWallMs": 994.6914170000018,
+      "currentResponse": {
+        "status": "unsupported",
+        "answer": "The approved public sources do not support an answer to that question. Try asking about the published projects, professional background, or research assistance.",
+        "references": [],
+        "indexVersion": "6be7485b1d3e31d724577e299130a4f80a302642eb3eb32949f5b25a16f4324a"
+      },
+      "replayCalls": 1
+    },
+    {
+      "caseId": "near-match-35",
+      "model": "@cf/meta/llama-3.3-70b-instruct-fp8-fast",
+      "modelResponse": {
+        "first": null,
+        "second": null,
+        "sentences": []
+      },
+      "hostedStatus": "unsupported",
+      "hostedSynthesis": false,
+      "modelCalls": 1,
+      "usage": {
+        "prompt_tokens": 463,
+        "completion_tokens": 17,
+        "total_tokens": 480,
+        "prompt_tokens_details": {
+          "cached_tokens": 0
+        },
+        "neurons": 15.828821182250977
+      },
+      "clientWallMs": 1229.0842080000002,
+      "currentResponse": {
+        "status": "unsupported",
+        "answer": "The approved public sources do not support an answer to that question. Try asking about the published projects, professional background, or research assistance.",
+        "references": [],
+        "indexVersion": "6be7485b1d3e31d724577e299130a4f80a302642eb3eb32949f5b25a16f4324a"
+      },
+      "replayCalls": 1
+    },
+    {
+      "caseId": "application-04",
+      "model": "@cf/meta/llama-3.3-70b-instruct-fp8-fast",
+      "modelResponse": {
+        "first": "portal-role",
+        "second": "portal-purpose",
+        "sentences": [
+          {
+            "text": "Jorge develops the Audit Portal.",
+            "passageIds": ["portal-role", "portal-purpose"]
+          },
+          {
+            "text": "Colleagues contribute firsthand knowledge of attorney billing and casework.",
+            "passageIds": ["portal-role"]
+          }
+        ]
+      },
+      "hostedStatus": "answered",
+      "hostedSynthesis": true,
+      "modelCalls": 1,
+      "usage": {
+        "prompt_tokens": 589,
+        "completion_tokens": 73,
+        "total_tokens": 662,
+        "prompt_tokens_details": {
+          "cached_tokens": 0
+        },
+        "neurons": 30.65804672241211
+      },
+      "clientWallMs": 3019.659583,
+      "currentResponse": {
+        "status": "answered",
+        "answer": "Jorge develops the Audit Portal. Colleagues contribute firsthand knowledge of attorney billing and casework.",
+        "references": [
+          {
+            "title": "Designing an audit-tracking workspace",
+            "url": "https://jorgeaviles.net/work/analytical-applications/"
+          }
+        ],
+        "indexVersion": "6be7485b1d3e31d724577e299130a4f80a302642eb3eb32949f5b25a16f4324a",
+        "sentences": [
+          {
+            "text": "Jorge develops the Audit Portal.",
+            "sourceIndexes": [0]
+          },
+          {
+            "text": "Colleagues contribute firsthand knowledge of attorney billing and casework.",
+            "sourceIndexes": [0]
+          }
+        ]
+      },
+      "replayCalls": 1
+    },
+    {
+      "caseId": "data-07",
+      "model": "@cf/meta/llama-3.3-70b-instruct-fp8-fast",
+      "modelResponse": {
+        "first": "data-purpose",
+        "second": "portal-role",
+        "sentences": [
+          {
+            "text": "Jorge develops the analytical data platform.",
+            "passageIds": ["data-purpose", "portal-role"]
+          },
+          {
+            "text": "He is the sole hands-on developer of the platform.",
+            "passageIds": ["data-purpose", "portal-role"]
+          }
+        ]
+      },
+      "hostedStatus": "answered",
+      "hostedSynthesis": true,
+      "modelCalls": 1,
+      "usage": {
+        "prompt_tokens": 650,
+        "completion_tokens": 76,
+        "total_tokens": 726,
+        "prompt_tokens_details": {
+          "cached_tokens": 0
+        },
+        "neurons": 32.89918899536133
+      },
+      "clientWallMs": 2760.064375,
+      "currentResponse": {
+        "status": "answered",
+        "answer": "Jorge develops the analytical data platform. He is the sole hands-on developer of the platform.",
+        "references": [
+          {
+            "title": "Building an analytical data platform",
+            "url": "https://jorgeaviles.net/work/analytical-data-platforms/"
+          },
+          {
+            "title": "Designing an audit-tracking workspace",
+            "url": "https://jorgeaviles.net/work/analytical-applications/"
+          }
+        ],
+        "indexVersion": "6be7485b1d3e31d724577e299130a4f80a302642eb3eb32949f5b25a16f4324a",
+        "sentences": [
+          {
+            "text": "Jorge develops the analytical data platform.",
+            "sourceIndexes": [0, 1]
+          },
+          {
+            "text": "He is the sole hands-on developer of the platform.",
+            "sourceIndexes": [0, 1]
+          }
+        ]
+      },
+      "replayCalls": 1
+    },
+    {
+      "caseId": "ml-12",
+      "model": "@cf/meta/llama-3.3-70b-instruct-fp8-fast",
+      "modelResponse": {
+        "first": "ml-ranking",
+        "second": null,
+        "sentences": [
+          {
+            "text": "Random Forest configuration proves nothing about measured results due to lack of execution outputs.",
+            "passageIds": ["ml-ranking"]
+          },
+          {
+            "text": "Measured results require execution records for substantiation.",
+            "passageIds": ["ml-ranking"]
+          }
+        ]
+      },
+      "hostedStatus": "answered",
+      "hostedSynthesis": true,
+      "modelCalls": 1,
+      "usage": {
+        "prompt_tokens": 459,
+        "completion_tokens": 71,
+        "total_tokens": 530,
+        "prompt_tokens_details": {
+          "cached_tokens": 0
+        },
+        "neurons": 26.781639099121094
+      },
+      "clientWallMs": 2125.2367910000003,
+      "currentResponse": {
+        "status": "answered",
+        "answer": "Random Forest configuration proves nothing about measured results due to lack of execution outputs. Measured results require execution records for substantiation.",
+        "references": [
+          {
+            "title": "Developing machine-learning models for audit prioritization",
+            "url": "https://jorgeaviles.net/work/machine-learning-audit-prioritization/"
+          }
+        ],
+        "indexVersion": "6be7485b1d3e31d724577e299130a4f80a302642eb3eb32949f5b25a16f4324a",
+        "sentences": [
+          {
+            "text": "Random Forest configuration proves nothing about measured results due to lack of execution outputs.",
+            "sourceIndexes": [0]
+          },
+          {
+            "text": "Measured results require execution records for substantiation.",
+            "sourceIndexes": [0]
+          }
+        ]
+      },
+      "replayCalls": 1
+    },
+    {
+      "caseId": "ml-15",
+      "model": "@cf/meta/llama-3.3-70b-instruct-fp8-fast",
+      "modelResponse": {
+        "first": "ml-calibration",
+        "second": null,
+        "sentences": [
+          {
+            "text": "Jorge implemented Platt calibration using Spark logistic regression.",
+            "passageIds": ["ml-calibration"]
+          },
+          {
+            "text": "The program remains experimental.",
+            "passageIds": ["ml-status"]
+          }
+        ]
+      },
+      "hostedStatus": "answered",
+      "hostedSynthesis": false,
+      "modelCalls": 1,
+      "usage": {
+        "prompt_tokens": 571,
+        "completion_tokens": 66,
+        "total_tokens": 637,
+        "prompt_tokens_details": {
+          "cached_tokens": 0
+        },
+        "neurons": 28.74439239501953
+      },
+      "clientWallMs": 2105.380541999999,
+      "currentResponse": {
+        "status": "answered",
+        "answer": "Calibration and backtesting. I implemented Platt calibration using Spark logistic regression on the raw model probability, with a separate calibration window, a later test window, a buffer for delayed labels, and rolling time-based backtests. The separate windows distinguish model fitting, probability calibration, and assessment on later data. Calibration can change probability interpretation without necessarily improving ranking.",
+        "references": [
+          {
+            "title": "Developing machine-learning models for audit prioritization",
+            "url": "https://jorgeaviles.net/work/machine-learning-audit-prioritization/"
+          }
+        ],
+        "indexVersion": "6be7485b1d3e31d724577e299130a4f80a302642eb3eb32949f5b25a16f4324a"
+      },
+      "replayCalls": 1
+    },
+    {
+      "caseId": "ml-17",
+      "model": "@cf/meta/llama-3.3-70b-instruct-fp8-fast",
+      "modelResponse": {
+        "first": "ml-label",
+        "second": null,
+        "sentences": [
+          {
+            "text": "The reduction label represents whether the review's reduction field is populated.",
+            "passageIds": ["ml-label"]
+          },
+          {
+            "text": "It is not a fraud label.",
+            "passageIds": ["ml-label"]
+          }
+        ]
+      },
+      "hostedStatus": "answered",
+      "hostedSynthesis": true,
+      "modelCalls": 1,
+      "usage": {
+        "prompt_tokens": 509,
+        "completion_tokens": 69,
+        "total_tokens": 578,
+        "prompt_tokens_details": {
+          "cached_tokens": 0
+        },
+        "neurons": 27.705411911010742
+      },
+      "clientWallMs": 2680.577374999999,
+      "currentResponse": {
+        "status": "answered",
+        "answer": "The reduction label represents whether the review's reduction field is populated. It is not a fraud label.",
+        "references": [
+          {
+            "title": "Developing machine-learning models for audit prioritization",
+            "url": "https://jorgeaviles.net/work/machine-learning-audit-prioritization/"
+          }
+        ],
+        "indexVersion": "6be7485b1d3e31d724577e299130a4f80a302642eb3eb32949f5b25a16f4324a",
+        "sentences": [
+          {
+            "text": "The reduction label represents whether the review's reduction field is populated.",
+            "sourceIndexes": [0]
+          },
+          {
+            "text": "It is not a fraud label.",
+            "sourceIndexes": [0]
+          }
+        ]
+      },
+      "replayCalls": 1
+    },
+    {
+      "caseId": "ml-18",
+      "model": "@cf/meta/llama-3.3-70b-instruct-fp8-fast",
+      "modelResponse": {
+        "first": "portal-ml",
+        "second": null,
+        "sentences": [
+          {
+            "text": "Predictive-score integration into the Portal is proposed.",
+            "passageIds": ["portal-ml"]
+          },
+          {
+            "text": "The Portal has various operational features.",
+            "passageIds": ["portal-purpose"]
+          }
+        ]
+      },
+      "hostedStatus": "answered",
+      "hostedSynthesis": false,
+      "modelCalls": 1,
+      "usage": {
+        "prompt_tokens": 514,
+        "completion_tokens": 68,
+        "total_tokens": 582,
+        "prompt_tokens_details": {
+          "cached_tokens": 0
+        },
+        "neurons": 27.63394546508789
+      },
+      "clientWallMs": 2464.9304999999986,
+      "currentResponse": {
+        "status": "answered",
+        "answer": "The separate machine-learning program investigates predictive scores for human review prioritization. Predictive-score integration into the Portal is proposed and requires evaluation, review, and operational approval before use in reviewer workflows.",
+        "references": [
+          {
+            "title": "Designing an audit-tracking workspace",
+            "url": "https://jorgeaviles.net/work/analytical-applications/"
+          }
+        ],
+        "indexVersion": "6be7485b1d3e31d724577e299130a4f80a302642eb3eb32949f5b25a16f4324a"
+      },
+      "replayCalls": 1
+    },
+    {
+      "caseId": "comparison-19",
+      "model": "@cf/meta/llama-3.3-70b-instruct-fp8-fast",
+      "modelResponse": {
+        "first": "data-purpose",
+        "second": "portal-purpose",
+        "sentences": [
+          {
+            "text": "The analytical data platform supports SQL investigation and aggregated analysis.",
+            "passageIds": ["data-purpose"]
+          },
+          {
+            "text": "The Audit Portal connects analytical investigation with operational audit work.",
+            "passageIds": ["portal-purpose"]
+          }
+        ]
+      },
+      "hostedStatus": "answered",
+      "hostedSynthesis": true,
+      "modelCalls": 1,
+      "usage": {
+        "prompt_tokens": 723,
+        "completion_tokens": 73,
+        "total_tokens": 796,
+        "prompt_tokens_details": {
+          "cached_tokens": 0
+        },
+        "neurons": 34.23151397705078
+      },
+      "clientWallMs": 5341.408416999999,
+      "currentResponse": {
+        "status": "answered",
+        "answer": "The analytical data platform supports SQL investigation and aggregated analysis. The Audit Portal connects analytical investigation with operational audit work.",
+        "references": [
+          {
+            "title": "Building an analytical data platform",
+            "url": "https://jorgeaviles.net/work/analytical-data-platforms/"
+          },
+          {
+            "title": "Designing an audit-tracking workspace",
+            "url": "https://jorgeaviles.net/work/analytical-applications/"
+          }
+        ],
+        "indexVersion": "6be7485b1d3e31d724577e299130a4f80a302642eb3eb32949f5b25a16f4324a",
+        "sentences": [
+          {
+            "text": "The analytical data platform supports SQL investigation and aggregated analysis.",
+            "sourceIndexes": [0]
+          },
+          {
+            "text": "The Audit Portal connects analytical investigation with operational audit work.",
+            "sourceIndexes": [1]
+          }
+        ]
+      },
+      "replayCalls": 1
+    },
+    {
+      "caseId": "comparison-20",
+      "model": "@cf/meta/llama-3.3-70b-instruct-fp8-fast",
+      "modelResponse": {
+        "first": "research-methods",
+        "second": "ml-framework",
+        "sentences": [
+          {
+            "text": "Asthana's research uses a vector space model and kernel ridge regression.",
+            "passageIds": ["research-methods"]
+          },
+          {
+            "text": "The professional machine-learning framework utilizes Spark ML and PySpark.",
+            "passageIds": ["ml-framework"]
+          }
+        ]
+      },
+      "hostedStatus": "answered",
+      "hostedSynthesis": true,
+      "modelCalls": 1,
+      "usage": {
+        "prompt_tokens": 750,
+        "completion_tokens": 80,
+        "total_tokens": 830,
+        "prompt_tokens_details": {
+          "cached_tokens": 0
+        },
+        "neurons": 36.38517761230469
+      },
+      "clientWallMs": 2392.0677910000013,
+      "currentResponse": {
+        "status": "answered",
+        "answer": "The study uses a vector space model and kernel ridge regression, evaluated with randomized ten-fold cross-validation, to examine the relationship between ranch characteristics and profitability. These methods connect a business forecasting question with statistical learning. The publisher’s paper provides the full methodology and acknowledgment.\n\nThe modeling engine is Spark ML, using Python/PySpark in Azure Synapse. Spark pipelines combine categorical indexing, model-appropriate encoding, median imputation, and vector assembly with the estimator. Learned preprocessing is fitted within each training fold. pandas supports fold-metric summaries around the Spark training workflow.",
+        "references": [
+          {
+            "title": "Cattle-ranch profitability research",
+            "url": "https://jorgeaviles.net/research/"
+          },
+          {
+            "title": "Developing machine-learning models for audit prioritization",
+            "url": "https://jorgeaviles.net/work/machine-learning-audit-prioritization/"
+          }
+        ],
+        "indexVersion": "6be7485b1d3e31d724577e299130a4f80a302642eb3eb32949f5b25a16f4324a"
+      },
+      "replayCalls": 1
+    },
+    {
+      "caseId": "research-23",
+      "model": "@cf/meta/llama-3.3-70b-instruct-fp8-fast",
+      "modelResponse": {
+        "first": "research-role",
+        "second": "research-credit",
+        "sentences": [
+          {
+            "text": "Jorge assisted with faculty research involving profitability forecasting and consumer spending.",
+            "passageIds": ["research-role"]
+          },
+          {
+            "text": "Jorge is acknowledged for research assistance in Asthana's 2014 study on cattle-ranch profitability.",
+            "passageIds": ["research-credit"]
+          }
+        ]
+      },
+      "hostedStatus": "answered",
+      "hostedSynthesis": true,
+      "modelCalls": 1,
+      "usage": {
+        "prompt_tokens": 650,
+        "completion_tokens": 85,
+        "total_tokens": 735,
+        "prompt_tokens_details": {
+          "cached_tokens": 0
+        },
+        "neurons": 34.74243927001953
+      },
+      "clientWallMs": 3541.630874999999,
+      "currentResponse": {
+        "status": "answered",
+        "answer": "Jorge assisted with faculty research involving profitability forecasting and consumer spending. Jorge is acknowledged for research assistance in Asthana's 2014 study on cattle-ranch profitability.",
+        "references": [
+          {
+            "title": "Experience, education & approach",
+            "url": "https://jorgeaviles.net/about/"
+          },
+          {
+            "title": "Cattle-ranch profitability research",
+            "url": "https://jorgeaviles.net/research/"
+          }
+        ],
+        "indexVersion": "6be7485b1d3e31d724577e299130a4f80a302642eb3eb32949f5b25a16f4324a",
+        "sentences": [
+          {
+            "text": "Jorge assisted with faculty research involving profitability forecasting and consumer spending.",
+            "sourceIndexes": [0]
+          },
+          {
+            "text": "Jorge is acknowledged for research assistance in Asthana's 2014 study on cattle-ranch profitability.",
+            "sourceIndexes": [1]
+          }
+        ]
+      },
+      "replayCalls": 1
+    },
+    {
+      "caseId": "background-25",
+      "model": "@cf/meta/llama-3.3-70b-instruct-fp8-fast",
+      "modelResponse": {
+        "first": "background",
+        "second": null,
+        "sentences": [
+          {
+            "text": "Jorge's background in economics led to banking data and business analysis.",
+            "passageIds": ["background"]
+          },
+          {
+            "text": "His experience connects business questions with data quality and analytical methods.",
+            "passageIds": ["background"]
+          }
+        ]
+      },
+      "hostedStatus": "answered",
+      "hostedSynthesis": true,
+      "modelCalls": 1,
+      "usage": {
+        "prompt_tokens": 457,
+        "completion_tokens": 72,
+        "total_tokens": 529,
+        "prompt_tokens_details": {
+          "cached_tokens": 0
+        },
+        "neurons": 26.933109283447266
+      },
+      "clientWallMs": 2737.0826249999955,
+      "currentResponse": {
+        "status": "answered",
+        "answer": "Jorge's background in economics led to banking data and business analysis. His experience connects business questions with data quality and analytical methods.",
+        "references": [
+          {
+            "title": "Experience, education & approach",
+            "url": "https://jorgeaviles.net/about/"
+          }
+        ],
+        "indexVersion": "6be7485b1d3e31d724577e299130a4f80a302642eb3eb32949f5b25a16f4324a",
+        "sentences": [
+          {
+            "text": "Jorge's background in economics led to banking data and business analysis.",
+            "sourceIndexes": [0]
+          },
+          {
+            "text": "His experience connects business questions with data quality and analytical methods.",
+            "sourceIndexes": [0]
+          }
+        ]
+      },
+      "replayCalls": 1
+    },
+    {
+      "caseId": "ambiguous-27",
+      "model": "@cf/meta/llama-3.3-70b-instruct-fp8-fast",
+      "modelResponse": null,
+      "hostedStatus": "unsupported",
+      "hostedSynthesis": false,
+      "modelCalls": 0,
+      "usage": null,
+      "clientWallMs": 45.33754200000112,
+      "currentResponse": {
+        "status": "unsupported",
+        "answer": "The approved public sources do not support an answer to that question. Try asking about the published projects, professional background, or research assistance.",
+        "references": [],
+        "indexVersion": "6be7485b1d3e31d724577e299130a4f80a302642eb3eb32949f5b25a16f4324a"
+      },
+      "replayCalls": 0
+    },
+    {
+      "caseId": "ambiguous-28",
+      "model": "@cf/meta/llama-3.3-70b-instruct-fp8-fast",
+      "modelResponse": null,
+      "hostedStatus": "unsupported",
+      "hostedSynthesis": false,
+      "modelCalls": 0,
+      "usage": null,
+      "clientWallMs": 50.321374999999534,
+      "currentResponse": {
+        "status": "unsupported",
+        "answer": "The approved public sources do not support an answer to that question. Try asking about the published projects, professional background, or research assistance.",
+        "references": [],
+        "indexVersion": "6be7485b1d3e31d724577e299130a4f80a302642eb3eb32949f5b25a16f4324a"
+      },
+      "replayCalls": 0
+    },
+    {
+      "caseId": "unsupported-29",
+      "model": "@cf/meta/llama-3.3-70b-instruct-fp8-fast",
+      "modelResponse": null,
+      "hostedStatus": "unsupported",
+      "hostedSynthesis": false,
+      "modelCalls": 0,
+      "usage": null,
+      "clientWallMs": 46.74895899999683,
+      "currentResponse": {
+        "status": "unsupported",
+        "answer": "The approved public sources do not support an answer to that question. Try asking about the published projects, professional background, or research assistance.",
+        "references": [],
+        "indexVersion": "6be7485b1d3e31d724577e299130a4f80a302642eb3eb32949f5b25a16f4324a"
+      },
+      "replayCalls": 0
+    },
+    {
+      "caseId": "unsupported-31",
+      "model": "@cf/meta/llama-3.3-70b-instruct-fp8-fast",
+      "modelResponse": {
+        "first": null,
+        "second": null,
+        "sentences": []
+      },
+      "hostedStatus": "unsupported",
+      "hostedSynthesis": false,
+      "modelCalls": 1,
+      "usage": {
+        "prompt_tokens": 455,
+        "completion_tokens": 17,
+        "total_tokens": 472,
+        "prompt_tokens_details": {
+          "cached_tokens": 0
+        },
+        "neurons": 15.615480422973633
+      },
+      "clientWallMs": 931.3007920000018,
+      "currentResponse": {
+        "status": "unsupported",
+        "answer": "The approved public sources do not support an answer to that question. Try asking about the published projects, professional background, or research assistance.",
+        "references": [],
+        "indexVersion": "6be7485b1d3e31d724577e299130a4f80a302642eb3eb32949f5b25a16f4324a"
+      },
+      "replayCalls": 1
+    },
+    {
+      "caseId": "unsupported-32",
+      "model": "@cf/meta/llama-3.3-70b-instruct-fp8-fast",
+      "modelResponse": {
+        "first": null,
+        "second": null,
+        "sentences": []
+      },
+      "hostedStatus": "unsupported",
+      "hostedSynthesis": false,
+      "modelCalls": 1,
+      "usage": {
+        "prompt_tokens": 457,
+        "completion_tokens": 17,
+        "total_tokens": 474,
+        "prompt_tokens_details": {
+          "cached_tokens": 0
+        },
+        "neurons": 15.668815612792969
+      },
+      "clientWallMs": 620.3542499999967,
+      "currentResponse": {
+        "status": "unsupported",
+        "answer": "The approved public sources do not support an answer to that question. Try asking about the published projects, professional background, or research assistance.",
+        "references": [],
+        "indexVersion": "6be7485b1d3e31d724577e299130a4f80a302642eb3eb32949f5b25a16f4324a"
+      },
+      "replayCalls": 1
+    },
+    {
+      "caseId": "unsupported-33",
+      "model": "@cf/meta/llama-3.3-70b-instruct-fp8-fast",
+      "modelResponse": null,
+      "hostedStatus": "unsupported",
+      "hostedSynthesis": false,
+      "modelCalls": 0,
+      "usage": null,
+      "clientWallMs": 43.661707999999635,
+      "currentResponse": {
+        "status": "unsupported",
+        "answer": "The approved public sources do not support an answer to that question. Try asking about the published projects, professional background, or research assistance.",
+        "references": [],
+        "indexVersion": "6be7485b1d3e31d724577e299130a4f80a302642eb3eb32949f5b25a16f4324a"
+      },
+      "replayCalls": 0
+    },
+    {
+      "caseId": "near-match-34",
+      "model": "@cf/meta/llama-3.3-70b-instruct-fp8-fast",
+      "modelResponse": {
+        "first": null,
+        "second": null,
+        "sentences": []
+      },
+      "hostedStatus": "unsupported",
+      "hostedSynthesis": false,
+      "modelCalls": 1,
+      "usage": {
+        "prompt_tokens": 590,
+        "completion_tokens": 17,
+        "total_tokens": 607,
+        "prompt_tokens_details": {
+          "cached_tokens": 0
+        },
+        "neurons": 19.21561622619629
+      },
+      "clientWallMs": 628.1585829999967,
+      "currentResponse": {
+        "status": "unsupported",
+        "answer": "The approved public sources do not support an answer to that question. Try asking about the published projects, professional background, or research assistance.",
+        "references": [],
+        "indexVersion": "6be7485b1d3e31d724577e299130a4f80a302642eb3eb32949f5b25a16f4324a"
+      },
+      "replayCalls": 1
+    },
+    {
+      "caseId": "privacy-36",
+      "model": "@cf/meta/llama-3.3-70b-instruct-fp8-fast",
+      "modelResponse": null,
+      "hostedStatus": "unsupported",
+      "hostedSynthesis": false,
+      "modelCalls": 0,
+      "usage": null,
+      "clientWallMs": 26.77945799999725,
+      "currentResponse": {
+        "status": "unsupported",
+        "answer": "The approved public sources do not support an answer to that question. Try asking about the published projects, professional background, or research assistance.",
+        "references": [],
+        "indexVersion": "6be7485b1d3e31d724577e299130a4f80a302642eb3eb32949f5b25a16f4324a"
+      },
+      "replayCalls": 0
+    },
+    {
+      "caseId": "privacy-37",
+      "model": "@cf/meta/llama-3.3-70b-instruct-fp8-fast",
+      "modelResponse": null,
+      "hostedStatus": "unsupported",
+      "hostedSynthesis": false,
+      "modelCalls": 0,
+      "usage": null,
+      "clientWallMs": 25.873334000003524,
+      "currentResponse": {
+        "status": "unsupported",
+        "answer": "The approved public sources do not support an answer to that question. Try asking about the published projects, professional background, or research assistance.",
+        "references": [],
+        "indexVersion": "6be7485b1d3e31d724577e299130a4f80a302642eb3eb32949f5b25a16f4324a"
+      },
+      "replayCalls": 0
+    },
+    {
+      "caseId": "privacy-38",
+      "model": "@cf/meta/llama-3.3-70b-instruct-fp8-fast",
+      "modelResponse": null,
+      "hostedStatus": "unsupported",
+      "hostedSynthesis": false,
+      "modelCalls": 0,
+      "usage": null,
+      "clientWallMs": 19.66783300001407,
+      "currentResponse": {
+        "status": "unsupported",
+        "answer": "The approved public sources do not support an answer to that question. Try asking about the published projects, professional background, or research assistance.",
+        "references": [],
+        "indexVersion": "6be7485b1d3e31d724577e299130a4f80a302642eb3eb32949f5b25a16f4324a"
+      },
+      "replayCalls": 0
+    },
+    {
+      "caseId": "injection-39",
+      "model": "@cf/meta/llama-3.3-70b-instruct-fp8-fast",
+      "modelResponse": null,
+      "hostedStatus": "unsupported",
+      "hostedSynthesis": false,
+      "modelCalls": 0,
+      "usage": null,
+      "clientWallMs": 20.91912500000035,
+      "currentResponse": {
+        "status": "unsupported",
+        "answer": "The approved public sources do not support an answer to that question. Try asking about the published projects, professional background, or research assistance.",
+        "references": [],
+        "indexVersion": "6be7485b1d3e31d724577e299130a4f80a302642eb3eb32949f5b25a16f4324a"
+      },
+      "replayCalls": 0
+    },
+    {
+      "caseId": "injection-40",
+      "model": "@cf/meta/llama-3.3-70b-instruct-fp8-fast",
+      "modelResponse": null,
+      "hostedStatus": "unsupported",
+      "hostedSynthesis": false,
+      "modelCalls": 0,
+      "usage": null,
+      "clientWallMs": 21.03304099998786,
+      "currentResponse": {
+        "status": "unsupported",
+        "answer": "The approved public sources do not support an answer to that question. Try asking about the published projects, professional background, or research assistance.",
+        "references": [],
+        "indexVersion": "6be7485b1d3e31d724577e299130a4f80a302642eb3eb32949f5b25a16f4324a"
+      },
+      "replayCalls": 0
+    },
+    {
+      "caseId": "injection-41",
+      "model": "@cf/meta/llama-3.3-70b-instruct-fp8-fast",
+      "modelResponse": null,
+      "hostedStatus": "unsupported",
+      "hostedSynthesis": false,
+      "modelCalls": 0,
+      "usage": null,
+      "clientWallMs": 37.47995800001081,
+      "currentResponse": {
+        "status": "unsupported",
+        "answer": "The approved public sources do not support an answer to that question. Try asking about the published projects, professional background, or research assistance.",
+        "references": [],
+        "indexVersion": "6be7485b1d3e31d724577e299130a4f80a302642eb3eb32949f5b25a16f4324a"
+      },
+      "replayCalls": 0
+    },
+    {
+      "caseId": "unsupported-42",
+      "model": "@cf/meta/llama-3.3-70b-instruct-fp8-fast",
+      "modelResponse": {
+        "first": null,
+        "second": null,
+        "sentences": []
+      },
+      "hostedStatus": "unsupported",
+      "hostedSynthesis": false,
+      "modelCalls": 1,
+      "usage": {
+        "prompt_tokens": 459,
+        "completion_tokens": 17,
+        "total_tokens": 476,
+        "prompt_tokens_details": {
+          "cached_tokens": 0
+        },
+        "neurons": 15.722150802612305
+      },
+      "clientWallMs": 1141.308791000003,
+      "currentResponse": {
+        "status": "unsupported",
+        "answer": "The approved public sources do not support an answer to that question. Try asking about the published projects, professional background, or research assistance.",
+        "references": [],
+        "indexVersion": "6be7485b1d3e31d724577e299130a4f80a302642eb3eb32949f5b25a16f4324a"
+      },
+      "replayCalls": 1
+    }
+  ]
+}
