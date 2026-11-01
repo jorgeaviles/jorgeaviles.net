@@ -115,5 +115,37 @@ export async function requestAnswer(
     !/^[a-f0-9]{64}$/.test(result.indexVersion)
   )
     throw new Error('unavailable');
+  if ('sentences' in result) {
+    if (
+      result.status !== 'answered' ||
+      !Array.isArray(result.sentences) ||
+      result.sentences.length < 2 ||
+      result.sentences.length > 4 ||
+      result.sentences.some(
+        (s: unknown) =>
+          !s ||
+          typeof s !== 'object' ||
+          Object.keys(s).sort().join() !== 'sourceIndexes,text' ||
+          !('text' in s) ||
+          typeof s.text !== 'string' ||
+          !s.text ||
+          s.text.length > 400 ||
+          !('sourceIndexes' in s) ||
+          !Array.isArray(s.sourceIndexes) ||
+          !s.sourceIndexes.length ||
+          s.sourceIndexes.length > LIMITS.passages ||
+          s.sourceIndexes.some(
+            (i: unknown) =>
+              !Number.isInteger(i) ||
+              typeof i !== 'number' ||
+              i < 0 ||
+              i >= (result.references as unknown[]).length,
+          ),
+      ) ||
+      result.sentences.map((s: { text: string }) => s.text).join(' ') !==
+        result.answer
+    )
+      throw new Error('unavailable');
+  }
   return result as AskResponse;
 }

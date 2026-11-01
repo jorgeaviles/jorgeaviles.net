@@ -166,9 +166,30 @@ export default function PortfolioAssistant({
               ? 'From the public sources'
               : 'No supported answer'}
           </h2>
-          {result.answer.split('\n\n').map((paragraph, i) => (
-            <p key={i}>{paragraph}</p>
-          ))}
+          {result.sentences ? (
+            <p>
+              {result.sentences.map((sentence, i) => (
+                <span key={i}>
+                  {i > 0 && ' '}
+                  {sentence.text}{' '}
+                  {sentence.sourceIndexes.map((sourceIndex) => (
+                    <a
+                      key={sourceIndex}
+                      className="assistant-citation"
+                      href={result.references[sourceIndex].url}
+                      aria-label={`Source ${sourceIndex + 1} for sentence ${i + 1}: ${result.references[sourceIndex].title}`}
+                    >
+                      [{sourceIndex + 1}]
+                    </a>
+                  ))}
+                </span>
+              ))}
+            </p>
+          ) : (
+            result.answer
+              .split('\n\n')
+              .map((paragraph, i) => <p key={i}>{paragraph}</p>)
+          )}
           {result.references.length > 0 && (
             <>
               <h3>Read the original pages</h3>
@@ -180,9 +201,9 @@ export default function PortfolioAssistant({
                 ))}
               </ul>
               <p className="assistant-caption">
-                AI selected these published passages. Check the original pages
-                for context; a selection may not answer every part of your
-                question.
+                {result.sentences
+                  ? 'AI summarized these public sources. Check the original pages for context; an answer may contain mistakes or miss qualifications.'
+                  : 'AI selected these published passages. Check the original pages for context; a selection may not answer every part of your question.'}
               </p>
             </>
           )}

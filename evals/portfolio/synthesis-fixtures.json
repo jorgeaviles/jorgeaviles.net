@@ -1,0 +1,58 @@
+{
+  "portal-purpose": [
+    "Jorge built the Audit Portal with ASP.NET Core and Blazor Interactive Server for analytical investigation and operational audit work.",
+    "Its permission-controlled workspace combines record search, audit detail, progress views, documents, change history, and workbook exports."
+  ],
+  "portal-role": [
+    "Jorge is the sole hands-on developer across the analytical notebooks, data platform, and Audit Portal.",
+    "Colleagues contribute practical billing and casework knowledge that informs analytical assumptions and interface design."
+  ],
+  "portal-ml": [
+    "The separate machine-learning program investigates predictive scores for human review prioritization.",
+    "Portal integration is proposed and requires evaluation, review, and operational approval before use."
+  ],
+  "data-purpose": [
+    "Jorge built an extract-based analytical foundation with Python and PySpark preparation, Parquet datasets in Azure Data Lake Storage Gen2, and Synapse serverless SQL access.",
+    "It supports SQL investigation, aggregated analysis, and selected downstream application queries."
+  ],
+  "data-role": [
+    "Jorge is the sole hands-on developer of the analytical notebooks and data platform, including transformations, prepared datasets, and SQL access structures.",
+    "Colleagues contribute billing and casework knowledge to help refine assumptions and requirements."
+  ],
+  "ml-status": [
+    "Jorge implemented a supervised-learning program in Python and PySpark for audit prioritization, which remains experimental.",
+    "Execution records are needed to substantiate completed evaluations, model selection, and operational readiness."
+  ],
+  "ml-ranking": [
+    "Random Forest is configured for continued experimentation, including a fixed fallback path.",
+    "The reviewed notebook exports have no execution outputs, so configuration is not a measured model ranking; comparative results remain evaluation requirements."
+  ],
+  "ml-label": [
+    "The target predicts whether a review reduction field is populated: zero counts as positive, while null or blank counts as negative.",
+    "It reflects a recording convention within reviewed bills, not the amount reduced, fraud, improper billing, or an instruction to initiate a full audit."
+  ],
+  "ml-framework": [
+    "The project uses Spark ML with Python and PySpark in Azure Synapse.",
+    "Its pipelines combine categorical indexing, encoding, median imputation, and vector assembly, with learned preprocessing fitted within each training fold."
+  ],
+  "ml-calibration": [
+    "Jorge implemented Platt calibration using Spark logistic regression, separate calibration and test windows, a delayed-label buffer, and rolling time-based backtests.",
+    "Calibration can change probability interpretation without necessarily improving ranking."
+  ],
+  "background": [
+    "Jorge's economics and faculty research background led to banking data and business analysis, then analytical infrastructure, experimental models, and applications.",
+    "His work connects business questions with data quality, analytical methods, and practical workflows."
+  ],
+  "research-role": [
+    "Jorge supported faculty research on profitability forecasting, consumer spending, conjoint analysis, and pricing.",
+    "His research assistance is acknowledged in a published 2014 cattle-ranch profitability study."
+  ],
+  "research-credit": [
+    "Anand N. Asthana authored the 2014 cattle-ranch profitability study.",
+    "Jorge contributed research assistance and is acknowledged as J. Avilés on page 478."
+  ],
+  "research-methods": [
+    "The cattle-ranch study uses a vector space model and kernel ridge regression with randomized ten-fold cross-validation.",
+    "It investigates the relationship between ranch characteristics and profitability."
+  ]
+}

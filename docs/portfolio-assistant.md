@@ -29,13 +29,21 @@ only the approved excerpts, not full documents or arbitrary files.
 
 ## Grounding and model use
 
-Workers AI selects at most two candidate passage IDs using
-`@cf/meta/llama-3.2-3b-instruct`. The server returns the exact approved passages and
-canonical page links, never model-written prose or model-provided URLs. This is
-an extractive first version: answers may be less conversational, but an incorrect
-model selection cannot invent a performance number, authorship, or production claim.
-Selection can still be irrelevant; source review remains necessary. Invalid IDs,
-malformed model output, and unsupported questions produce an explicit fallback.
+The proposed conversational v2 uses one Workers AI call to select at most two
+candidate passages and write 2–4 short sentence records. **It is not approved for
+production:** the bounded hosted trials failed the quality gate. Production
+continues using the PR #41 extractive version until a separate reviewed release.
+See [the v2 evaluation and release decision](portfolio-assistant-v2.md).
+
+The candidate accepts only a strict JSON shape, validates selected and sentence
+passage IDs against retrieved evidence, and resolves canonical URLs server-side.
+Malformed prose with a valid evidence selection falls back to the original
+approved text; malformed selection or abstention cannot become a lexical-only
+answer. Known numerical, attribution and experimental-status failure checks are
+conservative rejection rules, not a semantic entailment proof. No verifier-model
+call, automatic retry, conversation history or new production infrastructure is
+added. Summarization can hallucinate despite valid citation IDs; hosted semantic
+review is mandatory before activation.
 
 Search is deterministic lexical retrieval with curated keywords, at most six
 candidates. It is not semantic search and does not establish that every part of a
@@ -55,10 +63,16 @@ enable paid billing to keep the assistant running. There is no paid fallback.
 Send `POST /ask` with `Content-Type: application/json`, public-site Origin, and
 `{"question":"What is the status of the modeling program?"}`. Only the `question`
 field is accepted. The response has `status`, `answer`, `references` (title and URL),
-and `indexVersion`. Substantive answers always have references.
+and `indexVersion`. Substantive answers always have references. The candidate adds
+optional `sentences` with `text` and zero-based `sourceIndexes` into the
+server-resolved reference list. Their joined text must exactly match `answer`.
+Old extractive responses remain compatible; deploy the reviewed UI/disclosure
+before activating the candidate API.
 
 - Maximum question: 500 characters; actual request body: 2,048 bytes.
-- Maximum answer: 1,800 characters; selected passages: two; model output: 100 tokens.
+- Maximum answer: 1,800 characters; selected passages: two; candidate model output: 420 tokens (production v1: 100).
+- Candidate serialized model output: 3,600 characters; sentence records: 2–4,
+  each at most 400 characters with 1–2 selected supporting IDs.
 - Inference deadline: 12 seconds; one model invocation; no automatic retry.
 - Per-IP request allowance: five per minute; shared inference allowance: 20 per minute
   per Cloudflare location. Missing client IP or failed bindings deny inference.

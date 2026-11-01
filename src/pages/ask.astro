@@ -10,7 +10,7 @@ const endpoint = configuredEndpoint(
 
 <BaseLayout
   title="Ask about my work"
-  description="Find source-backed passages about my public projects, professional background, and research assistance."
+  description="Find source-backed answers about my public projects, professional background, and research assistance."
 >
   <PageIntro
     label="Portfolio assistant"
@@ -33,11 +33,11 @@ const endpoint = configuredEndpoint(
         <a href="/research/">Research assistance</a>
       </nav>
     </div>
-    <aside class="aside-note">
+    <aside class="aside-note assistant-aside">
       <p class="eyebrow">Public sources only</p>
       <p>
-        A small AI-assisted guide to this portfolio. It selects passages from an
-        approved public index and links to the original pages.
+        A small AI-assisted guide to this portfolio. It uses an approved public
+        index to answer questions and links to the original pages.
       </p>
       <p>
         It cannot search agency records, private documents, or the wider web.
@@ -158,6 +158,15 @@ const endpoint = configuredEndpoint(
   .assistant-result p {
     margin-block: 0 20px;
     overflow-wrap: anywhere;
+  }
+  .assistant-aside p a {
+    display: inline;
+  }
+  .assistant-citation {
+    display: inline-block;
+    padding-inline: 4px;
+    line-height: 24px;
+    font-size: var(--text-supporting);
   }
   .assistant-result h3 {
     font-family: var(--font-sans);

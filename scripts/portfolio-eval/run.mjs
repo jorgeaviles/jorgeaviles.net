@@ -21,6 +21,8 @@ for (const [entry, name] of [
   ['workers/portfolio-api/src/content.ts', 'baseline-content'],
   ['workers/portfolio-api/src/assistant-retrieval.ts', 'candidate-content'],
   ['evals/portfolio/evaluate.ts', 'evaluate'],
+  ['evals/portfolio/v1-worker.ts', 'v1-worker'],
+  ['evals/portfolio/evaluate-synthesis.ts', 'evaluate-synthesis'],
 ])
   await build({
     ...options,
@@ -87,3 +89,26 @@ assert.equal(
   results.candidate.totals.citations,
 );
 assert.ok(results.candidate.totals.maxInferenceCalls <= 1);
+
+const [{ default: v1 }, { evaluateSynthesis }] = await Promise.all([
+  load('v1-worker'),
+  load('evaluate-synthesis'),
+]);
+const conversational = {
+  baselineCommit: '315683c1bbd918aba4beaad4adc2d214bf30eaf6',
+  baseline: await evaluate(v1, searchAssistant, dataset.cases, index),
+  candidate: await evaluateSynthesis(
+    candidate,
+    searchAssistant,
+    dataset.cases,
+    index,
+  ),
+};
+await writeFile(
+  `${out}/conversational.json`,
+  JSON.stringify(conversational, null, 2) + '\n',
+);
+console.log(
+  'V1 vs V2 ORACLE MOCKS — NOT LIVE MODEL ACCURACY',
+  JSON.stringify(conversational.candidate.totals),
+);

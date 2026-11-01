@@ -1,0 +1,282 @@
+// Frozen PR #41 production baseline, 315683c1. Import paths relocated only.
+import { index } from '../../workers/portfolio-api/src/content';
+import { searchAssistant } from '../../workers/portfolio-api/src/assistant-retrieval';
+import {
+  parseSelection,
+  selectionPrompt,
+} from '../../workers/portfolio-api/src/selection';
+// Evaluate the SDK at isolate startup, outside the first MCP request budget.
+// The route still checks MCP_ENABLED before constructing any request server.
+import { serveMcp } from '../../workers/portfolio-api/src/mcp';
+import { LIMITS, type AskResponse } from '../../src/lib/portfolio/types';
+
+import { MODEL } from '../../workers/portfolio-api/src/model';
+interface Limiter {
+  limit(input: { key: string }): Promise<{ success: boolean }>;
+}
+export interface Env {
+  AI: {
+    run(
+      model: typeof MODEL,
+      input: {
+        messages: { role: string; content: string }[];
+        max_tokens: number;
+        temperature: number;
+        stream: false;
+      },
+    ): Promise<unknown>;
+  };
+  REQUEST_LIMITER: Limiter;
+  INFERENCE_LIMITER: Limiter;
+  ASSISTANT_ENABLED: string;
+  MCP_ENABLED?: string;
+  MCP_LIMITER: Limiter;
+}
+const origin = 'https://jorgeaviles.net';
+const fallback =
+  'The approved public sources do not support an answer to that question. Try asking about the published projects, professional background, or research assistance.';
+
+function reply(
+  status: AskResponse['status'],
+  answer: string,
+  code: number,
+  references: AskResponse['references'] = [],
+  cors = false,
+) {
+  const body: AskResponse = {
+    status,
+    answer,
+    references,
+    indexVersion: index.version,
+  };
+  if (
+    new TextEncoder().encode(JSON.stringify(body)).byteLength >
+    LIMITS.responseBytes
+  ) {
+    body.status = 'unsupported';
+    body.answer = fallback;
+    body.references = [];
+  }
+  return Response.json(body, {
+    status: code,
+    headers: {
+      'Cache-Control': 'no-store',
+      'X-Content-Type-Options': 'nosniff',
+      'X-Robots-Tag': 'noindex',
+      Vary: 'Origin',
+      ...(cors ? { 'Access-Control-Allow-Origin': origin } : {}),
+      ...([429, 503].includes(code) ? { 'Retry-After': '60' } : {}),
+    },
+  });
+}
+async function readQuestion(request: Request) {
+  if (
+    !request.headers.get('content-type')?.match(/^application\/json(?:\s*;|$)/i)
+  )
+    throw new Error('json');
+  if (Number(request.headers.get('content-length')) > LIMITS.bodyBytes)
+    throw new Error('size');
+  if (!request.body) throw new Error('body');
+  const reader = request.body.getReader();
+  const chunks: Uint8Array[] = [];
+  let size = 0;
+  try {
+    while (true) {
+      const { value, done } = await reader.read();
+      if (done) break;
+      size += value.byteLength;
+      if (size > LIMITS.bodyBytes) {
+        await reader.cancel();
+        throw new Error('size');
+      }
+      chunks.push(value);
+    }
+  } finally {
+    reader.releaseLock();
+  }
+  const bytes = new Uint8Array(size);
+  let position = 0;
+  for (const chunk of chunks) {
+    bytes.set(chunk, position);
+    position += chunk.length;
+  }
+  const input: unknown = JSON.parse(
+    new TextDecoder('utf-8', { fatal: true }).decode(bytes),
+  );
+  if (
+    !input ||
+    typeof input !== 'object' ||
+    Array.isArray(input) ||
+    Object.keys(input).join() !== 'question' ||
+    !('question' in input) ||
+    typeof input.question !== 'string'
+  )
+    throw new Error('schema');
+  const question = input.question.trim();
+  if (
+    !question ||
+    question.length > LIMITS.question ||
+    [...question].some(
+      (char) => char.charCodeAt(0) < 32 || char.charCodeAt(0) === 127,
+    )
+  )
+    throw new Error('question');
+  return question;
+}
+export default {
+  async fetch(request: Request, env: Env): Promise<Response> {
+    if (new URL(request.url).pathname === '/mcp') {
+      if (env.MCP_ENABLED !== 'true')
+        return new Response('Not found', {
+          status: 404,
+          headers: { 'Cache-Control': 'no-store' },
+        });
+      return serveMcp(request, env);
+    }
+    const cors = request.headers.get('Origin') === origin;
+    if (!cors)
+      return reply(
+        'invalid',
+        'This endpoint accepts requests from the public portfolio only.',
+        403,
+      );
+    if (new URL(request.url).pathname !== '/ask')
+      return reply('invalid', 'Not found.', 404, [], cors);
+    if (request.method === 'OPTIONS')
+      return new Response(null, {
+        status: 204,
+        headers: {
+          'Access-Control-Allow-Origin': origin,
+          'Access-Control-Allow-Methods': 'POST',
+          'Access-Control-Allow-Headers': 'Content-Type',
+          'Access-Control-Max-Age': '600',
+          Vary: 'Origin',
+        },
+      });
+    if (request.method !== 'POST')
+      return reply('invalid', 'Use POST with a JSON question.', 405, [], cors);
+    if (env.ASSISTANT_ENABLED !== 'true')
+      return reply(
+        'unavailable',
+        'The portfolio assistant is not currently available. Please browse the source pages.',
+        503,
+        [],
+        cors,
+      );
+    try {
+      // Cloudflare sets this header. Use it only as an ephemeral rate-limit key;
+      // never forward it to the model, log it, or persist a visitor identifier.
+      const ip = request.headers.get('CF-Connecting-IP');
+      if (!ip || !(await env.REQUEST_LIMITER.limit({ key: ip })).success)
+        return reply(
+          'rate_limited',
+          'Too many requests. Please wait a minute before trying again.',
+          429,
+          [],
+          cors,
+        );
+      let question: string;
+      try {
+        question = await readQuestion(request);
+      } catch {
+        return reply(
+          'invalid',
+          'Send one question of 1–500 characters as JSON. Do not include files or conversation history.',
+          400,
+          [],
+          cors,
+        );
+      }
+      // No URL fetcher, tools, account connectors, or file access exist here.
+      if (
+        /https?:\/\/|www\.|(?:secret|password|credential|api.?key|private|confidential|internal document|raw (?:data|record)|system prompt|ignore .*instruction)/i.test(
+          question,
+        )
+      )
+        return reply('unsupported', fallback, 200, [], cors);
+      const candidates = searchAssistant(question);
+      if (!candidates.length)
+        return reply('unsupported', fallback, 200, [], cors);
+      if (
+        !(await env.INFERENCE_LIMITER.limit({ key: 'portfolio-inference' }))
+          .success
+      )
+        return reply(
+          'rate_limited',
+          'The assistant is busy. Please wait a minute or browse the source pages.',
+          429,
+          [],
+          cors,
+        );
+      let timer: ReturnType<typeof setTimeout> | undefined;
+      let output: unknown;
+      try {
+        output = await Promise.race([
+          env.AI.run(MODEL, {
+            messages: [
+              {
+                role: 'system',
+                content: selectionPrompt,
+              },
+              {
+                role: 'user',
+                content: JSON.stringify({
+                  question,
+                  passages: candidates.map(({ id, title, text }) => ({
+                    id,
+                    title,
+                    text,
+                  })),
+                }),
+              },
+            ],
+            max_tokens: 100,
+            temperature: 0,
+            stream: false,
+          }),
+          new Promise((_, reject) => {
+            timer = setTimeout(
+              () => reject(new Error('timeout')),
+              LIMITS.inferenceMs,
+            );
+          }),
+        ]);
+      } finally {
+        clearTimeout(timer);
+      }
+      const selection = parseSelection(
+        output,
+        candidates.map((item) => item.id),
+      );
+      const ids = selection.ids;
+      if (
+        !ids.length ||
+        ids.some((id) => !candidates.some((item) => item.id === id))
+      )
+        return reply('unsupported', fallback, 200, [], cors);
+      const selected = ids.map((id) =>
+        candidates.find((item) => item.id === id)!,
+      );
+      const answer = selected.map((item) => item.text).join('\n\n');
+      if (answer.length > LIMITS.answer)
+        return reply('unsupported', fallback, 200, [], cors);
+      const references = [
+        ...new Map(
+          selected.map(({ title, url }) => [url, { title, url }]),
+        ).values(),
+      ];
+      // The model's prose and URLs are never exposed. Only allowlisted source text.
+      return reply('answered', answer, 200, references, cors);
+    } catch {
+      // Includes free-quota exhaustion, model/limiter outages and inference timeout.
+      // No automatic retries and no raw provider errors, prompts or request logging.
+      return reply(
+        'unavailable',
+        'The assistant is temporarily unavailable or its free allowance has been reached. Please use the public source pages or try again later.',
+        503,
+        [],
+        cors,
+      );
+    }
+  },
+};

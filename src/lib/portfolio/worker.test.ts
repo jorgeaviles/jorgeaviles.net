@@ -183,7 +183,7 @@ describe('POST /ask', () => {
     expect(env.AI.run).toHaveBeenCalledTimes(1);
     expect(env.AI.run.mock.calls[0]).toMatchObject([
       MODEL,
-      { max_tokens: 100, stream: false, temperature: 0 },
+      { max_tokens: 420, stream: false, temperature: 0 },
     ]);
     expect(JSON.stringify(env.AI.run.mock.calls)).not.toContain('192.0.2.1');
     expect(response.headers.get('cache-control')).toBe('no-store');

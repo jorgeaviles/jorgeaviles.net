@@ -25,6 +25,7 @@ export interface AskResponse {
   answer: string;
   references: Reference[];
   indexVersion: string;
+  sentences?: { text: string; sourceIndexes: number[] }[];
 }
 export const LIMITS = {
   question: 500,

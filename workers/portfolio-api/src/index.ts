@@ -1,6 +1,6 @@
 import { index } from './content';
 import { searchAssistant } from './assistant-retrieval';
-import { parseSelection, selectionPrompt } from './selection';
+import { GENERATION, generationPrompt, parseGeneration } from './generation';
 // Evaluate the SDK at isolate startup, outside the first MCP request budget.
 // The route still checks MCP_ENABLED before constructing any request server.
 import { serveMcp } from './mcp';
@@ -38,12 +38,14 @@ function reply(
   code: number,
   references: AskResponse['references'] = [],
   cors = false,
+  sentences?: AskResponse['sentences'],
 ) {
   const body: AskResponse = {
     status,
     answer,
     references,
     indexVersion: index.version,
+    ...(sentences ? { sentences } : {}),
   };
   if (
     new TextEncoder().encode(JSON.stringify(body)).byteLength >
@@ -52,6 +54,7 @@ function reply(
     body.status = 'unsupported';
     body.answer = fallback;
     body.references = [];
+    delete body.sentences;
   }
   return Response.json(body, {
     status: code,
@@ -185,7 +188,7 @@ export default {
       }
       // No URL fetcher, tools, account connectors, or file access exist here.
       if (
-        /https?:\/\/|www\.|(?:secret|password|credential|api.?key|private|confidential|internal document|raw (?:data|record)|system prompt|ignore .*instruction)/i.test(
+        /https?:\/\/|www\.|(?:secret|password|credential|api.?key|private|confidential|internal document|raw (?:data|record)|system prompt|ignore .*instruction|ignore (?:the )?sources|\binvent\b|\bpretend\b)/i.test(
           question,
         )
       )
@@ -212,7 +215,7 @@ export default {
             messages: [
               {
                 role: 'system',
-                content: selectionPrompt,
+                content: generationPrompt,
               },
               {
                 role: 'user',
@@ -226,7 +229,7 @@ export default {
                 }),
               },
             ],
-            max_tokens: 100,
+            max_tokens: GENERATION.tokens,
             temperature: 0,
             stream: false,
           }),
@@ -240,10 +243,7 @@ export default {
       } finally {
         clearTimeout(timer);
       }
-      const selection = parseSelection(
-        output,
-        candidates.map((item) => item.id),
-      );
+      const selection = parseGeneration(output, candidates);
       const ids = selection.ids;
       if (
         !ids.length ||
@@ -253,7 +253,9 @@ export default {
       const selected = ids.map((id) =>
         candidates.find((item) => item.id === id)!,
       );
-      const answer = selected.map((item) => item.text).join('\n\n');
+      const answer = selection.sentences
+        ? selection.sentences.map((s) => s.text).join(' ')
+        : selected.map((item) => item.text).join('\n\n');
       if (answer.length > LIMITS.answer)
         return reply('unsupported', fallback, 200, [], cors);
       const references = [
@@ -261,8 +263,19 @@ export default {
           selected.map(({ title, url }) => [url, { title, url }]),
         ).values(),
       ];
-      // The model's prose and URLs are never exposed. Only allowlisted source text.
-      return reply('answered', answer, 200, references, cors);
+      const sentences = selection.sentences?.map((sentence) => ({
+        text: sentence.text,
+        sourceIndexes: [
+          ...new Set(
+            sentence.passageIds.map((id) =>
+              references.findIndex(
+                (ref) => ref.url === selected.find((p) => p.id === id)!.url,
+              ),
+            ),
+          ),
+        ],
+      }));
+      return reply('answered', answer, 200, references, cors, sentences);
     } catch {
       // Includes free-quota exhaustion, model/limiter outages and inference timeout.
       // No automatic retries and no raw provider errors, prompts or request logging.

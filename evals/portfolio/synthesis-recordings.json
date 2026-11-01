@@ -1,0 +1,224 @@
+{
+  "model": "@cf/meta/llama-3.2-3b-instruct",
+  "indexVersion": "6be7485b1d3e31d724577e299130a4f80a302642eb3eb32949f5b25a16f4324a",
+  "description": "Sanitized public-fixture outputs from bounded hosted trials; model output is untrusted evidence of failures, not endorsed professional claims. No live inference in replay.",
+  "records": [
+    {
+      "variant": "v1",
+      "caseId": "ml-09",
+      "output": {
+        "first": "ml-framework",
+        "second": "ml-status"
+      },
+      "expectedStatus": "answered",
+      "expectedSynthesis": false
+    },
+    {
+      "variant": "v1",
+      "caseId": "application-01",
+      "output": {
+        "first": "portal-purpose",
+        "second": "data-purpose"
+      },
+      "expectedStatus": "answered",
+      "expectedSynthesis": false
+    },
+    {
+      "variant": "v1",
+      "caseId": "ml-14",
+      "output": {
+        "first": "null",
+        "second": "ml-status"
+      },
+      "expectedStatus": "answered",
+      "expectedSynthesis": false
+    },
+    {
+      "variant": "v1",
+      "caseId": "research-24",
+      "output": {
+        "first": "research-credit",
+        "second": "research-role"
+      },
+      "expectedStatus": "answered",
+      "expectedSynthesis": false
+    },
+    {
+      "variant": "v1",
+      "caseId": "unsupported-30",
+      "output": {
+        "first": null,
+        "second": null
+      },
+      "expectedStatus": "unsupported",
+      "expectedSynthesis": false
+    },
+    {
+      "variant": "v1",
+      "caseId": "injection-41",
+      "output": {
+        "first": "research-credit",
+        "second": "research-methods"
+      },
+      "expectedStatus": "answered",
+      "expectedSynthesis": false
+    },
+    {
+      "variant": "v2",
+      "caseId": "ml-09",
+      "output": {
+        "first": null,
+        "second": "ml-status",
+        "sentences": [
+          {
+            "text": "Saved notebooks document implemented code paths and configurations; execution records are needed to substantiate completed evaluations, model selection, and operational readiness.",
+            "passageIds": ["ml-status"]
+          },
+          {
+            "text": "The work connects bill-level features with candidate models, repeatable evaluation, probability calibration, and scoring outputs.",
+            "passageIds": ["ml-status"]
+          },
+          {
+            "text": "Saved notebooks document implemented code paths and configurations; execution records are needed to substantiate completed evaluations, model selection, and operational readiness.",
+            "passageIds": ["ml-status"]
+          }
+        ]
+      },
+      "expectedStatus": "answered",
+      "expectedSynthesis": false
+    },
+    {
+      "variant": "v2",
+      "caseId": "application-01",
+      "output": {
+        "first": null,
+        "second": "portal-purpose",
+        "sentences": [
+          {
+            "text": "I built the Audit Portal with ASP.NET Core and Blazor Interactive Server to connect analytical investigation with operational audit work.",
+            "passageIds": ["portal-purpose"]
+          },
+          {
+            "text": "The application brings record search, audit detail, lifecycle and progress views, documents, change history, and workbook exports into a permission-controlled workspace.",
+            "passageIds": ["portal-purpose"]
+          }
+        ]
+      },
+      "expectedStatus": "answered",
+      "expectedSynthesis": true
+    },
+    {
+      "variant": "v2",
+      "caseId": "ml-14",
+      "output": {
+        "first": null,
+        "second": "ml-status",
+        "sentences": [
+          {
+            "text": "execution records are needed to substantiate completed evaluations, model selection, and operational readiness.",
+            "passageIds": ["ml-status"]
+          }
+        ]
+      },
+      "expectedStatus": "answered",
+      "expectedSynthesis": false
+    },
+    {
+      "variant": "v2",
+      "caseId": "research-24",
+      "output": "{\"first\":null,\"second\":\"research-credit\",\"sentences\":[{\"text\":\"I contributed research assistance to the project and am acknowledged as J. Avil\\u00e9s on page 478.\",\"passageIds\":[\"research-credit\"]}]",
+      "expectedStatus": "unsupported",
+      "expectedSynthesis": false
+    },
+    {
+      "variant": "v2",
+      "caseId": "unsupported-30",
+      "output": {
+        "first": null,
+        "second": null,
+        "sentences": [
+          {
+            "text": "Runtime package availability and comparative results remain evaluation requirements.",
+            "passageIds": [null, null]
+          }
+        ]
+      },
+      "expectedStatus": "unsupported",
+      "expectedSynthesis": false
+    },
+    {
+      "variant": "v2-final",
+      "caseId": "ml-09",
+      "output": {
+        "first": "ml-framework",
+        "second": "ml-status",
+        "sentences": [
+          {
+            "text": "The modeling engine is Spark ML, using Python/PySpark in Azure Synapse. Spark pipelines combine categorical indexing, model-appropriate encoding, median imputation, and vector assembly with the estimator.",
+            "passageIds": ["ml-framework"]
+          },
+          {
+            "text": "Saved notebooks document implemented code paths and configurations; execution records are needed to substantiate completed evaluations, model selection, and operational readiness.",
+            "passageIds": ["ml-status"]
+          }
+        ]
+      },
+      "expectedStatus": "answered",
+      "expectedSynthesis": false
+    },
+    {
+      "variant": "v2-final",
+      "caseId": "application-01",
+      "output": "{\"first\":\"data-purpose\",\"second\":\"portal-purpose\",\"sentences\":[{\"text\":\"I built the Audit Portal with ASP.NET Core and Blazor Interactive Server to connect analytical investigation with operational audit work.\",\"passageIds\":[\"data-purpose\",\"portal-purpose\"]},{\"text\":\"The application brings record search, audit detail, lifecycle and progress views, documents, change history, and workbook exports into a permission-controlled workspace.\",\"passageIds\":[\"data-purpose\",\"portal-purpose\"]}]",
+      "expectedStatus": "unsupported",
+      "expectedSynthesis": false
+    },
+    {
+      "variant": "v2-final",
+      "caseId": "ml-14",
+      "output": {
+        "first": "ml-status",
+        "second": "ml-status",
+        "sentences": [
+          {
+            "text": "Saved notebooks document implemented code paths and configurations; execution records are needed to substantiate completed evaluations, model selection, and operational readiness.",
+            "passageIds": ["ml-status"]
+          },
+          {
+            "text": "Execution records are needed to substantiate completed evaluations, model selection, and operational readiness.",
+            "passageIds": ["ml-status"]
+          }
+        ]
+      },
+      "expectedStatus": "answered",
+      "expectedSynthesis": false
+    },
+    {
+      "variant": "v2-final",
+      "caseId": "research-24",
+      "output": {
+        "first": "research-credit",
+        "second": "research-role",
+        "sentences": [
+          {
+            "text": "Jorge contributed research assistance to the project and am acknowledged as J. Avilés on page 478.",
+            "passageIds": ["research-credit", "research-role"]
+          },
+          {
+            "text": "My research assistance is acknowledged in a published 2014 study of cattle-ranch profitability.",
+            "passageIds": ["research-credit", "research-role"]
+          }
+        ]
+      },
+      "expectedStatus": "answered",
+      "expectedSynthesis": false
+    },
+    {
+      "variant": "v2-final",
+      "caseId": "unsupported-30",
+      "output": "{\"first\":null,\"second\":null,\"sentences\":[]}}",
+      "expectedStatus": "unsupported",
+      "expectedSynthesis": false
+    }
+  ]
+}
