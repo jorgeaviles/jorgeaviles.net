@@ -64,8 +64,8 @@
     "His work included customer segmentation, churn modeling, and reporting for marketing and operational decisions."
   ],
   "banking-quality": [
-    "At Santander, Jorge developed data pipelines from a legacy mainframe environment for IT operations reporting.",
-    "He used validation checks and exception reporting to support data quality and reliability."
+    "At Santander, Jorge worked with IBM Db2 mainframe systems, using JCL for batch workflows and SQL through ODBC to query banking data.",
+    "He used R for data-quality analysis, automated checks and exception reporting with VBA, and supported Tableau dashboards for master data management and operational reporting."
   ],
   "research-practice": [
     "At CENTRUM, Jorge prepared and validated datasets and performed statistical analysis using SPSS and Stata.",

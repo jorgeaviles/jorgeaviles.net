@@ -1164,7 +1164,7 @@ test('About connects experience to capabilities before supporting education', as
     'customer segmentation, churn modeling',
   );
   await expect(page.locator('.experience-roles')).toContainText(
-    'legacy mainframe',
+    'IBM Db2 mainframe systems',
   );
   await expect(page.locator('main')).toContainText('SPSS and Stata');
   await expectAccessible(page);
