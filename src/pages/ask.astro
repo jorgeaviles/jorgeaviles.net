@@ -22,8 +22,8 @@ const endpoint = configuredEndpoint(
       <PortfolioAssistant endpoint={endpoint} client:load />
       <noscript>
         <p>
-          This assistant needs JavaScript. The public source pages remain
-          available below.
+          Enable JavaScript to ask a question, or explore the source pages
+          below.
         </p>
       </noscript>
       <nav class="assistant-sources" aria-label="Portfolio source pages">
@@ -34,15 +34,12 @@ const endpoint = configuredEndpoint(
       </nav>
     </div>
     <aside class="aside-note assistant-aside">
-      <p class="eyebrow">Public sources only</p>
+      <p class="eyebrow">Explore the portfolio</p>
       <p>
-        A small AI-assisted guide to this portfolio. It uses an approved public
-        index to answer questions and links to the original pages.
+        Ask about the projects, professional experience, and research. Answers
+        include links to the original pages.
       </p>
-      <p>
-        It cannot search agency records, private documents, or the wider web.
-        Each question stands alone.
-      </p>
+      <p>Each question starts a fresh inquiry into the published portfolio.</p>
       <p>
         For external AI applications, see the{' '}
         <a href="/mcp/">public MCP integration</a>.

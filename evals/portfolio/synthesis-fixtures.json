@@ -16,7 +16,7 @@
     "It supports SQL investigation, aggregated analysis, and selected downstream application queries."
   ],
   "data-role": [
-    "Jorge is the sole hands-on developer of the analytical notebooks and data platform, including transformations, prepared datasets, and SQL access structures.",
+    "Jorge designed and developed the analytical notebooks and data platform, including transformations, prepared datasets, and SQL access structures.",
     "Colleagues contribute billing and casework knowledge to help refine assumptions and requirements."
   ],
   "ml-status": [
@@ -25,7 +25,7 @@
   ],
   "ml-ranking": [
     "Random Forest is configured for continued experimentation, including a fixed fallback path.",
-    "The reviewed notebook exports have no execution outputs, so configuration is not a measured model ranking; comparative results remain evaluation requirements."
+    "Comparative model results require execution records and runtime package verification."
   ],
   "ml-label": [
     "The target predicts whether a review reduction field is populated: zero counts as positive, while null or blank counts as negative.",
@@ -54,5 +54,21 @@
   "research-methods": [
     "The cattle-ranch study uses a vector space model and kernel ridge regression with randomized ten-fold cross-validation.",
     "It investigates the relationship between ranch characteristics and profitability."
+  ],
+  "banking-delivery": [
+    "At Santander, Jorge built Power Apps and Power BI dashboards with SQL Server pipelines integrated with Microsoft Project.",
+    "They supported portfolio reporting, milestones, and project-status visibility."
+  ],
+  "banking-analytics": [
+    "At Santander, Jorge analyzed marketing and operational data using SAS, R, SQL Server, and SSRS.",
+    "His work included customer segmentation, churn modeling, and reporting for marketing and operational decisions."
+  ],
+  "banking-quality": [
+    "At Santander, Jorge developed data pipelines from a legacy mainframe environment for IT operations reporting.",
+    "He used validation checks and exception reporting to support data quality and reliability."
+  ],
+  "research-practice": [
+    "At CENTRUM, Jorge prepared and validated datasets and performed statistical analysis using SPSS and Stata.",
+    "He designed and analyzed discrete-choice and conjoint experiments and estimated logit models to examine consumer trade-offs and willingness to pay."
   ]
 }

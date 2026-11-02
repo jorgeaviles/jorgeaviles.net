@@ -100,7 +100,7 @@ export function TrainingLesson({ state, dispatch }: LabController) {
           <p className="ranch-takeaway">
             {logistic
               ? 'The percentage is the model’s estimate of how likely this ranch is to make a profit. At 50% or above, it predicts “Profitable.”'
-              : 'The highlighted point shows the prediction for your cattle sales. Moving the slider changes the ranch being predicted, not the trained line.'}
+              : 'The highlighted point shows the prediction for your cattle sales. Move the slider to explore predictions along the trained line.'}
           </p>
         </div>
         <ModelPlot
@@ -114,7 +114,7 @@ export function TrainingLesson({ state, dispatch }: LabController) {
       <p className="lesson-takeaway">
         <b>What you learned:</b>{' '}
         {logistic
-          ? 'Logistic regression estimates the probability of a category, rather than predicting a dollar amount.'
+          ? 'Logistic regression estimates the probability of a category, such as whether a ranch earns a profit.'
           : 'Linear regression finds a relationship in observed data and uses it to predict a number.'}
       </p>
       <details

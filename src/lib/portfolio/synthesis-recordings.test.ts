@@ -1,3 +1,8 @@
+vi.mock('../../../workers/portfolio-api/index.json', async () => ({
+  default: (await import('../../../evals/portfolio/pre-career-index.json'))
+    .default,
+}));
+
 import { describe, expect, it, vi } from 'vitest';
 import recordings from '../../../evals/portfolio/synthesis-recordings.json';
 import dataset from '../../../evals/portfolio/cases.json';

@@ -37,7 +37,7 @@
       },
       {
         "id": "data-role",
-        "text": "I am the sole hands-on developer of the analytical notebooks and data platform. My responsibilities span transformations, prepared datasets, and SQL access structures. Departmental colleagues contribute practical knowledge of billing and casework, helping me revisit assumptions and refine requirements.",
+        "text": "I designed and developed the analytical notebooks and data platform. My responsibilities span transformations, prepared datasets, and SQL access structures. Departmental colleagues contribute practical knowledge of billing and casework, helping me revisit assumptions and refine requirements.",
         "keywords": "developer role collaboration authorship"
       }
     ]
@@ -56,7 +56,7 @@
       },
       {
         "id": "ml-ranking",
-        "text": "Random Forest is configured for continued experimentation, including the fixed fallback path. The reviewed notebook exports contain no execution outputs, so the candidate table describes implementation and configuration rather than a measured model ranking. Runtime package availability and comparative results remain evaluation requirements.",
+        "text": "Random Forest is configured for continued experimentation, including the fixed fallback path. Comparative model results require execution records and runtime package verification.",
         "keywords": "random forest best model ranking results measured accuracy performance evaluation"
       },
       {
@@ -92,6 +92,21 @@
         "id": "research-role",
         "text": "I supported faculty research involving profitability forecasting, consumer spending, conjoint analysis, and pricing, connecting economic and business questions with quantitative research. My research assistance is acknowledged in a published 2014 study of cattle-ranch profitability.",
         "keywords": "research assistant assistance authorship centrum cattle ranch"
+      },
+      {
+        "id": "banking-delivery",
+        "text": "I built Power Apps and Power BI dashboards with SQL Server pipelines integrated with Microsoft Project to support portfolio reporting, milestones, and project-status visibility.",
+        "keywords": "santander banking change management business analyst pmo project portfolio power bi apps sql server microsoft project dashboard milestones"
+      },
+      {
+        "id": "banking-analytics",
+        "text": "I analyzed marketing and operational data using SAS, R, SQL Server, and SSRS. My work included customer segmentation, churn modeling, and reporting for marketing and operational decisions.",
+        "keywords": "santander banking retail operations database analyst sas r sql server ssrs customer segmentation churn marketing analytics"
+      },
+      {
+        "id": "banking-quality",
+        "text": "I developed data pipelines from a legacy mainframe environment for IT operations reporting, with validation checks and exception reporting to support data quality and reliability.",
+        "keywords": "santander banking operations data quality specialist mainframe pipelines validation exception reporting"
       }
     ]
   },
@@ -111,6 +126,11 @@
         "id": "research-methods",
         "text": "The study uses a vector space model and kernel ridge regression, evaluated with randomized ten-fold cross-validation, to examine the relationship between ranch characteristics and profitability. These methods connect a business forecasting question with statistical learning. The publisher’s paper provides the full methodology and acknowledgment.",
         "keywords": "research method kernel ridge regression validation cattle ranch profitability"
+      },
+      {
+        "id": "research-practice",
+        "text": "Across faculty research projects at CENTRUM, I prepared and validated datasets and performed statistical analysis using SPSS and Stata. I designed and analyzed discrete-choice and conjoint experiments and estimated logit models to examine consumer trade-offs and willingness to pay.",
+        "keywords": "centrum faculty quantitative spss stata discrete choice conjoint experiments logit consumer tradeoffs willingness pay"
       }
     ]
   }

@@ -1,0 +1,116 @@
+{
+  "schemaVersion": 1,
+  "version": "6be7485b1d3e31d724577e299130a4f80a302642eb3eb32949f5b25a16f4324a",
+  "documents": [
+    {
+      "id": "analytical-applications",
+      "kind": "project",
+      "path": "/work/analytical-applications/",
+      "title": "Designing an audit-tracking workspace",
+      "passages": [
+        {
+          "id": "portal-purpose",
+          "text": "I built the Audit Portal with ASP.NET Core and Blazor Interactive Server to connect analytical investigation with operational audit work. The application brings record search, audit detail, lifecycle and progress views, documents, change history, and workbook exports into a permission-controlled workspace.",
+          "keywords": "audit portal blazor c# asp.net application software workspace architecture"
+        },
+        {
+          "id": "portal-role",
+          "text": "I am the sole hands-on developer across the analytical notebooks, data platform, and Audit Portal. Audit & Oversight colleagues contribute firsthand knowledge of attorney billing and casework. Their feedback informs analytical assumptions, model iteration, reports, and interface design.",
+          "keywords": "developer role collaboration authorship colleagues"
+        },
+        {
+          "id": "portal-ml",
+          "text": "The separate machine-learning program investigates predictive scores for human review prioritization. Predictive-score integration into the Portal is proposed and requires evaluation, review, and operational approval before use in reviewer workflows.",
+          "keywords": "machine learning operational production deployed integration approval prediction"
+        }
+      ]
+    },
+    {
+      "id": "analytical-data-platforms",
+      "kind": "project",
+      "path": "/work/analytical-data-platforms/",
+      "title": "Building an analytical data platform",
+      "passages": [
+        {
+          "id": "data-purpose",
+          "text": "I built an extract-based analytical foundation connecting legacy source information with reusable Python and PySpark preparation, Parquet datasets in Azure Data Lake Storage Gen2, and Synapse serverless SQL access. It supports SQL investigation, aggregated analysis, and selected downstream application queries.",
+          "keywords": "data platform python pyspark parquet synapse sql azure architecture"
+        },
+        {
+          "id": "data-role",
+          "text": "I am the sole hands-on developer of the analytical notebooks and data platform. My responsibilities span transformations, prepared datasets, and SQL access structures. Departmental colleagues contribute practical knowledge of billing and casework, helping me revisit assumptions and refine requirements.",
+          "keywords": "developer role collaboration authorship"
+        }
+      ]
+    },
+    {
+      "id": "machine-learning-audit-prioritization",
+      "kind": "project",
+      "path": "/work/machine-learning-audit-prioritization/",
+      "title": "Developing machine-learning models for audit prioritization",
+      "passages": [
+        {
+          "id": "ml-status",
+          "text": "I implemented a supervised-learning program in Python and PySpark to investigate audit prioritization. The work connects bill-level features with candidate models, repeatable evaluation, probability calibration, and scoring outputs. The program remains experimental. Saved notebooks document implemented code paths and configurations; execution records are needed to substantiate completed evaluations, model selection, and operational readiness.",
+          "keywords": "machine learning ml experiment implemented pipeline evaluation performance accuracy production deployed"
+        },
+        {
+          "id": "ml-ranking",
+          "text": "Random Forest is configured for continued experimentation, including the fixed fallback path. The reviewed notebook exports contain no execution outputs, so the candidate table describes implementation and configuration rather than a measured model ranking. Runtime package availability and comparative results remain evaluation requirements.",
+          "keywords": "random forest best model ranking results measured accuracy performance evaluation"
+        },
+        {
+          "id": "ml-label",
+          "text": "The historical Random Audit program supplied reviewed bills from which to construct labeled training examples. The implemented target is whether the review's reduction field is populated: a recorded zero counts as positive, while a null or blank field counts as negative within that reviewed sample. This predicts a recording convention associated with bill review, rather than the amount reduced or selection into the random program. It is not a label for fraud, proof of improper billing, or a direct instruction to initiate a full audit.",
+          "keywords": "fraud labels target reduction audit prioritization"
+        },
+        {
+          "id": "ml-framework",
+          "text": "The modeling engine is Spark ML, using Python/PySpark in Azure Synapse. Spark pipelines combine categorical indexing, model-appropriate encoding, median imputation, and vector assembly with the estimator. Learned preprocessing is fitted within each training fold. pandas supports fold-metric summaries around the Spark training workflow.",
+          "keywords": "spark synapse python pyspark pandas framework machine learning"
+        },
+        {
+          "id": "ml-calibration",
+          "text": "Calibration and backtesting. I implemented Platt calibration using Spark logistic regression on the raw model probability, with a separate calibration window, a later test window, a buffer for delayed labels, and rolling time-based backtests. The separate windows distinguish model fitting, probability calibration, and assessment on later data. Calibration can change probability interpretation without necessarily improving ranking.",
+          "keywords": "calibration backtest platt probability chronological evaluation"
+        }
+      ]
+    },
+    {
+      "id": "about",
+      "kind": "about",
+      "path": "/about/",
+      "title": "Experience, education & approach",
+      "passages": [
+        {
+          "id": "background",
+          "text": "My background in economics and faculty research led to banking data and business analysis, then to developing analytical data infrastructure, experimental models, and software applications. Across these roles, I connect business questions with data quality, analytical methods, and the workflows people use.",
+          "keywords": "background career experience economics banking business analysis"
+        },
+        {
+          "id": "research-role",
+          "text": "I supported faculty research involving profitability forecasting, consumer spending, conjoint analysis, and pricing, connecting economic and business questions with quantitative research. My research assistance is acknowledged in a published 2014 study of cattle-ranch profitability.",
+          "keywords": "research assistant assistance authorship centrum cattle ranch"
+        }
+      ]
+    },
+    {
+      "id": "cattle-ranch-profitability",
+      "kind": "research",
+      "path": "/research/",
+      "title": "Cattle-ranch profitability research",
+      "passages": [
+        {
+          "id": "research-credit",
+          "text": "The 2014 study by Anand N. Asthana investigates machine-learning approaches to predicting cattle-ranch profitability in Latin America. I contributed research assistance to the project and am acknowledged as J. Avilés on page 478.",
+          "keywords": "research author authorship asthana paper cattle ranch profitability assistance acknowledgment"
+        },
+        {
+          "id": "research-methods",
+          "text": "The study uses a vector space model and kernel ridge regression, evaluated with randomized ten-fold cross-validation, to examine the relationship between ranch characteristics and profitability. These methods connect a business forecasting question with statistical learning. The publisher’s paper provides the full methodology and acknowledgment.",
+          "keywords": "research method kernel ridge regression validation cattle ranch profitability"
+        }
+      ]
+    }
+  ]
+}

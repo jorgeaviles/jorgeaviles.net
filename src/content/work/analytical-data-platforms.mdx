@@ -6,7 +6,7 @@ order: 2
 featured: true
 overview:
   purpose: Make legacy extracts reusable for investigation, reporting, and application queries.
-  role: Sole hands-on developer of the analytical notebooks and data platform.
+  role: Data preparation, dataset publication, and serverless SQL access.
   technologies:
     - Python / PySpark
     - ADLS Gen2 / Parquet
@@ -33,11 +33,11 @@ import AnalyticalDataFlow from '../../components/AnalyticalDataFlow.astro';
 
 I built an extract-based analytical foundation connecting legacy source information with reusable Python and PySpark preparation, Parquet datasets in Azure Data Lake Storage Gen2, and Synapse serverless SQL access. It supports SQL investigation, aggregated analysis, and selected downstream application queries.
 
-The work began in Python and Jupyter notebooks, exploring questions beyond established reporting. As investigations developed, I needed preparation that could be reused instead of rebuilding it for each question. University consultation informed early modeling proposals; departmental knowledge helped frame what the data could meaningfully explain.
+The work began in Python and Jupyter notebooks, exploring questions beyond established reporting. As investigations developed, I turned the preparation into reusable workflows. University consultation informed early modeling proposals; departmental knowledge helped frame what the data could meaningfully explain.
 
 ## My role and collaboration
 
-I am the sole hands-on developer of the analytical notebooks and data platform. My responsibilities span transformations, prepared datasets, and SQL access structures. Departmental colleagues contribute practical knowledge of billing and casework, helping me revisit assumptions and refine requirements.
+I designed and developed the analytical notebooks and data platform. My responsibilities span transformations, prepared datasets, and SQL access structures. Departmental colleagues contribute practical knowledge of billing and casework, helping me revisit assumptions and refine requirements.
 
 I designed and developed the analytical preparation and SQL access layers, coordinating with IT colleagues on scheduled source extracts, infrastructure access, and application permissions.
 
@@ -45,11 +45,11 @@ I designed and developed the analytical preparation and SQL access layers, coord
 
 ## Engineering decisions
 
-**Preserve source relationships.** Some legacy records contain repeated groups of values. Selected transformations check positional alignment and separate malformed groups for review; flattening groups independently could manufacture relationships. Repeated occurrences are not automatically errors. Explicit type conversion, deterministic selection for selected projections, and count and uniqueness checks preserve the intended row grain.
+**Preserve source relationships.** Some legacy records contain repeated groups of values. Selected transformations preserve positional alignment, retain repeated occurrences, and separate malformed groups for review. Explicit type conversion, deterministic selection for selected projections, and count and uniqueness checks preserve the intended row grain.
 
-**Separate exploration from reusable preparation.** Python and PySpark make preparation explicit and repeatable. A notebook can test an idea; a published dataset needs a declared shape and an access pattern consumers can depend on. Selected transformation and publication contracts have tests, while runtime data validation remains a separate responsibility.
+**Separate exploration from reusable preparation.** Python and PySpark make preparation explicit and repeatable. A notebook can test an idea; a published dataset needs a declared shape and an access pattern consumers can depend on. Tests check selected transformation and publication contracts; runtime validation checks the prepared data.
 
-**Keep prepared files reusable.** Parquet provides columnar data in ADLS Gen2, available independently of one notebook. Source representations, normalized detail, and serving datasets have different logical responsibilities without requiring an identical physical layout everywhere. The trade-off is maintaining schemas, file layouts, and the relationship between dated snapshots and serving data.
+**Keep prepared files reusable.** Parquet provides columnar data in ADLS Gen2, available independently of one notebook. Source representations, normalized detail, and serving datasets use layouts suited to their respective roles. The trade-off is maintaining schemas, file layouts, and the relationship between dated snapshots and serving data.
 
 **Provide serverless analytical access.** [Synapse serverless SQL](https://learn.microsoft.com/en-us/azure/synapse-analytics/sql/on-demand-workspace-overview) queries lake data through external tables, views, and selected stored procedures. This serverless access layer makes file layout, query shape, and data scanned important design considerations.
 
@@ -59,8 +59,8 @@ I designed and developed the analytical preparation and SQL access layers, coord
 
 Prepared information supports repeatable investigation and selected application queries. The [Audit Portal case study](/work/analytical-applications/) describes the application-facing work. The prepared data also supports bill-level feature engineering and model development. The [machine-learning case study](/work/machine-learning-audit-prioritization/) describes the implemented training, validation, calibration, and scoring pipelines, which remain experimental.
 
-Freshness depends on upstream extract delivery, preparation, and publication rather than a real-time connection to the operational database. Keeping those stages visible helps investigate stale or incomplete results and gives consumers a clear basis for interpreting dataset freshness.
+The platform tracks freshness through upstream extract delivery, preparation, and publication. Visibility into those stages helps consumers interpret snapshots and investigate delivery or preparation issues.
 
-## What I learned
+## Engineering perspective
 
-Maintaining an analytical foundation requires more than writing a query: it means defining what a row represents, recognizing preparation failures, and making consumer assumptions explicit. Domain knowledge and validation make reuse credible as questions and downstream applications change.
+Maintaining an analytical foundation means defining what a row represents, recognizing preparation failures, and making consumer assumptions explicit. Domain knowledge and validation make reuse credible as questions and downstream applications change.
