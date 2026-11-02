@@ -136,11 +136,11 @@ export function EvaluationLesson({ state, dispatch }: LabController) {
                 {selected.trainingIds.length} ranches.
               </p>
               <p>
-                Every ranch was predicted once while excluded from training.
-                Each round checks a different group, so its score varies. This
-                is the same kind of classifier as Lesson 2, fitted afresh each
-                round. Your sliders and optional training do not affect these
-                checks.
+                Each round predicts its held-out ranches once. Each round checks
+                a different group, so its score varies. This is the same kind of
+                classifier as Lesson 2, fitted afresh each round. This
+                evaluation uses a fixed training schedule for comparable
+                results.
               </p>
             </>
           )}
@@ -151,9 +151,8 @@ export function EvaluationLesson({ state, dispatch }: LabController) {
           <h3 id="final-test-heading">Stage 2 · Final test</h3>
           <p>
             Next, a fresh classifier learns from all 72 development ranches.
-            Check it once on the 18 ranches set aside from the beginning. Unlike
-            the development groups, these ranches took no part in any training
-            or validation round.
+            Check it once on the 18 ranches set aside from the beginning. These
+            held-out ranches provide a fresh assessment after development.
           </p>
           <button
             className="ranch-primary"
@@ -175,13 +174,13 @@ export function EvaluationLesson({ state, dispatch }: LabController) {
                 · {pct(final.metrics.accuracy)} final-test accuracy.
               </p>
               <p>
-                This is a separate check on new examples. Keep this small
-                synthetic test out of repeated tuning; one result cannot
-                guarantee performance on real ranches.
+                This final check measures predictions on new synthetic examples.
+                Reserving it until development is complete helps assess how the
+                model generalizes.
               </p>
               <p>
-                This assessment is now saved. You can still explore training in
-                Lessons 1 and 2 without changing these results.
+                Your assessment stays saved as you explore training in Lessons 1
+                and 2.
               </p>
               <button onClick={() => dispatch({ type: 'reset-evaluation' })}>
                 Reset validation exercise

@@ -1,42 +1,41 @@
 ## Privacy & measurement
 
-When enabled on the public site, [Cloudflare Web Analytics](https://developers.cloudflare.com/web-analytics/about/)
-uses a browser beacon to measure page visits and loading performance. Cloudflare
-does not track individual visitors across its customers’ websites.
+[Cloudflare Web Analytics](https://developers.cloudflare.com/web-analytics/about/)
+uses a browser beacon on the public site to measure page visits and loading
+performance. Cloudflare provides these measurements without tracking individual
+visitors across its customers’ websites.
 
-The Lab’s data and calculations stay in your browser; its slider settings and
-model results are not submitted as analytics events. There are no advertising
-scripts, visitor accounts, or third-party embeds. Contact links open email or an
-external professional profile.
+The Lab runs its data, calculations, sliders, and model results locally in your
+browser. Contact links open your email application or an external professional
+profile.
 
 <h3 id="portfolio-assistant-privacy">Portfolio assistant</h3>
 
-When activated, the portfolio assistant sends the question you choose to submit,
-along with relevant passages from approved public website content, to a separate
-Cloudflare Worker and Workers AI. Each question stands alone: this site does not
-save conversation history, use browser storage for questions, or send questions
-as Web Analytics events. Please do not submit personal, confidential, or agency
-information.
+Submitting a question sends its text and relevant public portfolio passages to a
+separate Cloudflare Worker and Workers AI. Use the assistant for questions about
+published projects, experience, and research, keeping personal, confidential, and
+agency information private.
 
-The Worker uses the connecting IP address transiently for request throttling. It
-does not send that address to the AI model or create a visitor profile. Application
-prompt/response logging is disabled. Cloudflare processes requests and operational
-metadata under its own policies; see [Workers AI data usage](https://developers.cloudflare.com/workers-ai/platform/data-usage/).
-This is separate from the browser-only Lab and ordinary static page visits.
+Each question stands alone. The site retains no conversation history in browser
+storage or application logs, and questions stay separate from Web Analytics
+measurements. The Worker uses the connecting IP address transiently for request
+throttling; that address stays outside the AI prompt. Cloudflare processes
+requests and operational metadata under its own policies; see
+[Workers AI data usage](https://developers.cloudflare.com/workers-ai/platform/data-usage/).
 
-The AI may summarize approved public passages into short answers with links to
-the original pages, or return selected passage text when a summary fails
-validation. Generated answers can contain mistakes, omit qualifications, or be
-irrelevant; source links do not guarantee that every claim is correct. If the sources do not
-support an answer, or the free service is unavailable, use the public pages directly.
+Answers present AI summaries or selected source passages with links to the
+original pages. Review those pages for full context and to check the answer’s
+accuracy. The [case studies](/work/), [background](/about/), and
+[research pages](/research/) are also available for direct exploration.
 
 <h3 id="portfolio-mcp-privacy">Public MCP integration</h3>
 
-Compatible AI clients can request curated public portfolio passages from the
-separate read-only MCP endpoint. MCP retrieval does not invoke Workers AI. The
-tools cannot modify content or access private accounts, files, or employer
-databases. The application does not intentionally store conversation histories
-or log request contents. Cloudflare processes network requests and operational
-metadata; the connecting IP address is used transiently for throttling. Your
-connected AI client follows its own data practices. Do not send confidential
-information. See [connection instructions and scope](/mcp/).
+Compatible AI applications use the read-only MCP endpoint to retrieve curated
+public portfolio passages and original source URLs. The connecting application
+handles interpretation; the endpoint handles retrieval.
+
+The service uses the connecting IP address transiently for throttling and retains
+no conversation history or application request-content logs. Cloudflare processes
+network requests and operational metadata. Your connected AI application follows
+its own data practices. Use public portfolio questions and keep confidential
+information private. See [connection instructions](/mcp/).

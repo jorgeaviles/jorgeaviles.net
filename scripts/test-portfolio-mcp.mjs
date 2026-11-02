@@ -111,12 +111,32 @@ try {
   }
   const research = await c.callTool({ name: 'get_research', arguments: {} });
   assert.match(JSON.stringify(research), /assistan/i);
+  assert.match(JSON.stringify(research), /SPSS and Stata/);
+  assert.match(JSON.stringify(research), /logit models/);
   const ml = await c.callTool({
     name: 'search_portfolio',
     arguments: { query: 'machine learning experimental', limit: 2 },
   });
   assert.ok(ml.structuredContent.passages.length <= 2);
   assert.match(JSON.stringify(ml), /experimental/);
+  for (const [query, passageId] of [
+    ['Santander Power Apps Power BI Microsoft Project', 'banking-delivery'],
+    ['Santander SAS R SSRS segmentation churn', 'banking-analytics'],
+    ['Santander mainframe validation exception reporting', 'banking-quality'],
+  ]) {
+    const result = await c.callTool({
+      name: 'search_portfolio',
+      arguments: { query, limit: 2 },
+    });
+    assert.ok(
+      result.structuredContent.passages.some((p) => p.id === passageId),
+    );
+    assert.ok(
+      result.structuredContent.passages.every(
+        (p) => p.url === 'https://jorgeaviles.net/about/',
+      ),
+    );
+  }
   const unsupported = await c.callTool({
     name: 'search_portfolio',
     arguments: { query: 'quantum penguin xyz' },

@@ -127,8 +127,7 @@ export default function PortfolioAssistant({
           </button>
         </div>
         <p className="assistant-privacy" id="assistant-privacy">
-          When activated, your question is sent to Cloudflare Workers AI. This
-          site does not save conversation history.{' '}
+          Cloudflare Workers AI processes each question independently.{' '}
           <a href="/colophon/#portfolio-assistant-privacy">Privacy details</a>.
         </p>
       </form>
@@ -202,8 +201,8 @@ export default function PortfolioAssistant({
               </ul>
               <p className="assistant-caption">
                 {result.sentences
-                  ? 'AI summarized these public sources. Check the original pages for context; an answer may contain mistakes or miss qualifications.'
-                  : 'AI selected these published passages. Check the original pages for context; a selection may not answer every part of your question.'}
+                  ? 'AI summary. Explore the original pages for project details and context.'
+                  : 'Selected source passages. Explore the original pages for project details and context.'}
               </p>
             </>
           )}

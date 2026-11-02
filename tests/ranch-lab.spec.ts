@@ -398,7 +398,7 @@ test('readable numeric training state and privacy framing remain quiet and coher
     'polite',
   );
   await expect(page.locator('.learning-lab > .section-footnote')).toContainText(
-    'does not reproduce the published study',
+    'Explore synthetic ranch data',
   );
   await info.attach('Ranch prediction lesson', {
     body: await page.screenshot({ fullPage: true }),

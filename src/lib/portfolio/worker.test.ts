@@ -103,7 +103,13 @@ describe('approved public-content service', () => {
     ['Python', ['data-purpose', 'ml-framework', 'ml-status']],
     [
       'research assistance',
-      ['research-credit', 'research-role', 'background', 'research-methods'],
+      [
+        'research-credit',
+        'research-role',
+        'background',
+        'research-methods',
+        'research-practice',
+      ],
     ],
     [
       'Synapse audit',

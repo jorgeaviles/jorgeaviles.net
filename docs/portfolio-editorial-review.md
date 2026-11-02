@@ -111,3 +111,38 @@ remain covered by the build and browser checks.
 - Added-line secret/private-path scanning and diff checks passed. The whole-file
   scan also matched the existing private-key detection expression in the build
   verifier; inspection confirmed that it is a scanner signature, not a key.
+
+## Career narrative revision
+
+This candidate builds on the copy cleanup with a fuller account of the research,
+banking, and public-sector career progression. Home introduces that progression;
+About gives each Santander role a concise contribution and expands the CENTRUM
+methods. Project pages emphasize responsibilities and engineering decisions,
+remove agency-wide appropriations context, and group ML execution evidence under
+one project-status heading. Research keeps Asthana’s authorship and Jorge’s
+acknowledged assistance clear while describing broader faculty research methods.
+
+The owner’s existing résumé, `Jorge_Aviles_Resume_26.pdf`, supports the added
+banking and faculty-research tools and activities. No résumé contact details,
+private documents, agency records, or campaign-improvement percentage are included.
+The owner confirmed the website dates: CPCS June 2020–present and CENTRUM April
+2012–September 2014. Santander role dates remain unchanged. The résumé itself and
+the separate GitHub profile have not been modified by this revision.
+
+The curated index adds three Santander passages and one faculty-methods passage,
+for 18 total. Source matching and canonical URLs remain enforced. The current
+47-case deterministic evaluation includes the four new career questions and a
+refusal for an unpublished campaign-improvement percentage. These are mocked
+retrieval/assembly checks, not hosted model-accuracy results. No new inference or
+account changes are part of the editorial revision.
+
+Historical hosted selector/synthesis recordings retain their original source
+version and outputs. Their tests now load `evals/portfolio/pre-career-index.json`,
+the exact prior index, rather than silently applying old observations to the new
+content. Current-index tests and the expanded evaluation run separately.
+
+Publishing website content and releasing the separate API index are distinct
+steps. A later protected API release requires owner approval and bounded live
+verification of the added career questions. This revision does not activate or
+change the production model, MCP transport, rate limits, privacy controls, or
+release settings.

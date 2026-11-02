@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "indexVersion": "6be7485b1d3e31d724577e299130a4f80a302642eb3eb32949f5b25a16f4324a",
+  "indexVersion": "60d33ddd5084d0546d644dcf9f100addad7d993de428f8b635dbb03d72792e85",
   "cases": [
     {
       "id": "application-01",
@@ -149,10 +149,7 @@
       "sourceUrls": [
         "https://jorgeaviles.net/work/machine-learning-audit-prioritization/"
       ],
-      "qualifications": [
-        "no execution outputs",
-        "rather than a measured model ranking"
-      ],
+      "qualifications": ["execution records", "runtime package verification"],
       "multiplePassagesRequired": false,
       "refusalReason": null,
       "requiredPassageIds": ["ml-ranking"]
@@ -542,6 +539,66 @@
       "qualifications": [],
       "multiplePassagesRequired": false,
       "refusalReason": "No approved passage supplies the requested fact.",
+      "requiredPassageIds": []
+    },
+    {
+      "id": "career-01",
+      "category": "career",
+      "question": "What did Jorge build for technology project reporting at Santander?",
+      "supported": true,
+      "relevantPassageIds": ["banking-delivery"],
+      "sourceUrls": ["https://jorgeaviles.net/about/"],
+      "qualifications": [],
+      "multiplePassagesRequired": false,
+      "refusalReason": null,
+      "requiredPassageIds": ["banking-delivery"]
+    },
+    {
+      "id": "career-02",
+      "category": "career",
+      "question": "How did Jorge use SAS, R, and SSRS in Santander marketing analytics?",
+      "supported": true,
+      "relevantPassageIds": ["banking-analytics"],
+      "sourceUrls": ["https://jorgeaviles.net/about/"],
+      "qualifications": [],
+      "multiplePassagesRequired": false,
+      "refusalReason": null,
+      "requiredPassageIds": ["banking-analytics"]
+    },
+    {
+      "id": "career-03",
+      "category": "career",
+      "question": "What did Jorge do with legacy mainframe data quality at Santander?",
+      "supported": true,
+      "relevantPassageIds": ["banking-quality"],
+      "sourceUrls": ["https://jorgeaviles.net/about/"],
+      "qualifications": [],
+      "multiplePassagesRequired": false,
+      "refusalReason": null,
+      "requiredPassageIds": ["banking-quality"]
+    },
+    {
+      "id": "career-04",
+      "category": "career",
+      "question": "What quantitative methods did Jorge use in CENTRUM faculty projects: SPSS, Stata, conjoint and logit?",
+      "supported": true,
+      "relevantPassageIds": ["research-practice"],
+      "sourceUrls": ["https://jorgeaviles.net/research/"],
+      "qualifications": [],
+      "multiplePassagesRequired": false,
+      "refusalReason": null,
+      "requiredPassageIds": ["research-practice"]
+    },
+    {
+      "id": "career-05",
+      "category": "unsupported",
+      "question": "What measured percentage improvement did Santander marketing campaigns achieve?",
+      "supported": false,
+      "relevantPassageIds": [],
+      "sourceUrls": [],
+      "qualifications": [],
+      "multiplePassagesRequired": false,
+      "refusalReason": "No approved public measurement is provided.",
       "requiredPassageIds": []
     }
   ]
