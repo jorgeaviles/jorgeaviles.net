@@ -1,6 +1,8 @@
 ---
 import '../styles/global.css';
 import { site, navigation } from '../config/site';
+import Arrow from '../components/Arrow.astro';
+import BrandIcon from '../components/BrandIcon.astro';
 interface Props {
   title?: string;
   description?: string;
@@ -91,7 +93,28 @@ const structuredData = {
       <main id="main" tabindex="-1">
         <slot />
       </main>
-      <footer class="site-footer">
+      <footer
+        class="site-footer"
+        id={Astro.url.pathname === '/' ? 'contact' : undefined}
+      >
+        {Astro.url.pathname === '/' && (
+          <div class="footer-contact">
+            <h2>Get in touch.</h2>
+            <p>
+              I welcome conversations about analysis, research, and practical
+              technology.
+            </p>
+            <a href={`mailto:${site.email}`}>{site.email}</a>
+            <div class="home-contact-links">
+              <a class="text-link" href={site.github}>
+                <BrandIcon brand="github" /> GitHub <Arrow diagonal />
+              </a>
+              <a class="text-link" href={site.linkedin}>
+                <BrandIcon brand="linkedin" /> LinkedIn <Arrow diagonal />
+              </a>
+            </div>
+          </div>
+        )}
         <div>
           <a class="footer-name" href="/">
             {site.name}

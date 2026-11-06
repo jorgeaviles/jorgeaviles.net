@@ -1508,7 +1508,7 @@ strong {
   z-index: 5;
   background: var(--paper);
 }
-:where(section[id], h2[id], h3[id]) {
+:where(section[id], footer[id], h2[id], h3[id]) {
   scroll-margin-top: 92px;
 }
 @media (prefers-reduced-motion: no-preference) {
@@ -1549,9 +1549,6 @@ strong {
   font-size: 14px;
 }
 .resume-entry {
-  display: grid;
-  grid-template-columns: minmax(0, 1fr);
-  gap: 10px;
   max-width: 760px;
   padding-block: 28px;
   border-bottom: 1px solid var(--line);
@@ -1559,6 +1556,7 @@ strong {
 .resume-date {
   color: var(--muted);
   font-size: 14px;
+  margin-bottom: 10px;
 }
 .resume-entry h3 {
   margin-bottom: 8px;
@@ -1589,8 +1587,16 @@ strong {
   margin-top: 6px;
 }
 .home-research .research-entry {
+  display: block;
   padding-top: 0;
   border-top: 0;
+}
+.home-research .research-meta .mono-label {
+  max-width: none;
+  margin: 0 0 10px;
+}
+.home-research .research-entry .prose {
+  max-width: 750px;
 }
 .home-research .prose h2 {
   font-size: 22px;
@@ -1634,7 +1640,7 @@ strong {
   }
 }
 @media (max-width: 640px) {
-  :where(section[id], h2[id], h3[id]) {
+  :where(section[id], footer[id], h2[id], h3[id]) {
     scroll-margin-top: 122px;
   }
 }
@@ -1644,4 +1650,21 @@ strong {
     -webkit-backdrop-filter: none;
     backdrop-filter: none;
   }
+}
+
+.footer-contact {
+  grid-column: 1 / -1;
+  margin-bottom: 24px;
+}
+.footer-contact h2 {
+  margin-bottom: 18px;
+}
+.footer-contact p {
+  color: var(--muted);
+  margin-bottom: 16px;
+}
+.footer-contact a {
+  color: var(--green);
+  text-decoration: underline;
+  text-underline-offset: 4px;
 }

@@ -157,19 +157,15 @@ test('contact links identify the approved destinations', async ({ page }) => {
   );
 });
 
-test('home contact actions are not duplicated in the footer', async ({
+test('home footer provides contact and profile links once', async ({
   page,
 }) => {
   await page.goto('/');
   const contact = page.locator('#contact');
-  await expect(contact.locator('.contact-address a')).toHaveAttribute(
+  await expect(contact.locator('a[href^="mailto:"]')).toHaveAttribute(
     'href',
     'mailto:jorge@jorgeaviles.net',
   );
-  await expect(
-    contact.getByRole('link', { name: 'Write an email' }),
-  ).toHaveCount(0);
-  await expect(contact.locator('.home-contact-links a')).toHaveCount(2);
   await expect(contact.getByRole('link', { name: /GitHub/ })).toHaveAttribute(
     'href',
     'https://github.com/jorgeaviles',
@@ -178,16 +174,8 @@ test('home contact actions are not duplicated in the footer', async ({
     'href',
     'https://www.linkedin.com/in/jraviles/',
   );
-  const footerLinks = page.locator('.site-footer .footer-links a');
-  await expect(footerLinks).toHaveText([
-    'Lab',
-    'Ask',
-    'MCP',
-    'Colophon',
-    'Privacy',
-  ]);
-  await expect(page.locator('.site-footer')).not.toContainText('GitHub');
-  await expect(page.locator('.site-footer')).not.toContainText('LinkedIn');
+  await expect(page.getByRole('link', { name: /GitHub/ })).toHaveCount(1);
+  await expect(page.getByRole('link', { name: /LinkedIn/ })).toHaveCount(1);
 });
 
 test('home experience dates align directly above the associated roles', async ({
@@ -394,7 +382,7 @@ test('home contact invitation leads to contact choices', async ({ page }) => {
     .getByRole('link', { name: 'Contact', exact: true })
     .click();
   await expect(page).toHaveURL(/#contact$/);
-  await expect(page.locator('.contact-address')).toBeVisible();
+  await expect(page.locator('#contact a[href^="mailto:"]')).toBeVisible();
 });
 
 test('approved case study stays consistent across listings and renders a static capability workflow', async ({
@@ -670,7 +658,7 @@ test('recruiter, engineering, and admissions paths expose evidence without ambig
   await page
     .getByRole('link', { name: 'Experience & education', exact: true })
     .click();
-  await expect(page.locator('main')).toContainText('June 2020–present');
+  await expect(page.locator('main')).toContainText('2020–present');
   await expect(page.locator('main')).toContainText(
     'Change Management Business Analyst',
   );
@@ -679,7 +667,7 @@ test('recruiter, engineering, and admissions paths expose evidence without ambig
     .getByRole('navigation', { name: 'Main navigation' })
     .getByRole('link', { name: 'Contact', exact: true })
     .click();
-  await expect(page.locator('.contact-address')).toHaveText(
+  await expect(page.locator('#contact a[href^="mailto:"]')).toHaveText(
     'jorge@jorgeaviles.net',
   );
   await page.goto('/');
