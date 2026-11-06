@@ -157,9 +157,7 @@ test('contact links identify the approved destinations', async ({ page }) => {
   );
 });
 
-test('home footer provides contact and profile links once', async ({
-  page,
-}) => {
+test('home contact provides email and profile links once', async ({ page }) => {
   await page.goto('/');
   const contact = page.locator('#contact');
   await expect(contact.locator('a[href^="mailto:"]')).toHaveAttribute(
