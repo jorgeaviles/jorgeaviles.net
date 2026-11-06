@@ -157,6 +157,53 @@ test('contact links identify the approved destinations', async ({ page }) => {
   );
 });
 
+test('home footer provides contact and profile links once', async ({
+  page,
+}) => {
+  await page.goto('/');
+  const contact = page.locator('#contact');
+  await expect(contact.locator('a[href^="mailto:"]')).toHaveAttribute(
+    'href',
+    'mailto:jorge@jorgeaviles.net',
+  );
+  await expect(contact.getByRole('link', { name: /GitHub/ })).toHaveAttribute(
+    'href',
+    'https://github.com/jorgeaviles',
+  );
+  await expect(contact.getByRole('link', { name: /LinkedIn/ })).toHaveAttribute(
+    'href',
+    'https://www.linkedin.com/in/jraviles/',
+  );
+  await expect(page.getByRole('link', { name: /GitHub/ })).toHaveCount(1);
+  await expect(page.getByRole('link', { name: /LinkedIn/ })).toHaveCount(1);
+});
+
+test('home experience dates align directly above the associated roles', async ({
+  page,
+}) => {
+  await page.goto('/');
+  const entries = page.locator('#experience .resume-entry');
+  await expect(entries).toHaveCount(3);
+  for (const entry of await entries.all()) {
+    const position = await entry.evaluate((element) => {
+      const dateElement = element.querySelector('.resume-date')!;
+      const titleElement = element.querySelector('h3')!;
+      const date = dateElement.getBoundingClientRect();
+      const title = titleElement.getBoundingClientRect();
+      const details = titleElement.parentElement!.getBoundingClientRect();
+      return {
+        leftDifference: Math.abs(date.left - title.left),
+        dateAboveTitle: date.bottom <= title.top,
+        width: details.width,
+      };
+    });
+    expect(position.leftDifference).toBeLessThanOrEqual(2);
+    expect(position.dateAboveTitle).toBe(true);
+    expect(position.width).toBeLessThanOrEqual(760);
+  }
+  await expectNoHorizontalOverflow(page);
+});
+
 test('first-party page links resolve successfully', async ({
   page,
   request,

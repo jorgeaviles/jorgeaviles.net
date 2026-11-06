@@ -1549,6 +1549,7 @@ strong {
   font-size: 14px;
 }
 .resume-entry {
+  max-width: 760px;
   padding-block: 28px;
   border-bottom: 1px solid var(--line);
 }
@@ -1606,6 +1607,11 @@ strong {
 .home-contact .contact-address {
   margin-block: 24px;
   color: var(--green);
+}
+.home-contact .contact-address a {
+  text-decoration: underline;
+  text-decoration-thickness: 1px;
+  text-underline-offset: 5px;
 }
 .home-contact-links {
   display: flex;

@@ -105,6 +105,14 @@ const structuredData = {
               technology.
             </p>
             <a href={`mailto:${site.email}`}>{site.email}</a>
+            <div class="home-contact-links">
+              <a class="text-link" href={site.github}>
+                <BrandIcon brand="github" /> GitHub <Arrow diagonal />
+              </a>
+              <a class="text-link" href={site.linkedin}>
+                <BrandIcon brand="linkedin" /> LinkedIn <Arrow diagonal />
+              </a>
+            </div>
           </div>
         )}
         <div>
@@ -115,12 +123,6 @@ const structuredData = {
           <p>Thoughtful analysis. Useful systems.</p>
         </div>
         <div class="footer-links">
-          <a href={site.github}>
-            <BrandIcon brand="github" /> GitHub <Arrow diagonal />
-          </a>
-          <a href={site.linkedin}>
-            <BrandIcon brand="linkedin" /> LinkedIn <Arrow diagonal />
-          </a>
           <a href="/lab/">Lab</a>
           <a href="/ask/" aria-label="Ask about my work">
             Ask
