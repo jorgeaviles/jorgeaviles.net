@@ -4,11 +4,12 @@ import Arrow from './Arrow.astro';
 interface Props {
   entries: CollectionEntry<'work'>[];
   headingLevel?: 'h2' | 'h3';
+  expanded?: boolean;
 }
-const { entries, headingLevel: Heading = 'h3' } = Astro.props;
+const { entries, headingLevel: Heading = 'h3', expanded = false } = Astro.props;
 ---
 
-<div class="work-list">
+<div class:list={['work-list', { 'work-list-expanded': expanded }]}>
   {entries.map((entry, index) => (
     <a class="work-row" href={`/work/${entry.id}/`}>
       <span class="work-number">{String(index + 1).padStart(2, '0')}</span>
@@ -16,6 +17,17 @@ const { entries, headingLevel: Heading = 'h3' } = Astro.props;
         <span class="work-category">{entry.data.category}</span>
         <Heading class="work-title">{entry.data.title}</Heading>
         <p>{entry.data.description}</p>
+        {expanded && entry.data.overview && (
+          <>
+            <p class="project-contribution">
+              <strong>My contribution:</strong> {entry.data.overview.role}
+            </p>
+            <p class="project-stack">
+              {entry.data.overview.technologies.join(' · ')}
+            </p>
+            <span class="project-read-more">Read the technical case study</span>
+          </>
+        )}
       </div>
       <Arrow />
     </a>
