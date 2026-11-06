@@ -127,7 +127,7 @@ strong {
   align-items: center;
   justify-content: space-between;
   gap: 24px;
-  min-height: 112px;
+  min-height: 76px;
   border-bottom: var(--rule-width) solid var(--line);
 }
 .wordmark {
@@ -743,8 +743,9 @@ strong {
 @media (max-width: 640px) {
   .site-header {
     flex-wrap: wrap;
-    gap: 8px;
-    padding-block: 22px 10px;
+    gap: 4px;
+    min-height: auto;
+    padding-block: 8px;
   }
   .wordmark {
     gap: 11px;
@@ -758,9 +759,12 @@ strong {
     justify-content: space-between;
     gap: 10px;
     font-size: 14px;
-    padding-top: 8px;
+    padding-top: 0;
   }
   .site-header nav a {
+    display: inline-flex;
+    align-items: center;
+    min-height: 44px;
     padding-block: 10px;
   }
   .home-intro {
@@ -1505,7 +1509,7 @@ strong {
   background: var(--paper);
 }
 :where(section[id], h2[id], h3[id]) {
-  scroll-margin-top: 150px;
+  scroll-margin-top: 92px;
 }
 @media (prefers-reduced-motion: no-preference) {
   html {
@@ -1610,16 +1614,32 @@ strong {
   .portfolio-section {
     padding-block: 36px;
   }
-  .site-header {
-    min-height: auto;
-    padding-block: 14px;
-  }
-  :where(section[id], h2[id], h3[id]) {
-    scroll-margin-top: 150px;
-  }
 }
 
 .work-list-expanded .work-row:last-child,
 .resume-entry:last-child {
   border-bottom: 0;
+}
+
+/* Keep an opaque fallback where backdrop filtering is unavailable. */
+@supports (
+  (backdrop-filter: blur(12px)) or (-webkit-backdrop-filter: blur(12px))
+) {
+  .site-header {
+    background: rgb(247 246 242 / 88%);
+    -webkit-backdrop-filter: blur(12px);
+    backdrop-filter: blur(12px);
+  }
+}
+@media (max-width: 640px) {
+  :where(section[id], h2[id], h3[id]) {
+    scroll-margin-top: 122px;
+  }
+}
+@media (prefers-reduced-transparency: reduce) {
+  .site-header {
+    background: var(--paper);
+    -webkit-backdrop-filter: none;
+    backdrop-filter: none;
+  }
 }
