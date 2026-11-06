@@ -1,8 +1,6 @@
 ---
 import '../styles/global.css';
 import { site, navigation } from '../config/site';
-import Arrow from '../components/Arrow.astro';
-import BrandIcon from '../components/BrandIcon.astro';
 interface Props {
   title?: string;
   description?: string;
@@ -102,12 +100,6 @@ const structuredData = {
           <p>Thoughtful analysis. Useful systems.</p>
         </div>
         <div class="footer-links">
-          <a href={site.github}>
-            <BrandIcon brand="github" /> GitHub <Arrow diagonal />
-          </a>
-          <a href={site.linkedin}>
-            <BrandIcon brand="linkedin" /> LinkedIn <Arrow diagonal />
-          </a>
           <a href="/lab/">Lab</a>
           <a href="/ask/" aria-label="Ask about my work">
             Ask
