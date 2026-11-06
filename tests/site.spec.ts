@@ -198,13 +198,11 @@ test('home experience dates align directly above the associated roles', async ({
   await expect(entries).toHaveCount(3);
   for (const entry of await entries.all()) {
     const position = await entry.evaluate((element) => {
-      const date = element
-        .querySelector('.resume-date')!
-        .getBoundingClientRect();
-      const title = element.querySelector('h3')!.getBoundingClientRect();
-      const details = element
-        .querySelector('h3')!
-        .parentElement!.getBoundingClientRect();
+      const dateElement = element.querySelector('.resume-date')!;
+      const titleElement = element.querySelector('h3')!;
+      const date = dateElement.getBoundingClientRect();
+      const title = titleElement.getBoundingClientRect();
+      const details = titleElement.parentElement!.getBoundingClientRect();
       return {
         leftDifference: Math.abs(date.left - title.left),
         dateAboveTitle: date.bottom <= title.top,
