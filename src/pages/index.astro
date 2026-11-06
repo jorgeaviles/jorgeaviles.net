@@ -1,4 +1,8 @@
 ---
+import HomeExperience from '../content/home-experience.mdx';
+import EducationSection from '../components/EducationSection.astro';
+import BrandIcon from '../components/BrandIcon.astro';
+import HomeResearch from '../content/home-research.mdx';
 import HomeIntroduction from '../content/home-introduction.mdx';
 import BaseLayout from '../layouts/BaseLayout.astro';
 import WorkList from '../components/WorkList.astro';
@@ -8,6 +12,7 @@ import { getPublishedEntries } from '../lib/content';
 const work = (await getPublishedEntries('work')).filter(
   (entry) => entry.data.featured && entry.data.workType === 'project',
 );
+const research = await getPublishedEntries('research');
 ---
 
 <BaseLayout>
@@ -24,72 +29,89 @@ const work = (await getPublishedEntries('work')).filter(
         <HomeIntroduction />
       </div>
       <div class="hero-links">
-        <a class="button" href="/work/">
+        <a class="button" href="#projects">
           View technical case studies <Arrow />
         </a>
-        <a class="text-link" href="/about/">
+        <a class="text-link" href="#experience">
           Experience & education <Arrow />
         </a>
       </div>
     </div>
   </section>
-  <section class="home-work section-space" aria-labelledby="selected-work">
+  <section
+    id="projects"
+    class="home-work portfolio-section"
+    aria-labelledby="selected-work"
+  >
     <div class="section-heading">
       <div>
         <p class="eyebrow">Selected work</p>
         <h2 id="selected-work">Applications, data & machine learning.</h2>
       </div>
-      <a class="text-link" href="/work/">
-        View all work <Arrow />
-      </a>
     </div>
-    <WorkList entries={work} />
+    <WorkList entries={work} expanded />
   </section>
-  <section class="explore-section" aria-labelledby="explore-title">
-    <div class="explore-copy">
-      <p class="eyebrow">A closer look</p>
-      <h2 id="explore-title">
-        Research background.
-        <br />
-        Hands-on learning.
-      </h2>
-      <p>
-        Research informs how I ask questions. Small experiments help me make the
-        answers tangible.
-      </p>
-    </div>
-    <div class="explore-links">
-      <a href="/research/">
-        <span class="work-category">Research & writing</span>
-        <h3>Academic research assistance</h3>
-        <p>
-          Faculty research on economic and business questions, including an
-          acknowledged contribution to a published study.
-        </p>
-        <Arrow />
-      </a>
-      <a href="/lab/">
-        <span class="work-category">The lab</span>
-        <h3>Explore the machine-learning lab</h3>
-        <p>
-          Train regression and classification models, then explore decisions
-          with a synthetic ranch dataset.
-        </p>
-        <Arrow />
-      </a>
-    </div>
+  <section
+    id="experience"
+    class="portfolio-section"
+    aria-labelledby="experience-title"
+  >
+    <h2 id="experience-title">Experience</h2>
+    <HomeExperience />
   </section>
-  <section class="contact-band">
-    <div>
-      <p class="eyebrow">Let’s connect</p>
-      <h2>Have a question worth exploring?</h2>
-      <p>
-        I welcome conversations about analysis, research, and practical
-        technology.
-      </p>
+  <EducationSection />
+  <section
+    id="research"
+    class="portfolio-section home-research"
+    aria-labelledby="research-title"
+  >
+    <h2 id="research-title">Research &amp; inquiry</h2>
+    {research.map((entry) => (
+      <article class="research-entry">
+        <div class="research-meta">
+          <span class="mono-label">Acknowledged research assistance</span>
+        </div>
+        <div>
+          <h3>{entry.data.title}</h3>
+          <div class="prose">
+            <HomeResearch />
+          </div>
+          <div class="source-links">
+            {entry.data.sources.map((source) => (
+              <a class="text-link" href={source.url}>
+                {source.label} <Arrow diagonal />
+              </a>
+            ))}
+          </div>
+        </div>
+      </article>
+    ))}
+    <p class="section-footnote">
+      For a separate hands-on example with independently fabricated data,{' '}
+      <a href="/lab/">explore the machine-learning Lab</a>.
+    </p>
+  </section>
+  <section
+    id="contact"
+    class="portfolio-section home-contact"
+    aria-labelledby="contact-title"
+  >
+    <h2 id="contact-title">Let’s connect.</h2>
+    <p>
+      I welcome conversations about analysis, research, and practical
+      technology.
+    </p>
+    <p class="contact-address">{site.email}</p>
+    <div class="home-contact-links">
+      <a class="text-link" href={`mailto:${site.email}`}>
+        Write an email <Arrow diagonal />
+      </a>
+      <a class="text-link" href={site.github}>
+        <BrandIcon brand="github" /> GitHub <Arrow diagonal />
+      </a>
+      <a class="text-link" href={site.linkedin}>
+        <BrandIcon brand="linkedin" /> LinkedIn <Arrow diagonal />
+      </a>
     </div>
-    <a class="text-link" href="/contact/">
-      Contact me <Arrow />
-    </a>
   </section>
 </BaseLayout>

@@ -13,7 +13,8 @@ const pageTitle = title
   ? `${title} — ${site.name}`
   : `${site.name} — Data platforms & applications`;
 const canonical = new URL(Astro.url.pathname, site.url).href;
-const active = (href: string) => Astro.url.pathname.startsWith(href);
+const active = (href: string) =>
+  !href.includes('#') && Astro.url.pathname.startsWith(href);
 const structuredData = {
   '@context': 'https://schema.org',
   '@graph': [
@@ -107,6 +108,7 @@ const structuredData = {
           <a href={site.linkedin}>
             <BrandIcon brand="linkedin" /> LinkedIn <Arrow diagonal />
           </a>
+          <a href="/lab/">Lab</a>
           <a href="/ask/" aria-label="Ask about my work">
             Ask
           </a>

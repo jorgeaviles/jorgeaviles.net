@@ -103,18 +103,17 @@ test('navigation and case-study links reach their intended pages', async ({
   const errors = observeApplicationErrors(page);
   await page.goto('/');
   for (const [label, path] of [
-    ['About', '/about/'],
-    ['Work', '/work/'],
-    ['Research', '/research/'],
-    ['Lab', '/lab/'],
-    ['Contact', '/contact/'],
+    ['Projects', '/#projects'],
+    ['Experience', '/#experience'],
+    ['Education', '/#education'],
+    ['Contact', '/#contact'],
   ]) {
     await page
       .getByRole('navigation', { name: 'Main navigation' })
       .getByRole('link', { name: label, exact: true })
       .click();
     await expect(page).toHaveURL(new RegExp(`${path}$`));
-    await expect(page.getByRole('heading', { level: 1 })).toBeVisible();
+    await expect(page.locator(path.slice(1))).toBeInViewport();
   }
   await page
     .getByRole('link', { name: 'Jorge Avilés, home', exact: true })
@@ -331,8 +330,11 @@ test('email text can be selected without launching a mail application', async ({
 
 test('home contact invitation leads to contact choices', async ({ page }) => {
   await page.goto('/');
-  await page.getByRole('link', { name: 'Contact me' }).click();
-  await expect(page).toHaveURL(/\/contact\/$/);
+  await page
+    .getByRole('navigation', { name: 'Main navigation' })
+    .getByRole('link', { name: 'Contact', exact: true })
+    .click();
+  await expect(page).toHaveURL(/#contact$/);
   await expect(page.locator('.contact-address')).toBeVisible();
 });
 
@@ -629,10 +631,7 @@ test('recruiter, engineering, and admissions paths expose evidence without ambig
     .locator('.related-work a[href="/work/analytical-data-platforms/"]')
     .click();
   await expect(page.locator('article')).toContainText('Engineering decisions');
-  await page
-    .getByRole('navigation', { name: 'Main navigation' })
-    .getByRole('link', { name: 'Research', exact: true })
-    .click();
+  await page.goto('/research/');
   await expect(page.locator('main')).toContainText('Asthana');
   await expect(page.locator('.research-entry')).toContainText(
     'research assistance',

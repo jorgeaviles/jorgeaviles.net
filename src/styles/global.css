@@ -1496,3 +1496,130 @@ strong {
   padding-block: 12px;
   color: var(--green);
 }
+
+/* The portfolio reads continuously; full case studies remain ordinary pages. */
+.site-header {
+  position: sticky;
+  top: 0;
+  z-index: 5;
+  background: var(--paper);
+}
+:where(section[id], h2[id], h3[id]) {
+  scroll-margin-top: 150px;
+}
+@media (prefers-reduced-motion: no-preference) {
+  html {
+    scroll-behavior: smooth;
+  }
+}
+.portfolio-section {
+  padding-block: 52px;
+  border-top: 1px solid var(--line);
+}
+.portfolio-section > h2 {
+  margin-bottom: 32px;
+}
+.work-list-expanded {
+  border-top: 0;
+}
+.work-list-expanded .work-row {
+  padding-block: 32px;
+}
+.work-list-expanded .work-row:first-child {
+  background: var(--light-green);
+  padding-inline: 20px;
+}
+.work-row .project-contribution {
+  margin-top: 14px;
+}
+.work-row .project-stack {
+  font-size: 12px;
+  margin-top: 10px;
+  color: var(--green);
+}
+.project-read-more {
+  display: inline-block;
+  margin-top: 16px;
+  text-decoration: underline;
+  text-underline-offset: 4px;
+  font-size: 14px;
+}
+.resume-entry {
+  display: grid;
+  grid-template-columns: 210px minmax(0, 1fr);
+  gap: 36px;
+  padding-block: 28px;
+  border-bottom: 1px solid var(--line);
+}
+.resume-date {
+  color: var(--muted);
+  font-size: 14px;
+}
+.resume-entry h3 {
+  margin-bottom: 8px;
+  font-size: 26px;
+}
+.resume-employer {
+  color: var(--green);
+  margin-bottom: 16px;
+}
+.resume-entry p:not(.resume-date):not(.resume-employer) {
+  color: var(--muted);
+  max-width: 750px;
+  line-height: 1.85;
+}
+.resume-roles {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+.resume-roles li + li {
+  margin-top: 24px;
+}
+.resume-roles strong {
+  font-size: 14px;
+  font-weight: 600;
+}
+.resume-roles p {
+  margin-top: 6px;
+}
+.home-research .research-entry {
+  padding-top: 0;
+  border-top: 0;
+}
+.home-research .prose h2 {
+  font-size: 22px;
+}
+.home-contact > p {
+  color: var(--muted);
+}
+.home-contact .contact-address {
+  margin-block: 24px;
+  color: var(--green);
+}
+.home-contact-links {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 20px 32px;
+}
+@media (max-width: 700px) {
+  .resume-entry {
+    grid-template-columns: 1fr;
+    gap: 10px;
+  }
+  .portfolio-section {
+    padding-block: 36px;
+  }
+  .site-header {
+    min-height: auto;
+    padding-block: 14px;
+  }
+  :where(section[id], h2[id], h3[id]) {
+    scroll-margin-top: 150px;
+  }
+}
+
+.work-list-expanded .work-row:last-child,
+.resume-entry:last-child {
+  border-bottom: 0;
+}
