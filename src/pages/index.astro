@@ -101,11 +101,10 @@ const research = await getPublishedEntries('research');
       I welcome conversations about analysis, research, and practical
       technology.
     </p>
-    <p class="contact-address">{site.email}</p>
+    <p class="contact-address">
+      <a href={`mailto:${site.email}`}>{site.email}</a>
+    </p>
     <div class="home-contact-links">
-      <a class="text-link" href={`mailto:${site.email}`}>
-        Write an email <Arrow diagonal />
-      </a>
       <a class="text-link" href={site.github}>
         <BrandIcon brand="github" /> GitHub <Arrow diagonal />
       </a>

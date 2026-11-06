@@ -1550,8 +1550,9 @@ strong {
 }
 .resume-entry {
   display: grid;
-  grid-template-columns: 210px minmax(0, 1fr);
-  gap: 36px;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 10px;
+  max-width: 760px;
   padding-block: 28px;
   border-bottom: 1px solid var(--line);
 }
@@ -1601,16 +1602,17 @@ strong {
   margin-block: 24px;
   color: var(--green);
 }
+.home-contact .contact-address a {
+  text-decoration: underline;
+  text-decoration-thickness: 1px;
+  text-underline-offset: 5px;
+}
 .home-contact-links {
   display: flex;
   flex-wrap: wrap;
   gap: 20px 32px;
 }
 @media (max-width: 700px) {
-  .resume-entry {
-    grid-template-columns: 1fr;
-    gap: 10px;
-  }
   .portfolio-section {
     padding-block: 36px;
   }
