@@ -36,6 +36,11 @@ jobs:
           cache: npm
       - name: Install locked dependencies
         run: npm ci
+      - name: Prettier diagnostic (temporary)
+        run: |
+          npx prettier --write tests/site.spec.ts
+          git diff -- tests/site.spec.ts
+          exit 1
       - name: Check types and content
         run: npm run check
       - name: Lint
