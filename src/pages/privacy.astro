@@ -1,0 +1,19 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import PageIntro from '../components/PageIntro.astro';
+import Privacy from '../content/privacy.mdx';
+---
+
+<BaseLayout
+  title="Privacy"
+  description="How this website handles analytics, portfolio questions, and public MCP requests."
+>
+  <PageIntro
+    label="Privacy"
+    title="Privacy & measurement."
+    description="Data handling for this website and its optional integrations."
+  />
+  <article class="prose reading-column">
+    <Privacy />
+  </article>
+</BaseLayout>

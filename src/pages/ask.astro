@@ -17,7 +17,7 @@ const endpoint = configuredEndpoint(
     title="A question about the work?"
     description="Find a starting point in the published projects, professional background, and research."
   />
-  <div class="editorial-grid">
+  <div class="reading-column">
     <div>
       <PortfolioAssistant endpoint={endpoint} client:load />
       <noscript>
@@ -33,18 +33,6 @@ const endpoint = configuredEndpoint(
         <a href="/research/">Research assistance</a>
       </nav>
     </div>
-    <aside class="aside-note assistant-aside">
-      <p class="eyebrow">Explore the portfolio</p>
-      <p>
-        Ask about the projects, professional experience, and research. Answers
-        include links to the original pages.
-      </p>
-      <p>Each question starts a fresh inquiry into the published portfolio.</p>
-      <p>
-        For external AI applications, see the{' '}
-        <a href="/mcp/">public MCP integration</a>.
-      </p>
-    </aside>
   </div>
 </BaseLayout>
 

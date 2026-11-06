@@ -1,6 +1,6 @@
 ---
 title: Developing machine-learning models for audit prioritization
-description: I implemented supervised-learning pipelines to investigate whether historical audit outcomes could help prioritize bills for human review.
+description: I implemented experimental supervised-learning pipelines to investigate whether historical audit outcomes could help prioritize bills for human review.
 category: Applied machine learning
 order: 3
 featured: true
@@ -25,9 +25,7 @@ import ArticleTable from '../../components/ArticleTable.astro';
 
 import ModelingFlow from '../../components/ModelingFlow.astro';
 
-## What I developed
-
-I developed bill-level feature preparation, supervised-learning pipelines, probability calibration, and scoring workflows in Python and PySpark to investigate audit prioritization. The shared evaluation path connects model comparisons with grouped validation and chronological backtesting.
+I implemented a supervised-learning program in Python and PySpark to investigate audit prioritization. The work connects bill-level features with candidate models, repeatable evaluation, probability calibration, and scoring outputs. The program remains experimental. Saved notebooks document implemented code paths and configurations; execution records are needed to substantiate completed evaluations, model selection, and operational readiness.
 
 I developed these notebooks and pipelines. Suffolk University consultation informed the early modeling proposals. Audit & Oversight colleagues contribute practical knowledge of billing and casework; their feedback helps me question features, interpret labels, and refine what an investigation needs to explain.
 
@@ -48,6 +46,9 @@ The preparation separates outcome labels from model inputs and excludes the curr
 ## Compare candidates on a common evaluation path
 
 The modeling engine is **Spark ML**, using Python/PySpark in Azure Synapse. Spark pipelines combine categorical indexing, model-appropriate encoding, median imputation, and vector assembly with the estimator. Learned preprocessing is fitted within each training fold. pandas supports fold-metric summaries around the Spark training workflow.
+
+<details>
+<summary>Candidate models and saved configuration</summary>
 
 <ArticleTable
   label="Model candidate comparison"
@@ -83,6 +84,8 @@ The modeling engine is **Spark ML**, using Python/PySpark in Azure Synapse. Spar
 
 An earlier notebook also implements an optional XGBoost Spark candidate. The later unified pipeline uses the candidates listed above; scikit-learn alternatives appear only in notebook notes.
 
+</details>
+
 ## Evaluate ranking, probabilities, and time
 
 **Grouped cross-validation.** The configured comparison uses ten folds grouped by BBO, the attorney identifier. Separate row- and NAC/case-grouped fold options are implemented. Holding an attorney’s related bills in one fold tests a different generalization question from splitting individual rows. It helps examine whether apparent performance depends on related records appearing on both sides of a split. Chronological tests add a complementary view of performance on later data.
@@ -101,9 +104,7 @@ The [analytical data platform](/work/analytical-data-platforms/) provides the pr
 
 For an interactive explanation of learning and evaluation with independently fabricated data, explore the [educational ML Lab](/lab/).
 
-## Project status and evaluation evidence
-
-I implemented a supervised-learning program in Python and PySpark to investigate audit prioritization. The work connects bill-level features with candidate models, repeatable evaluation, probability calibration, and scoring outputs. The program remains experimental. Saved notebooks document implemented code paths and configurations; execution records are needed to substantiate completed evaluations, model selection, and operational readiness.
+## Next validation steps
 
 Random Forest is configured for continued experimentation, including the fixed fallback path. Comparative model results require execution records and runtime package verification.
 

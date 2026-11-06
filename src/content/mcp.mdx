@@ -1,28 +1,34 @@
-## Start with the work
+This read-only integration lets compatible AI applications retrieve public portfolio passages with links to the original pages.
 
-This integration gives compatible AI applications a source-linked way to explore my public portfolio. You can use it to find a relevant project, compare technical approaches, or understand my contribution before reading the original pages.
+## Connect an AI application
 
-You can also review the [project case studies](/work/), [professional background and education](/about/), and [research experience](/research/) directly. The [website assistant](/ask/) offers another starting point for questions about those published sources.
+In an application that supports remote MCP servers, add a server or connection with this endpoint:
 
-## Questions worth asking
+<code className="mcp-endpoint">https://portfolio-api.jorgeaviles.net/mcp</code>
 
-### Experience and technical judgment
+Choose **Streamable HTTP** and **no authentication**.
 
-For a hiring conversation or project review, explore what I built, the decisions behind it, and their practical applications:
+After connecting, ask the application to discover the portfolio tools and try a question below. Follow the source links to explore the work in detail.
+
+<details>
+  <summary>Technical connection details</summary>
+
+The endpoint accepts MCP requests over HTTP POST using stateless Streamable HTTP.
+
+Tool inputs reject extra properties. Project IDs contain 1–80 lowercase letters, digits, or hyphens. Search accepts a plain-text query of 1–500 characters, with an optional integer `limit` from 1–6. Successful results include an `indexVersion` identifying the curated content. Unknown IDs return tool errors, and requests and responses have fixed size limits.
+
+Use a server-side MCP connection for external applications. Direct browser requests permit this website’s origin. Request throttling keeps the public service available.
+
+The [public implementation](https://github.com/jorgeaviles/jorgeaviles.net/tree/main/workers/portfolio-api) and [MCP transport specification](https://modelcontextprotocol.io/specification/latest/basic/transports) provide further technical context.
+
+</details>
+
+## Try a question
 
 - “Compare Jorge’s analytical data platform with the audit-tracking application. What did he build, and how do they fit together?”
-- “Which projects demonstrate Python, PySpark, SQL, and application development? Link to the supporting case studies.”
-- “How does Jorge approach feature engineering, model comparison, and evaluation?”
-
-### Academic preparation and research
-
-For an admissions or academic review, connect the published background with specific research and technical work:
-
-- “How does Jorge’s economics and research background connect with his later analytical and software work?”
 - “How did Jorge contribute research assistance to the cattle-ranch profitability study?”
-- “Which original pages would help me assess his research experience and approach to evaluating models?”
 
-Ask your application to cite the original pages. Follow those links for project details, education, and credentials.
+Ask your application to cite the original pages.
 
 ## What the integration provides
 
@@ -51,31 +57,8 @@ Find relevant passages across projects, professional background, and research. F
 
 Explore my faculty research experience, published acknowledgment, and original source links. Input: `{}`.
 
-## Connect an AI application
-
-In an application that supports remote MCP servers, add a server or connection with this endpoint:
-
-<code className="mcp-endpoint">https://portfolio-api.jorgeaviles.net/mcp</code>
-
-Choose **Streamable HTTP** and **no authentication**.
-
-After connecting, ask the application to discover the portfolio tools and try one of the questions above. Follow the source links to explore the work in detail.
-
-<details>
-  <summary>Technical connection details</summary>
-
-The endpoint accepts MCP requests over HTTP POST using stateless Streamable HTTP.
-
-Tool inputs reject extra properties. Project IDs contain 1–80 lowercase letters, digits, or hyphens. Search accepts a plain-text query of 1–500 characters, with an optional integer `limit` from 1–6. Successful results include an `indexVersion` identifying the curated content. Unknown IDs return tool errors, and requests and responses have fixed size limits.
-
-Use a server-side MCP connection for external applications. Direct browser requests permit this website’s origin. Request throttling keeps the public service available.
-
-The [public implementation](https://github.com/jorgeaviles/jorgeaviles.net/tree/main/workers/portfolio-api) and [MCP transport specification](https://modelcontextprotocol.io/specification/latest/basic/transports) provide further technical context.
-
-</details>
-
 ## Public content and privacy
 
 The read-only tools retrieve curated passages from the project case studies, professional background, and research pages. Each result includes its original source URL.
 
-The service uses the connecting IP address transiently for throttling. Cloudflare processes network requests and operational metadata; your connected AI application follows its own data practices. Read the [privacy disclosure](/colophon/#portfolio-mcp-privacy) for data-handling details.
+The service uses the connecting IP address transiently for throttling. Cloudflare processes network requests and operational metadata; your connected AI application follows its own data practices. Read the [privacy disclosure](/privacy/#portfolio-mcp-privacy) for data-handling details.

@@ -128,7 +128,7 @@ export default function PortfolioAssistant({
         </div>
         <p className="assistant-privacy" id="assistant-privacy">
           Cloudflare Workers AI processes each question independently.{' '}
-          <a href="/colophon/#portfolio-assistant-privacy">Privacy details</a>.
+          <a href="/privacy/#portfolio-assistant-privacy">Privacy details</a>.
         </p>
       </form>
       <div className="assistant-suggestions" aria-label="Suggested questions">

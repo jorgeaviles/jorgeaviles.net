@@ -100,7 +100,7 @@ export function TrainingLesson({ state, dispatch }: LabController) {
           <p className="ranch-takeaway">
             {logistic
               ? 'The percentage is the model’s estimate of how likely this ranch is to make a profit. At 50% or above, it predicts “Profitable.”'
-              : 'The highlighted point shows the prediction for your cattle sales. Move the slider to explore predictions along the trained line.'}
+              : 'The highlighted point is your prediction on the trained line.'}
           </p>
         </div>
         <ModelPlot

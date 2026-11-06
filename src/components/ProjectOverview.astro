@@ -5,12 +5,8 @@ interface Props {
 }
 const { overview } = Astro.props;
 const fields = [
-  ['Purpose', overview.purpose],
   ['My role', overview.role],
   ['Technology', overview.technologies.join(' · ')],
-  ['Implemented capabilities', overview.capabilities],
-  ['Engineering focus', overview.engineering],
-  ['Context', overview.context],
 ];
 ---
 

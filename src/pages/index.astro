@@ -1,4 +1,5 @@
 ---
+import HomeIntroduction from '../content/home-introduction.mdx';
 import BaseLayout from '../layouts/BaseLayout.astro';
 import WorkList from '../components/WorkList.astro';
 import Arrow from '../components/Arrow.astro';
@@ -19,14 +20,9 @@ const work = (await getPublishedEntries('work')).filter(
       <h1>
         Building <em>data platforms</em> and applications for analytical work.
       </h1>
-      <p class="hero-description">
-        I enjoy turning complex data and practical questions into tools people
-        can use. My path has taken me from economics research to banking
-        analytics and public-sector oversight. As a Senior Auditor Data Analyst
-        at the Committee for Public Counsel Services, I develop data platforms,
-        applications, and experimental machine-learning pipelines with input
-        from the people who use the work.
-      </p>
+      <div class="hero-description">
+        <HomeIntroduction />
+      </div>
       <div class="hero-links">
         <a class="button" href="/work/">
           View technical case studies <Arrow />
@@ -36,25 +32,7 @@ const work = (await getPublishedEntries('work')).filter(
         </a>
       </div>
     </div>
-    <aside class="hero-note">
-      <p class="eyebrow">Technical focus</p>
-      <p>Python &amp; PySpark preparation</p>
-      <p>Synapse serverless SQL &amp; ADLS Gen2</p>
-      <p>C# &amp; Blazor applications</p>
-      <p>Supervised learning &amp; model evaluation</p>
-      <p class="hero-note-context">
-        Requirements and design shaped with the people using the work.
-      </p>
-    </aside>
   </section>
-  <div class="context-strip">
-    <p>
-      Experience across <strong>legal services, banking, and academia.</strong>
-    </p>
-    <a href="/about/">
-      View professional background <Arrow />
-    </a>
-  </div>
   <section class="home-work section-space" aria-labelledby="selected-work">
     <div class="section-heading">
       <div>
@@ -66,10 +44,6 @@ const work = (await getPublishedEntries('work')).filter(
       </a>
     </div>
     <WorkList entries={work} />
-    <p class="section-footnote">
-      Application development, analytical infrastructure, and experimental
-      modeling for human review.
-    </p>
   </section>
   <section class="explore-section" aria-labelledby="explore-title">
     <div class="explore-copy">
