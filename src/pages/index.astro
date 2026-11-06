@@ -1,7 +1,6 @@
 ---
 import HomeExperience from '../content/home-experience.mdx';
 import EducationSection from '../components/EducationSection.astro';
-import BrandIcon from '../components/BrandIcon.astro';
 import HomeResearch from '../content/home-research.mdx';
 import HomeIntroduction from '../content/home-introduction.mdx';
 import BaseLayout from '../layouts/BaseLayout.astro';
@@ -90,28 +89,5 @@ const research = await getPublishedEntries('research');
       For a separate hands-on example with independently fabricated data,{' '}
       <a href="/lab/">explore the machine-learning Lab</a>.
     </p>
-  </section>
-  <section
-    id="contact"
-    class="portfolio-section home-contact"
-    aria-labelledby="contact-title"
-  >
-    <h2 id="contact-title">Let’s connect.</h2>
-    <p>
-      I welcome conversations about analysis, research, and practical
-      technology.
-    </p>
-    <p class="contact-address">{site.email}</p>
-    <div class="home-contact-links">
-      <a class="text-link" href={`mailto:${site.email}`}>
-        Write an email <Arrow diagonal />
-      </a>
-      <a class="text-link" href={site.github}>
-        <BrandIcon brand="github" /> GitHub <Arrow diagonal />
-      </a>
-      <a class="text-link" href={site.linkedin}>
-        <BrandIcon brand="linkedin" /> LinkedIn <Arrow diagonal />
-      </a>
-    </div>
   </section>
 </BaseLayout>

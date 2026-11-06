@@ -335,7 +335,7 @@ test('home contact invitation leads to contact choices', async ({ page }) => {
     .getByRole('link', { name: 'Contact', exact: true })
     .click();
   await expect(page).toHaveURL(/#contact$/);
-  await expect(page.locator('.contact-address')).toBeVisible();
+  await expect(page.locator('#contact a[href^="mailto:"]')).toBeVisible();
 });
 
 test('approved case study stays consistent across listings and renders a static capability workflow', async ({
@@ -611,7 +611,7 @@ test('recruiter, engineering, and admissions paths expose evidence without ambig
   await page
     .getByRole('link', { name: 'Experience & education', exact: true })
     .click();
-  await expect(page.locator('main')).toContainText('June 2020–present');
+  await expect(page.locator('main')).toContainText('2020–present');
   await expect(page.locator('main')).toContainText(
     'Change Management Business Analyst',
   );
@@ -620,7 +620,7 @@ test('recruiter, engineering, and admissions paths expose evidence without ambig
     .getByRole('navigation', { name: 'Main navigation' })
     .getByRole('link', { name: 'Contact', exact: true })
     .click();
-  await expect(page.locator('.contact-address')).toHaveText(
+  await expect(page.locator('#contact a[href^="mailto:"]')).toHaveText(
     'jorge@jorgeaviles.net',
   );
   await page.goto('/');

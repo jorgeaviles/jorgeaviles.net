@@ -93,7 +93,20 @@ const structuredData = {
       <main id="main" tabindex="-1">
         <slot />
       </main>
-      <footer class="site-footer">
+      <footer
+        class="site-footer"
+        id={Astro.url.pathname === '/' ? 'contact' : undefined}
+      >
+        {Astro.url.pathname === '/' && (
+          <div class="footer-contact">
+            <h2>Get in touch.</h2>
+            <p>
+              I welcome conversations about analysis, research, and practical
+              technology.
+            </p>
+            <a href={`mailto:${site.email}`}>{site.email}</a>
+          </div>
+        )}
         <div>
           <a class="footer-name" href="/">
             {site.name}
