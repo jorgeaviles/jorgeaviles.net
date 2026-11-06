@@ -157,6 +157,63 @@ test('contact links identify the approved destinations', async ({ page }) => {
   );
 });
 
+test('home contact actions are not duplicated in the footer', async ({
+  page,
+}) => {
+  await page.goto('/');
+  const contact = page.locator('#contact');
+  await expect(contact.locator('.contact-address a')).toHaveAttribute(
+    'href',
+    'mailto:jorge@jorgeaviles.net',
+  );
+  await expect(contact.getByRole('link', { name: 'Write an email' })).toHaveCount(
+    0,
+  );
+  await expect(contact.locator('.home-contact-links a')).toHaveCount(2);
+  await expect(contact.getByRole('link', { name: /GitHub/ })).toHaveAttribute(
+    'href',
+    'https://github.com/jorgeaviles',
+  );
+  await expect(contact.getByRole('link', { name: /LinkedIn/ })).toHaveAttribute(
+    'href',
+    'https://www.linkedin.com/in/jraviles/',
+  );
+  const footerLinks = page.locator('.site-footer .footer-links a');
+  await expect(footerLinks).toHaveText([
+    'Lab',
+    'Ask',
+    'MCP',
+    'Colophon',
+    'Privacy',
+  ]);
+  await expect(page.locator('.site-footer')).not.toContainText('GitHub');
+  await expect(page.locator('.site-footer')).not.toContainText('LinkedIn');
+});
+
+test('home experience dates align directly above the associated roles', async ({
+  page,
+}) => {
+  await page.goto('/');
+  const entries = page.locator('#experience .resume-entry');
+  await expect(entries).toHaveCount(3);
+  for (const entry of await entries.all()) {
+    const position = await entry.evaluate((element) => {
+      const date = element.querySelector('.resume-date')!.getBoundingClientRect();
+      const title = element.querySelector('h3')!.getBoundingClientRect();
+      const details = element.querySelector('h3')!.parentElement!.getBoundingClientRect();
+      return {
+        leftDifference: Math.abs(date.left - title.left),
+        dateAboveTitle: date.bottom <= title.top,
+        width: details.width,
+      };
+    });
+    expect(position.leftDifference).toBeLessThanOrEqual(2);
+    expect(position.dateAboveTitle).toBe(true);
+    expect(position.width).toBeLessThanOrEqual(760);
+  }
+  await expectNoHorizontalOverflow(page);
+});
+
 test('first-party page links resolve successfully', async ({
   page,
   request,
