@@ -25,10 +25,11 @@ const routes = [
     heading: 'Developing machine-learning models for audit prioritization',
   },
   { path: '/lab/', heading: 'Predicting profitability' },
-  { path: '/contact/', heading: 'Good work starts with a conversation.' },
+  { path: '/contact/', heading: 'Let’s connect.' },
   { path: '/mcp/', heading: 'Connect to the work.' },
   { path: '/ask/', heading: 'A question about the work?' },
   { path: '/colophon/', heading: 'A small site, built with care.' },
+  { path: '/privacy/', heading: 'Privacy & measurement.' },
 ] as const;
 
 function observeApplicationErrors(page: Page): string[] {
@@ -372,7 +373,7 @@ test('approved case study stays consistent across listings and renders a static 
     'approximately 10 staff users',
   );
   await expect(page.locator('article.prose')).toContainText(
-    'search, document, and progress tools',
+    'permission-controlled workspace',
   );
   await expect(figure.locator('figcaption')).toHaveText(
     'Conceptual application workflow showing implemented capabilities.',
@@ -560,9 +561,9 @@ test('local metadata, identity and privacy disclosure remain coherent without th
     'content',
     /^Get in touch with Jorge Avilés /,
   );
-  await page.goto('/colophon/');
+  await page.goto('/privacy/');
   await expect(
-    page.getByRole('heading', { name: 'Privacy & measurement' }),
+    page.getByRole('heading', { name: 'Privacy & measurement', level: 1 }),
   ).toBeVisible();
   await expect(page.locator('main')).toContainText(
     'uses a browser beacon on the public site',
@@ -622,9 +623,7 @@ test('recruiter, engineering, and admissions paths expose evidence without ambig
   );
   await page.goto('/');
   await page.locator('.work-row').first().click();
-  await expect(
-    page.getByRole('region', { name: 'Project at a glance' }),
-  ).toContainText('Server-side authorization');
+  await expect(page.locator('article')).toContainText('server-side checks');
   await expect(page.locator('article')).toContainText('Version-aware writes');
   await page
     .locator('.related-work a[href="/work/analytical-data-platforms/"]')
@@ -654,23 +653,15 @@ test('recruiter, engineering, and admissions paths expose evidence without ambig
 test('professional modeling explains the target, evaluation, and proposed integration without production claims', async ({
   page,
 }) => {
-  await page.goto('/research/');
-  await page
-    .getByRole('link', {
-      name: 'audit-prioritization modeling case study',
-      exact: true,
-    })
-    .click();
+  await page.goto('/work/machine-learning-audit-prioritization/');
   await expect(page).toHaveURL(
     /\/work\/machine-learning-audit-prioritization\/$/,
   );
   const article = page.locator('article.prose');
-  await expect(
-    page.getByRole('region', { name: 'Project at a glance' }),
-  ).toContainText('Experimental modeling program');
-  await expect(
-    page.getByRole('region', { name: 'Project at a glance' }),
-  ).toContainText('integration into the Audit Portal is proposed');
+  await expect(article).toContainText('program remains experimental');
+  await expect(article).toContainText(
+    'integration into the Audit Portal is proposed',
+  );
   await expect(article).toContainText('not a label for fraud');
   await expect(article).toContainText(
     'Comparative model results require execution records',
@@ -685,6 +676,9 @@ test('professional modeling explains the target, evaluation, and proposed integr
   ]) {
     await expect(article).toContainText(boundary);
   }
+  await page
+    .getByText('Candidate models and saved configuration', { exact: true })
+    .click();
   const candidates = article.getByRole('table');
   await expect(candidates.getByRole('row')).toHaveCount(6);
   await expect(
@@ -952,7 +946,7 @@ test('About distinguishes academic education from compact technical coursework a
   await expect(academic.locator('.credential-entry a')).toHaveCount(0);
   await expectNoHorizontalOverflow(page);
   const placement = await page.evaluate(() => {
-    const experience = document.querySelector('.editorial-grid')!;
+    const experience = document.querySelector('.major-sections')!;
     const educationSection = document.querySelector('#education')!;
     return !!(
       experience.compareDocumentPosition(educationSection) &
@@ -1002,7 +996,7 @@ test('editorial reading width stays stable around layout breakpoints', async ({
   ]) {
     await page.setViewportSize({ width, height: 1000 });
     const measure = await page
-      .locator('.editorial-grid .prose')
+      .locator('.reading-column .prose')
       .evaluate((element) => element.getBoundingClientRect().width);
     expect(measure).toBeGreaterThanOrEqual(previous - 1);
     expect(measure).toBeLessThanOrEqual(691);
@@ -1045,6 +1039,9 @@ test('article comparison preserves table relationships and readable narrow recor
   page,
 }) => {
   await page.goto('/work/machine-learning-audit-prioritization/');
+  await page
+    .getByText('Candidate models and saved configuration', { exact: true })
+    .click();
   const table = page.getByRole('table', { name: 'Model candidate comparison' });
   await expect(table.getByRole('columnheader')).toHaveText([
     'Candidate',
@@ -1094,10 +1091,8 @@ test('About connects experience to capabilities before supporting education', as
 }) => {
   await page.goto('/about/');
   await expect(page.locator('main h2')).toHaveText([
-    'A path from research to useful systems.',
     'Professional experience',
     'How I work',
-    'Different tools. A shared purpose.',
     'Education & Professional Development',
   ]);
   const employer = page.getByRole('region', {
@@ -1341,10 +1336,7 @@ test('MCP documentation connects visitors to bounded public tools without networ
     ).toBeVisible();
   }
   await expect(
-    page.getByRole('heading', { name: 'Experience and technical judgment' }),
-  ).toBeVisible();
-  await expect(
-    page.getByRole('heading', { name: 'Academic preparation and research' }),
+    page.getByRole('heading', { name: 'Try a question' }),
   ).toBeVisible();
   await expect(
     page.getByRole('heading', { name: 'Connect an AI application' }),
@@ -1391,6 +1383,9 @@ test('MCP documentation connects visitors to bounded public tools without networ
     .click();
   await expect(page).toHaveURL(/\/mcp\/$/);
   await page.goto('/ask/');
-  await page.getByRole('link', { name: 'public MCP integration' }).click();
+  await page
+    .getByRole('contentinfo')
+    .getByRole('link', { name: 'MCP', exact: true })
+    .click();
   await expect(page).toHaveURL(/\/mcp\/$/);
 });

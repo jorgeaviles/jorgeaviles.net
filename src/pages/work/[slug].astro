@@ -36,19 +36,6 @@ const related = (await getPublishedEntries('work')).filter(
       <Content />
     </article>
     <aside class="aside-note">
-      <p class="eyebrow">Perspective</p>
-      <p>Implementation, engineering decisions, and collaboration.</p>
-      {entry.data.methods.length > 0 && (
-        <>
-          <div class="aside-divider"></div>
-          <p class="eyebrow">Areas of practice</p>
-          <ul>
-            {entry.data.methods.map((method) => (
-              <li>{method}</li>
-            ))}
-          </ul>
-        </>
-      )}
       {entry.data.sources.length > 0 && (
         <>
           <div class="aside-divider"></div>

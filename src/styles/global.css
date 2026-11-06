@@ -1477,3 +1477,22 @@ strong {
   margin: 0;
   min-width: 0;
 }
+
+/* A single reading path keeps introductions and supporting pages focused. */
+.home-intro {
+  grid-template-columns: minmax(0, 1fr);
+}
+.reading-column {
+  max-width: var(--measure-reading);
+}
+.page-intro h1 {
+  font-size: clamp(2rem, 3.5vw, 3rem);
+}
+.prose details {
+  margin-block: 24px;
+}
+.prose summary {
+  cursor: pointer;
+  padding-block: 12px;
+  color: var(--green);
+}

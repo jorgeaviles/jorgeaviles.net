@@ -2,106 +2,29 @@
 import BaseLayout from '../layouts/BaseLayout.astro';
 import PageIntro from '../components/PageIntro.astro';
 import Arrow from '../components/Arrow.astro';
-import BrandIcon from '../components/BrandIcon.astro';
 import Background from '../content/background.mdx';
 import Education from '../content/education.mdx';
-import { site } from '../config/site';
 ---
 
 <BaseLayout
   title="About"
   description="My background connects business analysis, data engineering, applied research, and application development."
 >
-  <PageIntro
-    label="About"
-    title="Experience, education & approach."
-    description="Quantitative research, enterprise banking data and analytics, and hands-on development for public-sector oversight."
-  />
-  <nav class="career-overview" aria-labelledby="career-overview-title">
-    <p class="eyebrow">At a glance</p>
-    <h2 id="career-overview-title">A path from research to useful systems.</h2>
-    <ol>
-      <li>
-        <a href="#centrum-experience">
-          <span>2012–2014</span>
-          <strong>Research</strong>
-          <span>CENTRUM Católica · Graduate Research Assistant</span>
-        </a>
-      </li>
-      <li>
-        <a href="#santander-experience">
-          <span>2015–2020</span>
-          <strong>Banking analytics</strong>
-          <span>Santander · Data quality, analytics & change management</span>
-        </a>
-      </li>
-      <li>
-        <a href="#cpcs-experience">
-          <span>2020–present</span>
-          <strong>Data & applications</strong>
-          <span>CPCS · Senior Auditor Data Analyst</span>
-        </a>
-      </li>
-    </ol>
-    <a class="text-link" href="#education">
-      Education & professional development <Arrow />
-    </a>
+  <PageIntro label="About" title="Experience, education & approach." />
+  <nav class="career-navigation" aria-label="Experience and education">
+    <a href="#cpcs-experience">CPCS</a>
+    <a href="#santander-experience">Santander</a>
+    <a href="#centrum-experience">CENTRUM</a>
+    <a href="#education">Education</a>
   </nav>
-  <div class="editorial-grid">
+  <div class="reading-column">
     <div class="prose major-sections">
       <Background />
       <a class="text-link" href="/work/">
         Explore selected work <Arrow />
       </a>
     </div>
-    <aside class="aside-note">
-      <p class="eyebrow">Elsewhere</p>
-      <a href={site.github}>
-        <BrandIcon brand="github" /> GitHub <Arrow diagonal />
-      </a>
-      <a href={site.linkedin}>
-        <BrandIcon brand="linkedin" /> LinkedIn <Arrow diagonal />
-      </a>
-    </aside>
   </div>
-  <section class="section-space capabilities">
-    <div class="section-heading">
-      <div>
-        <p class="eyebrow">Capabilities</p>
-        <h2>Different tools. A shared purpose.</h2>
-      </div>
-    </div>
-    <div class="capability-grid">
-      <div>
-        <span class="work-number">01</span>
-        <h3>Business analysis</h3>
-        <p>
-          Stakeholder consultation, requirements, prioritization, and
-          translating operational needs into useful systems.
-        </p>
-      </div>
-      <div>
-        <span class="work-number">02</span>
-        <h3>Data & analytics</h3>
-        <p>
-          SQL, Python, R, Jupyter, data engineering, reporting, and statistical
-          and machine-learning methods.
-        </p>
-      </div>
-      <div>
-        <span class="work-number">03</span>
-        <h3>Applications & technology</h3>
-        <p>
-          C#, .NET, Blazor, Azure data services, and practical exploration of
-          AI-assisted information access.
-        </p>
-      </div>
-    </div>
-    <p class="section-footnote">
-      Background based on my{' '}
-      <a href={site.profileSource}>public professional profile</a>.
-    </p>
-  </section>
   <section
     class="education-section section-space"
     id="education"
@@ -112,45 +35,16 @@ import { site } from '../config/site';
 </BaseLayout>
 
 <style>
-  .career-overview {
-    border-block: 1px solid var(--line);
-    padding-block: 32px;
-    margin-bottom: 48px;
-  }
-  .career-overview h2 {
-    margin: 10px 0 24px;
-  }
-  .career-overview ol {
-    list-style: none;
-    padding: 0;
-    margin: 0 0 20px;
-    display: grid;
-    grid-template-columns: repeat(3, minmax(0, 1fr));
-    gap: 24px;
-  }
-  .career-overview li a {
+  .career-navigation {
     display: flex;
-    flex-direction: column;
-    gap: 6px;
-    height: 100%;
-    padding: 12px 0;
+    flex-wrap: wrap;
+    gap: 8px 24px;
+    margin-bottom: 32px;
   }
-  .career-overview li a:hover strong {
+  .career-navigation a {
+    padding-block: 10px;
     text-decoration: underline;
     text-underline-offset: 4px;
-  }
-  .career-overview li span {
-    color: var(--muted);
-    font-size: 14px;
-  }
-  @media (max-width: 700px) {
-    .career-overview ol {
-      grid-template-columns: 1fr;
-      gap: 4px;
-    }
-  }
-  .capabilities {
-    margin-top: 0;
   }
   .major-sections :global(.experience-entry) {
     display: flow-root;
