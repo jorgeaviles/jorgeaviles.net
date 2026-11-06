@@ -166,9 +166,9 @@ test('home contact actions are not duplicated in the footer', async ({
     'href',
     'mailto:jorge@jorgeaviles.net',
   );
-  await expect(contact.getByRole('link', { name: 'Write an email' })).toHaveCount(
-    0,
-  );
+  await expect(
+    contact.getByRole('link', { name: 'Write an email' }),
+  ).toHaveCount(0);
   await expect(contact.locator('.home-contact-links a')).toHaveCount(2);
   await expect(contact.getByRole('link', { name: /GitHub/ })).toHaveAttribute(
     'href',
