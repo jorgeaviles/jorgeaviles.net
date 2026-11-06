@@ -1094,6 +1094,7 @@ test('About connects experience to capabilities before supporting education', as
 }) => {
   await page.goto('/about/');
   await expect(page.locator('main h2')).toHaveText([
+    'A path from research to useful systems.',
     'Professional experience',
     'How I work',
     'Different tools. A shared purpose.',

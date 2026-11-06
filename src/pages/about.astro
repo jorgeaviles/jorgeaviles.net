@@ -17,6 +17,36 @@ import { site } from '../config/site';
     title="Experience, education & approach."
     description="Quantitative research, enterprise banking data and analytics, and hands-on development for public-sector oversight."
   />
+  <nav class="career-overview" aria-labelledby="career-overview-title">
+    <p class="eyebrow">At a glance</p>
+    <h2 id="career-overview-title">A path from research to useful systems.</h2>
+    <ol>
+      <li>
+        <a href="#centrum-experience">
+          <span>2012–2014</span>
+          <strong>Research</strong>
+          <span>CENTRUM Católica · Graduate Research Assistant</span>
+        </a>
+      </li>
+      <li>
+        <a href="#santander-experience">
+          <span>2015–2020</span>
+          <strong>Banking analytics</strong>
+          <span>Santander · Data quality, analytics & change management</span>
+        </a>
+      </li>
+      <li>
+        <a href="#cpcs-experience">
+          <span>2020–present</span>
+          <strong>Data & applications</strong>
+          <span>CPCS · Senior Auditor Data Analyst</span>
+        </a>
+      </li>
+    </ol>
+    <a class="text-link" href="#education">
+      Education & professional development <Arrow />
+    </a>
+  </nav>
   <div class="editorial-grid">
     <div class="prose major-sections">
       <Background />
@@ -82,6 +112,43 @@ import { site } from '../config/site';
 </BaseLayout>
 
 <style>
+  .career-overview {
+    border-block: 1px solid var(--line);
+    padding-block: 32px;
+    margin-bottom: 48px;
+  }
+  .career-overview h2 {
+    margin: 10px 0 24px;
+  }
+  .career-overview ol {
+    list-style: none;
+    padding: 0;
+    margin: 0 0 20px;
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 24px;
+  }
+  .career-overview li a {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    height: 100%;
+    padding: 12px 0;
+  }
+  .career-overview li a:hover strong {
+    text-decoration: underline;
+    text-underline-offset: 4px;
+  }
+  .career-overview li span {
+    color: var(--muted);
+    font-size: 14px;
+  }
+  @media (max-width: 700px) {
+    .career-overview ol {
+      grid-template-columns: 1fr;
+      gap: 4px;
+    }
+  }
   .capabilities {
     margin-top: 0;
   }

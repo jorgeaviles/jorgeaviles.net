@@ -17,6 +17,11 @@ const { entries, headingLevel: Heading = 'h3' } = Astro.props;
         <Heading class="work-title">{entry.data.title}</Heading>
         <p>{entry.data.description}</p>
         {entry.data.overview && (
+          <p class="work-context">
+            <strong>Context:</strong> {entry.data.overview.context}
+          </p>
+        )}
+        {entry.data.overview && (
           <p class="work-technologies">
             {entry.data.overview.technologies.join(' · ')}
           </p>
