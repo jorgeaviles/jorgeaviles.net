@@ -1634,7 +1634,7 @@ strong {
   (backdrop-filter: blur(12px)) or (-webkit-backdrop-filter: blur(12px))
 ) {
   .site-header {
-    background: rgb(247 246 242 / 88%);
+    background: rgb(247 246 242 / 84%);
     -webkit-backdrop-filter: blur(12px);
     backdrop-filter: blur(12px);
   }
