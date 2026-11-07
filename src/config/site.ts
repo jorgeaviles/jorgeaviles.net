@@ -1,5 +1,6 @@
 export const site = {
   name: 'Jorge Avilés',
+  location: 'Boston',
   url: 'https://jorgeaviles.net',
   email: 'jorge@jorgeaviles.net',
   description:

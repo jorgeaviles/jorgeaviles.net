@@ -1423,13 +1423,13 @@ test('MCP documentation connects visitors to bounded public tools without networ
   await page.goto('/');
   await page
     .getByRole('contentinfo')
-    .getByRole('link', { name: 'MCP', exact: true })
+    .getByRole('link', { name: 'MCP tools', exact: true })
     .click();
   await expect(page).toHaveURL(/\/mcp\/$/);
   await page.goto('/ask/');
   await page
     .getByRole('contentinfo')
-    .getByRole('link', { name: 'MCP', exact: true })
+    .getByRole('link', { name: 'MCP tools', exact: true })
     .click();
   await expect(page).toHaveURL(/\/mcp\/$/);
 });
